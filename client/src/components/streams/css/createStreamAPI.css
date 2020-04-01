@@ -1,0 +1,8 @@
+
+.OTPublisherContainer {
+	width: 100% !important;
+	height: 500px !important;
+}
+.react-player {
+	object-fit: cover !important;
+}

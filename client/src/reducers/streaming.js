@@ -1,0 +1,17 @@
+import { PLAYBACK_ID } from "../actions/types.js";
+
+const initialState = {
+	data: {}
+};
+
+export default (state = initialState, action) => {
+	switch (action.type) {
+		case PLAYBACK_ID: 
+			return {
+				...state,
+				playbackID: action.payload
+			}
+		default: 
+			return state;
+	}
+}
