@@ -93,3 +93,6 @@
     margin-bottom: -15%;
     color: #495057;
 }
+.register-form {
+    background-color: transparent !important;
+}

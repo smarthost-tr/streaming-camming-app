@@ -17,6 +17,7 @@ import { Link } from "react-router-dom";
 import "./style.css";
 import { connect } from "react-redux";
 import { authentication } from "../../actions/index.js";
+import { store } from "../../store/store.js";
 
 
 
@@ -44,11 +45,14 @@ const Navigation = (props) => {
          	{props.authenticated ? <NavItem>
               <Link className="nav-link" to="/streams/create">Broadcast Yourself</Link>
             </NavItem> : null}
-            
+            <NavItem className="link">
+              <Link className="nav-link" to="/profiles">Profiles/Buy-Content</Link>
+            </NavItem>
           </Nav>
           	{props.authenticated ? null : <NavItem className="link">
               <Link className="btn btn-outline-info" to="/login">Sign-in</Link>
             </NavItem>}
+            
             {props.authenticated ? <NavItem className="link">
               <button onClick={() => {
               	props.authentication({});
@@ -56,8 +60,11 @@ const Navigation = (props) => {
             </NavItem> : <NavItem className="link">
               <Link className="btn btn-outline-success" to="/register">Sign Up</Link>
             </NavItem>}
+            {props.authenticated ? <NavItem className="link">
+              <Link className="btn btn-outline pink_button" to="/signup/camming/one">Become A Cammer!</Link>
+            </NavItem> : null}
 
-            <NavbarText>You have (88) tokens</NavbarText>
+            {props.authenticated ? <NavbarText>{store.getState().auth.data.username}, You have (88) tokens</NavbarText> : null}
         </Collapse>
       </Navbar>
     </div>

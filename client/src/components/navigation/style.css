@@ -8,3 +8,9 @@
 	list-style-type: none;
 	margin-right: 30px;
 }
+.pink_button {
+	border: 2px solid pink !important;
+}
+.pink_button:hover {
+	border: 2px solid purple !important;
+}

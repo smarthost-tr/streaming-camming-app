@@ -91,14 +91,14 @@ constructor(props) {
                                             	this.setState({
                                             		firstName: e.target.value
                                             	})
-		                                    }} class="form-control" placeholder="First Name *" value={this.state.firstName} />
+		                                    }} class="form-control" placeholder="First Name - This will NOT being publicly avaliable *" value={this.state.firstName} />
                                         </div>
                                         <div class="form-group">
                                             <input type="text" onChange={(e) => {
                                             	this.setState({
                                             		lastName: e.target.value
                                             	})
-                                            }} class="form-control" placeholder="Last Name *" value={this.state.lastName} />
+                                            }} class="form-control" placeholder="Last Name - This will NOT being publicly avaliable *" value={this.state.lastName} />
                                         </div>
                                         <div class="form-group">
                                             <input type="password" onChange={(e) => {

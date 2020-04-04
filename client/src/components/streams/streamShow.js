@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import Navigation from "../navigation/index.js";
 import axios from "axios";
 import ReactPlayer from 'react-player';
+import ChatMockup from "../messaging/mockup.js";
 
 
 let live_stream_id;
@@ -89,6 +90,27 @@ class StreamShow extends Component {
 
 		createLive();
 	}
+	renderContent = () => {
+		const { streamIsReady } = this.state;
+
+		if (!streamIsReady) {
+			return (
+				<div className="col-md-12">
+					<h1 className="text-center" style={{ textDecoration: "underline", paddingTop: "30px" }}>Stream is unavaliable, please check back again in a few moments...</h1>
+					<button style={{ marginTop: "40px", width: "100%" }} onClick={this.checkStreamActive} className="btn btn-outline-warning">Check if stream is active</button>
+				</div>
+			);
+		} else {
+			return (
+				<React.Fragment>
+					<div className="col-md-6">
+						<ReactPlayer playing={true} style={{ backgroundColor: "black" }} url={`https://stream.mux.com/${this.state.playbackID}.m3u8`} controls width="100%" height="100%" />
+					</div>
+					<ChatMockup />
+				</React.Fragment>
+			);
+		}
+	}
     render() {
     	const { streamsReady, APISuccess, err, streamIsReady } = this.state;
 
@@ -98,11 +120,9 @@ class StreamShow extends Component {
         	<div>
         		<Navigation />
  				<div className="container-fluid">
-					<div className="row">
-						<div className="col-md-12">
-							{!streamIsReady ? <div><h1 className="text-center" style={{ textDecoration: "underline", paddingTop: "30px" }}>Stream is unavaliable, please check back again in a few moments...</h1><button style={{ marginTop: "40px", width: "100%" }} onClick={this.checkStreamActive} className="btn btn-outline-warning">Check if stream is active</button></div> : <div className="col-md-6"><ReactPlayer style={{ backgroundColor: "black" }} url={`https://stream.mux.com/${this.state.playbackID}.m3u8`} controls width="100%" height="100%" /></div>}
-						</div>
+					<div className="row" style={{ margin: "40px 0px" }}>
 						
+						{this.renderContent()}
 						{/*{streamsReady ? <div className="col-md-6"><ReactPlayer style={{ backgroundColor: "black" }} url={`https://stream.mux.com/${this.state.playbackID}.m3u8`} controls width="100%" height="100%" /></div> : null}*/}
 					</div>
  				</div>

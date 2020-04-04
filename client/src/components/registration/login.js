@@ -4,6 +4,7 @@ import axios from "axios";
 import { connect } from "react-redux";
 import { authentication } from "../../actions/index.js";
 import { withRouter } from "react-router-dom";
+import "./registration.css";
 
 class LoginScreen extends Component {
 constructor(props) {

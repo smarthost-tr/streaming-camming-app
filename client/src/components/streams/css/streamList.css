@@ -2,3 +2,12 @@
 	box-shadow: 10px 10px 10px grey;
 	background-color: black;
 }
+.box-two {
+	background-color: black;
+}
+#dark_image {
+	background-color: black;
+}
+.background {
+	height: 100vh;
+}

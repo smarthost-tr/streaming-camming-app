@@ -9,6 +9,7 @@ import { connect } from "react-redux";
 import { streamPlaybackID } from "../../actions/streaming.js";
 import { withRouter } from "react-router-dom";
 import { CopyToClipboard } from 'react-copy-to-clipboard';
+import FooterPage from "../common/footer/footer.js";
 
 const apiKey = '46621022';
 
@@ -38,7 +39,8 @@ constructor(props) {
 		loadVideoAgain: false,
 		startedStream: false,
 		copied: false,
-		value: ""
+		value: "",
+		data: []
 	}
 
 	
@@ -54,18 +56,18 @@ constructor(props) {
 	}
 	handleClick = () => {
   		axios.post("/mux/create/stream").then((res) => {
-  			let playback = res.data.data.playback_ids[0].id;
-  			console.log(res.data);
   			this.setState({
   				playbackID: res.data.playbackID,
   				streamKey: res.data.streamKey,
   				streamID: res.data.data.id,
   				loaded: true,
-  				startedStream: true
+  				startedStream: true,
+  				data: res.data
   			}, () => {
   				this.props.streamPlaybackID(this.state.playbackID);
   			})
-
+			
+			
   			console.log(res.data);
   		}).catch((err) => {
   			console.log(err);
@@ -91,7 +93,46 @@ constructor(props) {
 			ready: false
 		})
   	}
+	handleRedirect = (e) => {
+		e.preventDefault();
+
 		
+		const createLive = async () => {
+		  const auth = {
+		    username: "f899a074-f11e-490f-b35d-b6c478a5b12a",
+		    password: "4vLdjx6uBafGdFiSbmWt5akv4DaD4PkDuCCYdFYXzudywyQSR3Uh27GqlfedlhZ17fbnXbf9Rh/"
+		  };
+		    const param = { "reduced_latency": true, 
+			  "playback_policy": "public", 
+			  "new_asset_settings": { 
+			  	"playback_policy": "public" 
+			  } 
+			}
+		  const res = await axios.get(`https://api.mux.com/video/v1/live-streams/${this.state.streamID}`, { auth: auth }).catch((error) => {
+		    throw error;
+		  });
+
+		  console.log(res.data.data.status);
+		  if (res.data.data.status === "active") {
+		  	axios.post("/post/new/stream", {
+				data: this.state.data.data,
+				email: this.props.email
+			}).then((res) => {
+				console.log(res.data);
+				if (res) {
+					this.props.history.push(`/view/individual/private/stream/${this.state.streamID}`, { streamID: this.state.streamID });
+				}
+			}).catch((err) => {
+				console.log(err);
+				alert(err);
+			})
+		  } else {
+		  	alert("Broadcast/stream not detected... Please go to OBS and start your live stream.");
+		  }
+		}
+
+		createLive();
+	}	
     render() {
     	const { loaded, token, sessionId, error, showVideo, startedStream, streamKey } = this.state;
     	console.log(this.state);
@@ -106,7 +147,7 @@ constructor(props) {
 			          onCopy={() => this.setState({
 			          	copied: true
 			          })}>
-			          <button className="btn btn-success">Copy to clipboard</button>
+			          <button className="btn btn-outline-danger">Copy to clipboard</button>
 			        </CopyToClipboard> : null}</div>
 
 			    <hr className="my-4"/> 
@@ -118,11 +159,9 @@ constructor(props) {
 	           
 
             	{this.state.streamKey ? <hr className="my-4"/> : null}
-            	{this.state.loaded && this.state.streamKey ? <button onClick={() => {
-					this.props.history.push(`/view/individual/private/stream/${this.state.streamID}`, { streamID: this.state.streamID });
-				}} className="btn btn-outline-info" style={{ width: "100%", marginBottom: "50px" }}>Once you started streaming - Use this to go to the Stream</button> : null}
+            	{this.state.loaded && this.state.streamKey ? <button onClick={this.handleRedirect} className="btn btn-outline-info" style={{ width: "100%", marginBottom: "50px" }}>Once you started streaming - Use this to go to the Stream</button> : null}
             	{/*<button className="btn btn-outline-success" style={{ width: "100%", marginTop: "30px" }} onClick={this.createNewSession}>Gather Streams Now</button>*/}
-			<div className="container-fluid">
+				<div className="container-fluid">
 				   { error ? <h1 style={{ color: "darkred" }} className="text-center">{this.state.error}</h1> : null }
 				  	<div className="row">
 				        <div className="col-md-6">
@@ -145,13 +184,15 @@ constructor(props) {
 				        </div>
 				    </div>
 			    </div>
+			    <FooterPage />
             </div>
         );
     }
 }
 const mapStateToProps = (state) => {
 	return {
-		streamID: state.streaming.playbackID
+		streamID: state.streaming.playbackID,
+		email: state.auth.data.email
 	}
 }
 
