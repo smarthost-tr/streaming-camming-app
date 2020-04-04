@@ -28,7 +28,8 @@ constructor(props) {
 		ready: false,
 		successful: false,
 		modalIsOpen: false,
-		user: null
+		user: null,
+		skills: []
 	}
 }
 	componentDidMount() {
@@ -42,27 +43,19 @@ constructor(props) {
 			console.log(err);
 		})
 	}
-	renderContent = () => {
-		const { successful } = this.state;
-
-		if (successful) {
-			for (let item in this.state.users) {
-				let playback_secondary_id = this.state.users[item].streams;
-				// streamsArray.push(playback_secondary_id);
-				for (let key in playback_secondary_id) {
-					let uniqueID = playback_secondary_id[key].playback_ids[0].id;
-					console.log(uniqueID);
-					streamsArray.push(uniqueID);
-				}
-			}
-			this.setState({
-				ready: true,
-				successful: false
-			})
-		}
-	}
 	handleClick = (user) => {
 		console.log("entered :", user);
+
+		axios.post("/gather/skills/profile/page", {
+			email: user.email
+		}).then((res) => {
+			console.log(res.data);
+			this.setState({
+				skills: res.data
+			});
+		}).catch((err) => {
+			console.log(err);
+		})
 		this.setState({
 			user,
 			modalIsOpen: true
@@ -104,16 +97,20 @@ constructor(props) {
 			                    }} className="btn btn-outline purple_button" style={{ width: "100%" }}>Visit This Model's Profile</button></h3>
 			                    <hr className="my-4"/>
 			                    <button className="btn btn-outline pink_button" onClick={this.closeModal} style={{ width: "100%" }}>close</button>
-			                    
 			                    <span><strong style={{ marginBottom: "30px" }}>Skills: </strong></span>
 			                    <div className="horizontal">
-			                        <span class="label label-warning tag">Insert Skill Here</span>
-			                        <span class="label label-info tag">Insert Skill Here</span>
-			                        <span class="label label-info tag">Insert Skill Here</span>
-			                        <span class="label label-success tag">Insert Skill Here</span>
-			                        <span class="label label-info tag">Insert Skill Here</span>
-			                        <span class="label label-info tag">Insert Skill Here</span>
-			                        <span class="label label-success tag">Insert Skill Here</span>
+			                    {this.state.skills.length > 0 ? this.state.skills.map((each, index) => {
+									if (each.skills) {
+										return each.skills.map((skill, index) => {
+	                                		console.log(skill);
+	                                		return (
+												<span class="label label-warning tag">{skill.skill} - {skill.percentage}%</span>
+	                                		);
+										})
+									} else {
+										return <h3 className="text-center">No skills have been listed...</h3>
+									}
+	                        	}) : <h3 className="text-center">No skills have been listed...</h3>}
 			                    </div>
 		                    </div>
 		                    <hr className="my-4" />

@@ -111,6 +111,8 @@ app.use("/profile/append/data/one", require("./routes/profile/addNewData/addProf
 app.use("/gather/all/users", require("./routes/profile/gatherData/gatherAllUsers.js"));
 app.use("/update/skills/percentages", require("./routes/profile/addNewData/updateSkills.js"));
 app.use("/gather/skills/profile/page", require("./routes/profile/gatherData/gatherSkills.js"));
+app.use("/profile/find/user/streams", require("./routes/profile/gatherData/gatherStreams.js"));
+app.use("/push/stream/active_asset_id", require("./routes/mux/pushAssetID.js"));
 
 app.listen(PORT, () => {
 	console.log(`Server listening on port ${PORT}!`);

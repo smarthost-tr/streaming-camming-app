@@ -112,11 +112,17 @@ constructor(props) {
 		    throw error;
 		  });
 
-		  console.log(res.data.data.status);
+		  console.log(res.data);
 		  if (res.data.data.status === "active") {
+		  	// put more code here to handle asset logic
+
+
+
+
 		  	axios.post("/post/new/stream", {
 				data: this.state.data.data,
-				email: this.props.email
+				email: this.props.email,
+				active_asset_id: res.data.data.active_asset_id
 			}).then((res) => {
 				console.log(res.data);
 				if (res) {
@@ -125,7 +131,7 @@ constructor(props) {
 			}).catch((err) => {
 				console.log(err);
 				alert(err);
-			})
+			});
 		  } else {
 		  	alert("Broadcast/stream not detected... Please go to OBS and start your live stream.");
 		  }

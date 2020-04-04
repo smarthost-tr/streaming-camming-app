@@ -121,15 +121,18 @@ class StreamShow extends Component {
         		<Navigation />
  				<div className="container-fluid">
 					<div className="row" style={{ margin: "40px 0px" }}>
-						
 						{this.renderContent()}
-						{/*{streamsReady ? <div className="col-md-6"><ReactPlayer style={{ backgroundColor: "black" }} url={`https://stream.mux.com/${this.state.playbackID}.m3u8`} controls width="100%" height="100%" /></div> : null}*/}
 					</div>
  				</div>
         	</div>
       )
     }
 }
+const mapStateToProps = (state) => {
+	return {
+		email: state.auth.data.email
+	}
+}
 
 
-export default connect(null, { })(StreamShow);
+export default connect(mapStateToProps, { })(StreamShow);

@@ -4,6 +4,7 @@ import "../css/individual.css";
 import { store } from "../../../store/store.js";
 import axios from "axios";
 import { connect } from "react-redux";
+import ReactPlayer from 'react-player'
 
 
 class ProfilesIndividual extends Component {
@@ -15,7 +16,11 @@ constructor(props) {
     	skill: "",
     	talents: [],
     	percentage: 0,
-    	skills: []
+    	skills: [],
+    	streams: null,
+    	assetIDs: [],
+    	process: false,
+    	stream_playback_ids: []
     }
 }
 	addSkillToDB = (e) => {
@@ -26,7 +31,6 @@ constructor(props) {
 			skill: this.state.skill,
 			email: this.props.email
 		}).then((res) => {
-			console.log(res.data);
 			if (res) {
 				this.setState({
 					percentage: 0,
@@ -45,13 +49,87 @@ constructor(props) {
 		axios.post("/gather/skills/profile/page", {
 			email: this.props.location.state.user.email
 		}).then((res) => {
-			console.log(res.data);
 			this.setState({
 				skills: res.data
 			});
 		}).catch((err) => {
 			console.log(err);
+		});
+
+	}
+	videoApi = () => {
+		const user = this.props.location.state.user;
+
+		axios.post("/profile/find/user/streams", {
+			email: user.email
+		}).then((res) => {
+			console.log(res.data.streams);
+			const streams = res.data.streams;
+			this.setState({
+				streams,
+				process: true
+			}, () => {
+				this.processData();
+			})
+		}).catch((err) => {
+			console.log(err);
 		})
+	}
+	processData = () => {
+		if (this.state.process) {
+
+			return this.state.streams.map((stream, index) => {
+				console.log("STREAM:", stream);
+				const asyncReturn = async () => {
+					const auth = {
+				      username: "f899a074-f11e-490f-b35d-b6c478a5b12a",
+				      password: "4vLdjx6uBafGdFiSbmWt5akv4DaD4PkDuCCYdFYXzudywyQSR3Uh27GqlfedlhZ17fbnXbf9Rh/"
+				    };
+				    const param = { 
+				  	    "reduced_latency": true, 
+					    "playback_policy": "public", 
+					    "new_asset_settings": { 
+					    	"playback_policy": "public" 
+					    } 
+				    }
+				    const res = await axios.get(`https://api.mux.com/video/v1/assets/${stream.active_asset_id}`, { auth: auth }).catch((error) => {
+				   		throw error;
+				    });
+					let stream_playback_ids = res.data.data.playback_ids[0].id;
+
+				    this.setState({
+				    	stream_playback_ids: [...this.state.stream_playback_ids, stream_playback_ids]
+				    })
+
+				    console.log(res.data.data.playback_ids[0].id);
+				}
+				asyncReturn();
+			})
+
+			this.setState({
+				process: false
+			})
+			// const user = this.props.location.state.user;
+
+			// console.log(user.streams.active_asset_id);
+
+		    // const auth = {
+		    //   username: "f899a074-f11e-490f-b35d-b6c478a5b12a",
+		    //   password: "4vLdjx6uBafGdFiSbmWt5akv4DaD4PkDuCCYdFYXzudywyQSR3Uh27GqlfedlhZ17fbnXbf9Rh/"
+		    // };
+		    // const param = { 
+		  	 //    "reduced_latency": true, 
+			   //  "playback_policy": "public", 
+			   //  "new_asset_settings": { 
+			   //  	"playback_policy": "public" 
+			   //  } 
+		    // }
+		    // const res = await axios.get(`https://api.mux.com/video/v1/assets/${user.streams.active_asset_id}`, param, { auth: auth }).catch((error) => {
+		    // throw error;
+		    // });
+
+		  // console.log(res.data.data);
+		}
 	}
     render() {
     	const user = this.props.location.state.user;
@@ -108,13 +186,17 @@ constructor(props) {
 				                        <li class="active tab" style={{ width: "25%" }}>
 				                            <a href="#home-2" data-toggle="tab" aria-expanded="false" class="active">
 				                                <span class="visible-xs"><i class="fa fa-home"></i></span>
-				                                <span class="hidden-xs">About Me</span>
+				                                <span onClick={() => {
+				                                	this.setState({
+				                                		stream_playback_ids: []
+				                                	})
+				                                }} class="hidden-xs">About Me</span>
 				                            </a>
 				                        </li>
 				                        <li class="tab" style={{ width: "25%" }}>
 				                            <a href="#profile-2" data-toggle="tab" aria-expanded="false">
 				                                <span class="visible-xs"><i class="fa fa-user"></i></span>
-				                                <span class="hidden-xs">Activities</span>
+				                                <span onClick={this.videoApi} class="hidden-xs">Videos</span>
 				                            </a>
 				                        </li>
 				                        <li class="tab" style={{ width: "25%" }}>
@@ -231,7 +313,7 @@ constructor(props) {
 																	return each.skills.map((skill, index) => {
 						                                        		console.log(skill);
 						                                        		return (
-																			<div class="m-b-15">
+																			<div key={index} class="m-b-15">
 								                                                <h5>{skill.skill} <span class="pull-right">{skill.percentage}%</span></h5>
 								                                                <div class="progress">
 																				  <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow={`${skill.percentage}`} aria-valuemin="0" aria-valuemax="100" style={{ width: `${skill.percentage}%` }}></div>
@@ -258,14 +340,19 @@ constructor(props) {
 
 				                                <div class="panel-body">
 				                                    <div class="timeline-2">
-				                                        <div class="time-item">
-				                                            <div class="item-info">
-				                                                <div class="text-muted">5 minutes ago</div>
-				                                                <p><strong><a href="#" class="text-info">John Doe</a></strong> Uploaded a photo <strong>"DSC000586.jpg"</strong></p>
-				                                            </div>
-				                                        </div>
+														<div className="row">
+				                                        {this.state.stream_playback_ids.length > 0 ? this.state.stream_playback_ids.map((id, index) => {
+				                                        	console.log("ID! :", id);
+				                                        	return (
+																<div className="col-md-3">
+				                                        			<img style={{ width: "100%", height: "100%" }} src={`https://image.mux.com/${id}/animated.gif`} alt=""/>
+				                                        			
+				                                        		</div>
+				                                        	);
 
-				                                        <div class="time-item">
+				                                        }) : <h1 className="text-center">This user currently has no old streams for sale. Please check again soon.</h1>}
+														</div>
+				                                        {/*<div class="time-item">
 				                                            <div class="item-info">
 				                                                <div class="text-muted">30 minutes ago</div>
 				                                                <p><a href="" class="text-info">Lorem</a> commented your post.</p>
@@ -302,7 +389,7 @@ constructor(props) {
 				                                                <p><a href="" class="text-info">Jessi</a> attended a meeting with<a href="#" class="text-success">John Doe</a>.</p>
 				                                                <p><em>"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam laoreet tellus ut tincidunt euismod. "</em></p>
 				                                            </div>
-				                                        </div>
+				                                        </div>*/}
 				                                    </div>
 
 				                                </div>
@@ -397,7 +484,11 @@ constructor(props) {
 															  	})
 															  }} type="text" value={this.state.skill} class="form-control" aria-label="Text input with segmented dropdown button"/> 
 															  <div class="input-group-append">
-															    {this.state.percentage !== 0 && this.state.skill.length > 0 ? <button onClick={this.addSkillToDB} type="button" class="btn btn-outline-secondary">Add Skill ({this.state.percentage}%)</button> : <div type="button" class="btn btn-outline-secondary">Add Skill Percentage</div>}
+															    {this.state.percentage !== 0 && this.state.skill.length > 0 ? <button onClick={this.addSkillToDB} type="button" class="btn btn-outline-secondary">Add Skill ({this.state.percentage}%)</button> : <button  onClick={() => {
+															    	if (this.state.percentage === 0 || this.state.skill.length === 0) {
+																		alert("You must complete both fields - Percentage + Skill Name")
+															    	}
+															    }} type="button" class="btn btn-outline-secondary">Add Skill Percentage</button>}
 															    <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 															      <span class="sr-only">Toggle Percentages</span>
 															    </button>
@@ -451,10 +542,10 @@ constructor(props) {
 				                                            <label for="RePassword">Re-Password</label>
 				                                            <input type="password" placeholder="6 - 15 Characters" id="RePassword" class="form-control"/>
 				                                        </div>*/}
-				                                        <div class="form-group">
+				                                       {/* <div class="form-group">
 				                                            <label for="AboutMe">About Me</label>
 				                                            <textarea style={{ height: "125px" }} id="AboutMe" class="form-control">Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.</textarea>
-				                                        </div>
+				                                        </div>*/}
 				                                        <button class="btn btn-primary waves-effect waves-light w-md" type="submit">Save</button>
 				                                    </form>
 
