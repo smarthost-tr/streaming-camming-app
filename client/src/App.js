@@ -21,6 +21,8 @@ import ProfileHomepage from "./components/profile/home/index.js";
 import PageThreeCammerSignup from "./components/signupCammer/pageThree/index.js";
 import AllProfilesHomepage from "./components/profile/allProfiles/allProfiles.js";
 import ProfilesIndividual from "./components/profile/individual/individual.js";
+import SubscribeHomepage from "./components/subscribe/home/index.js";
+import FriendsListHome from "./components/friends/home/index.js";
 
 class App extends Component {
 constructor(props) {
@@ -59,6 +61,8 @@ constructor(props) {
         <Route path="/profile/individual" exact component={ProfileHomepage} />
         <Route path="/profiles" exact component={AllProfilesHomepage} />
         <Route path="/profiles/individual/:id" exact component={ProfilesIndividual} />
+        <Route path="/signup/subscriber/payment" exact component={SubscribeHomepage} />
+        <Route path="/friends/list/home" exact component={FriendsListHome} />
       </div>
     </BrowserRouter>
     );

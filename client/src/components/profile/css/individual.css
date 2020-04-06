@@ -1,3 +1,6 @@
 .dropdown_custom {
 	background-color: white !important;
 }
+.link-a:hover {
+	cursor: pointer;
+}

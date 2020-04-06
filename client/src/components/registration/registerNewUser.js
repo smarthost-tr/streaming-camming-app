@@ -21,7 +21,8 @@ constructor(props) {
 		username: "",
 		password: "",
 		birthdate: new Date(),
-		phoneNumber: ""
+		phoneNumber: "",
+        image: null
 	}
 }
 	onChange = (date) => {
@@ -32,22 +33,31 @@ constructor(props) {
 	handleSubmission = (e) => {
 		e.preventDefault();
 		// deconstruct to make more readable
-		const { security, securityAnswer, gender, firstName, lastName, phoneNumber, email, username, password, birthdate } = this.state;
+		const { security, securityAnswer, gender, firstName, lastName, phoneNumber, image, email, username, password, birthdate } = this.state;
+
+        const formData = new FormData();
+
+        formData.append('securityAnswer', securityAnswer);
+        formData.append("security", security);
+        formData.append("gender", gender);
+        formData.append("firstName", firstName);
+        formData.append("lastName", lastName);
+        formData.append("phoneNumber", phoneNumber);
+        formData.append("image", image);
+        formData.append("email", email);
+        formData.append("username", username);
+        formData.append("password", password);
+        formData.append("birthdate", birthdate);
+
+        const config = {
+            headers: {
+                'content-type': 'multipart/form-data'
+            }
+        };
 
 		// check if everything is filled out
-		if (security.length > 0 && securityAnswer.length > 0 && gender.length > 0 && firstName.length > 0 && lastName.length > 0 && phoneNumber.length > 0 && email.length > 0 && username.length > 0 && password.length > 0 && birthdate !== null) {
-			axios.post("/register/new/user", {
-				security, 
-				securityAnswer, 
-				gender, 
-				firstName, 
-				lastName, 
-				phoneNumber, 
-				email, 
-				username, 
-				password, 
-				birthdate
-			}).then((res) => {
+		if (security.length > 0 && securityAnswer.length > 0 && gender.length > 0 && firstName.length > 0 && lastName.length > 0 && phoneNumber.length > 0 && email.length > 0 && username.length > 0 && password.length > 0 && birthdate !== null && image) {
+			axios.post("/register/new/user", formData, config).then((res) => {
 				// console.log response
 				console.log(res.data);
 				if (res.data.user !== null) {
@@ -77,7 +87,7 @@ constructor(props) {
                         <img src="https://image.ibb.co/n7oTvU/logo_white.png" alt=""/>
                         <h3>Welcome</h3>
                         <p>You are 30 seconds away from jerking to the best quality models on the internet or even making money with us!</p>
-                       
+                        
                     </div>
                     <div class="col-md-9 register-right">
                        
@@ -189,10 +199,24 @@ constructor(props) {
                                         </div>
                                         <div class="form-group">
                                         	<label className="text-left" style={{ marginRight: "30px" }}>Birthdate</label>
-                                            <DatePicker
+                                            <DatePicker style={{ zIndex: 999 }}
 									          onChange={this.onChange}
 									          value={this.state.birthdate}
 									        />
+                                        </div>
+                                        <div className="row">
+                                            <div className="col-md-12">
+                                                <div style={{ float: "left" }} class="input-group mb-3">
+                                                  <div class="custom-file">
+                                                    <input name="image" onChange={(e) => {
+                                                        this.setState({
+                                                            image: e.target.files[0]
+                                                        })
+                                                    }} type="file" class="custom-file-input" id="inputGroupFile01"/>
+                                                    <label class="custom-file-label" for="inputGroupFile01">{this.state.image ? "You selected a profile picture!" : "Choose a profile picture"}</label>
+                                                  </div>
+                                                </div>
+                                            </div>
                                         </div>
                                         <input type="submit" class="btnRegister" onClick={this.handleSubmission}  value="Register"/>
                                     </div>

@@ -4,6 +4,7 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import "../css/profile.css";
 import Modal from 'react-modal';
+import Footer from "../../common/footer/footer.js";
  
 const customStyles = {
   content : {
@@ -149,6 +150,7 @@ constructor(props) {
 						{this.renderModalContent()}
 					</div>
 				</div>
+				<Footer />
             </div>
         );
     }

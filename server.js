@@ -90,8 +90,8 @@ if (process.env.NODE_ENV === "production") {
 	})
 }; 
 
-
-
+app.use("/post/reply/comment/profile", require("./routes/comments/postReplyComment.js"));
+app.use("/gather/profile/comments/individual", require("./routes/comments/gather/gatherComments.js"));
 app.use("/stream", require("./routes/streaming/stream.js"));
 app.use("/streaming/create", require("./routes/streaming/streamingTokBox.js"));
 app.use("/streaming/gather", require("./routes/streaming/gatherStreams.js"));
@@ -113,6 +113,16 @@ app.use("/update/skills/percentages", require("./routes/profile/addNewData/updat
 app.use("/gather/skills/profile/page", require("./routes/profile/gatherData/gatherSkills.js"));
 app.use("/profile/find/user/streams", require("./routes/profile/gatherData/gatherStreams.js"));
 app.use("/push/stream/active_asset_id", require("./routes/mux/pushAssetID.js"));
+app.use("/post/new/comment/profile", require("./routes/comments/postComment.js"));
+app.use("/send/friend/request/reciever", require("./routes/friendsList/addFriend/recievingFriend.js"));
+app.use("/send/friend/request/sender", require("./routes/friendsList/addFriend/sendingFriend.js"));
+app.use("/gather/friends/list/navbar", require("./routes/friendsList/gatherPending/gather.js"));
+app.use("/gather/username/profile", require("./routes/profile/gatherData/gatherUsername.js"));
+
+
+
+
+
 
 app.listen(PORT, () => {
 	console.log(`Server listening on port ${PORT}!`);

@@ -4,7 +4,9 @@ import "../css/individual.css";
 import { store } from "../../../store/store.js";
 import axios from "axios";
 import { connect } from "react-redux";
-import ReactPlayer from 'react-player'
+import ReactPlayer from 'react-player';
+import DropAComment from "../comments/index.js";
+import { Link } from "react-router-dom";
 
 
 class ProfilesIndividual extends Component {
@@ -20,7 +22,8 @@ constructor(props) {
     	streams: null,
     	assetIDs: [],
     	process: false,
-    	stream_playback_ids: []
+    	stream_playback_ids: [],
+    	error: ""
     }
 }
 	addSkillToDB = (e) => {
@@ -67,7 +70,8 @@ constructor(props) {
 			const streams = res.data.streams;
 			this.setState({
 				streams,
-				process: true
+				process: true,
+				stream_playback_ids: []
 			}, () => {
 				this.processData();
 			})
@@ -76,39 +80,42 @@ constructor(props) {
 		})
 	}
 	processData = () => {
-		if (this.state.process) {
+			if (this.state.streams) {
+				return this.state.streams.map((stream, index) => {
+					console.log("STREAM:", stream);
+					if (stream.active_asset_id) {
+						const asyncReturn = async () => {
+							const auth = {
+						      username: "f899a074-f11e-490f-b35d-b6c478a5b12a",
+						      password: "4vLdjx6uBafGdFiSbmWt5akv4DaD4PkDuCCYdFYXzudywyQSR3Uh27GqlfedlhZ17fbnXbf9Rh/"
+						    };
+						    const param = { 
+						  	    "reduced_latency": true, 
+							    "playback_policy": "public", 
+							    "new_asset_settings": { 
+							    	"playback_policy": "public" 
+							    } 
+						    }
+						    const res = await axios.get(`https://api.mux.com/video/v1/assets/${stream.active_asset_id}`, { auth: auth }).catch((error) => {
+						   		if (error) {
+						   			this.setState({
+						   				error: error
+						   			})
+						   		}
+						    });
+							let stream_playback_ids = res.data.data.playback_ids[0].id;
 
-			return this.state.streams.map((stream, index) => {
-				console.log("STREAM:", stream);
-				const asyncReturn = async () => {
-					const auth = {
-				      username: "f899a074-f11e-490f-b35d-b6c478a5b12a",
-				      password: "4vLdjx6uBafGdFiSbmWt5akv4DaD4PkDuCCYdFYXzudywyQSR3Uh27GqlfedlhZ17fbnXbf9Rh/"
-				    };
-				    const param = { 
-				  	    "reduced_latency": true, 
-					    "playback_policy": "public", 
-					    "new_asset_settings": { 
-					    	"playback_policy": "public" 
-					    } 
-				    }
-				    const res = await axios.get(`https://api.mux.com/video/v1/assets/${stream.active_asset_id}`, { auth: auth }).catch((error) => {
-				   		throw error;
-				    });
-					let stream_playback_ids = res.data.data.playback_ids[0].id;
+						    this.setState({
+						    	stream_playback_ids: [...this.state.stream_playback_ids, stream_playback_ids]
+						    })
 
-				    this.setState({
-				    	stream_playback_ids: [...this.state.stream_playback_ids, stream_playback_ids]
-				    })
-
-				    console.log(res.data.data.playback_ids[0].id);
-				}
-				asyncReturn();
-			})
-
-			this.setState({
-				process: false
-			})
+						    console.log(res.data.data.playback_ids[0].id);
+						}
+						asyncReturn();
+					}
+					
+				})
+			}
 			// const user = this.props.location.state.user;
 
 			// console.log(user.streams.active_asset_id);
@@ -129,11 +136,44 @@ constructor(props) {
 		    // });
 
 		  // console.log(res.data.data);
-		}
 	}
+	redirectToClip = (id) => {
+		console.log("clicked.");
+
+		this.props.history.push(`/profile/streams/individual/${id}`, { id })
+	}
+	sendFriendRequest = () => {
+		const user = this.props.location.state.user;
+		console.log("sending friend request...");
+
+		axios.post("/send/friend/request/sender", {
+			email: this.props.email,
+			sendingID: user._id,
+			username: user.username
+		}).then((res) => {
+			console.log(res.data);
+		}).catch((err) => {
+			console.log(err);
+		})
+		axios.post("/send/friend/request/reciever", {
+			receivingEmail: user.email,
+			receivingID: this.props._id,
+			username: this.props.username
+		}).then((res) => {
+			console.log(res.data);
+		}).catch((err) => {
+			console.log(err);
+		})
+	} 
     render() {
-    	const user = this.props.location.state.user;
-    	console.log(this.state);
+    	let user = this.props.location.state.user;
+    	console.log(this.props);
+    	console.log(user[0]);
+    	if (user.username) {
+    		console.log("let user be as it was...");
+    	} else {
+    		user = user[0];
+    	}
         return (
             <div>	
             	<Navigation />
@@ -144,7 +184,7 @@ constructor(props) {
 				                <div class="fb-profile-block-thumb cover-container"></div>
 				                <div class="profile-img">
 				                    <a href="#">
-				                        <img src={user.profile.profilePic} alt="profile-picture" />        
+				                        <img src={user.profile ? user.profile.profilePic : null} alt="profile-picture" />        
 				                    </a>
 				                </div>
 				                <div class="profile-name">
@@ -156,7 +196,7 @@ constructor(props) {
 				                        <ul>
 				                            <li><a href="#">Timeline</a></li>
 				                            <li><a href="#">about</a></li>
-				                            <li><a href="#">Friends</a></li>
+				                            <li><Link to="/friends/list/home">Friends</Link></li>
 				                            <li><a href="#">Photos</a></li>
 				                            <li><a href="#">More...</a></li>
 				                        </ul>
@@ -202,13 +242,21 @@ constructor(props) {
 				                        <li class="tab" style={{ width: "25%" }}>
 				                            <a href="#messages-2" data-toggle="tab" aria-expanded="true">
 				                                <span class="visible-xs"><i class="fa fa-envelope-o"></i></span>
-				                                <span class="hidden-xs">Projects</span>
+				                                <span onClick={() => {
+				                                	this.setState({
+				                                		stream_playback_ids: []
+				                                	})
+				                                }} class="hidden-xs">Projects</span>
 				                            </a>
 				                        </li>
 				                        {user.email === store.getState().auth.data.email ? <li class="tab" style={{ width: "25%" }}>
 				                            <a href="#settings-2" data-toggle="tab" aria-expanded="false">
 				                                <span class="visible-xs"><i class="fa fa-cog"></i></span>
-				                                <span class="hidden-xs">Settings</span>
+				                                <span onClick={() => {
+				                                	this.setState({
+				                                		stream_playback_ids: []
+				                                	})
+				                                }} class="hidden-xs">Settings</span>
 				                            </a>
 				                        </li> : null}
 				                        <div class="indicator" style={{ right: "476px", left: "0px" }}></div>
@@ -216,14 +264,16 @@ constructor(props) {
 				                    </ul>
 				                </div>
 				                <div class="col-lg-6 col-md-3 col-sm-3 hidden-xs">
-				                    <div class="pull-right">
+				                    <div class="pull-right" style={{ float: "right" }}>
 				                        <div class="dropdown">
-				                            <a data-toggle="dropdown" class="dropdown-toggle btn-rounded btn btn-primary waves-effect waves-light" href="#"> Following <span class="caret"></span></a>
-				                            <ul class="dropdown-menu dropdown-menu-right" role="menu">
-				                                <li><a href="#">Poke</a></li>
-				                                <li><a href="#">Private message</a></li>
+				                            <a data-toggle="dropdown" class="dropdown-toggle btn-rounded btn btn-primary waves-effect waves-light" href="#"> Add Friend <span class="caret"></span></a>
+				                            <ul style={{ padding: "10px" }} class="dropdown-menu dropdown-menu-right" role="menu">
+				                                <li><Link to="/">Remove from friends list</Link></li>
+				                                <li><Link to="/">Private message</Link></li>
 				                                <li class="divider"></li>
-				                                <li><a href="#">Unfollow</a></li>
+				                                <li><a href={null} style={{ color: "pink" }} className="link-a" onClick={() => {
+				                                	this.sendFriendRequest()
+				                                }}>Send a friend request</a></li>
 				                            </ul>
 				                        </div>
 				                    </div>
@@ -250,22 +300,22 @@ constructor(props) {
 				                                            <div class="about-info-p">
 				                                                <strong>Interested In...</strong>
 				                                                <br />
-				                                                <p class="text-muted">{user.profile.interestedIn}</p>
+				                                                <p class="text-muted">{user.profile ? user.profile.interestedIn : "unknown"}</p>
 				                                            </div>
 				                                            <div class="about-info-p">
 				                                                <strong>Nick-Name</strong>
 				                                                <br />
-				                                                <p class="text-muted">{user.profile.nickName}</p>
+				                                                <p class="text-muted">{user.profile ? user.profile.nickName : "unknown"}</p>
 				                                            </div>
 				                                            <div class="about-info-p">
 				                                                <strong>Body-Type</strong>
 				                                                <br />
-				                                                <p class="text-muted">{user.profile.bodyType}</p>
+				                                                <p class="text-muted">{user.profile ? user.profile.bodyType : "unknown"}</p>
 				                                            </div>
 				                                            <div class="about-info-p m-b-0">
 				                                                <strong>Hair Color + Eye Color</strong>
 				                                                <br />
-				                                                <p class="text-muted">{user.profile.hairColor} + {user.profile.eyeColor}</p>
+				                                                <p class="text-muted">{user.profile ? user.profile.hairColor : "unknown"} + {user.profile ? user.profile.eyeColor : "unknown"}</p>
 				                                         
 				                                            </div>
 				                                        </div>
@@ -278,7 +328,7 @@ constructor(props) {
 				                                        </div>
 				                                        <div class="panel-body">
 				                                            <ul style={{ listStyleType: "none" }}>
-				                                                <li style={{ marginLeft: "-40px" }}>{user.profile.languages}</li>
+				                                                <li style={{ marginLeft: "-40px" }}>{user.profile ? user.profile.languages : "unknown"}</li>
 				                                              
 				                                            </ul>
 				                                        </div>
@@ -294,7 +344,7 @@ constructor(props) {
 				                                            <h3 class="panel-title">Biography</h3>
 				                                        </div>
 				                                        <div class="panel-body">
-				                                            <p>{user.profile.bio}</p>
+				                                            <p>{user.profile ? user.profile.bio : "unknown"}</p>
 
 				                                           {/* <p><strong>But also the leap into electronic typesetting, remaining essentially unchanged.</strong></p>
 
@@ -338,7 +388,7 @@ constructor(props) {
 				                           
 				                            <div class="panel panel-default panel-fill">
 
-				                                <div class="panel-body">
+				                                <div class="panel-body" style={{ height: "100vh" }}>
 				                                    <div class="timeline-2">
 														<div className="row">
 				                                        {this.state.stream_playback_ids.length > 0 ? this.state.stream_playback_ids.map((id, index) => {
@@ -346,11 +396,15 @@ constructor(props) {
 				                                        	return (
 																<div className="col-md-3">
 				                                        			<img style={{ width: "100%", height: "100%" }} src={`https://image.mux.com/${id}/animated.gif`} alt=""/>
-				                                        			
+																	<button onClick={() => {
+																		this.redirectToClip()
+																	}} style={{ width: "100%" }} className="btn btn-outline-info">Purchase this clip</button>
 				                                        		</div>
 				                                        	);
 
-				                                        }) : <h1 className="text-center">This user currently has no old streams for sale. Please check again soon.</h1>}
+				                                        }) : <button onClick={() => {
+				                                        	this.videoApi();
+				                                        }} className="btn btn-outline pink_button" style={{ width: "100%" }}>Load Video Content</button>}
 														</div>
 				                                        {/*<div class="time-item">
 				                                            <div class="item-info">
@@ -546,7 +600,7 @@ constructor(props) {
 				                                            <label for="AboutMe">About Me</label>
 				                                            <textarea style={{ height: "125px" }} id="AboutMe" class="form-control">Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.</textarea>
 				                                        </div>*/}
-				                                        <button class="btn btn-primary waves-effect waves-light w-md" type="submit">Save</button>
+				                                       {/* <button class="btn btn-primary waves-effect waves-light w-md" type="submit">Save</button>*/}
 				                                    </form>
 
 				                                </div>
@@ -559,13 +613,16 @@ constructor(props) {
 				        </div>
 				    </div>
 				</div>
+				<DropAComment user={user} picture={user.profile ? user.profile.profilePic : user} />
             </div>
         );
     }
 }
 const mapStateToProps = (state) => {
 	return {
-		email: state.auth.data.email
+		email: state.auth.data.email,
+		_id: state.auth.data._id,
+		username: state.auth.data.username
 	}
 }
 

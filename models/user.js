@@ -30,6 +30,9 @@ const UserSchema = new mongoose.Schema({
 	},
 	birthdate: {
 		type: Date
+	},
+	image: {
+		type: String
 	}
 });
 
