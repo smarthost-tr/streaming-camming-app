@@ -103,7 +103,9 @@ constructor(props) {
                 <Link className="btn btn-outline pink_button" to="/signup/camming/one">Become A Cammer!</Link>
               </NavItem> : null}
               {this.props.authenticated ? <li style={{ listStyleType: "none" }} class="dropdown">
-                  <a style={{ margin: "20px", color: "black" }} onClick={this.gatherFriendRequests} class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i style={{ color: "black" }} class="fas fa-user-friends fa-2x"></i>{this.state.friends.length > 0 ? (<b>{this.state.friends ? this.state.friends.length : null}</b>) : null}</a>
+                  <a style={{ margin: "20px", color: "black" }} onClick={this.gatherFriendRequests} class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i style={{ color: "black" }} class="fas fa-user-friends fa-2x"></i>
+                  {/*{this.state.friends ? (<b>{this.state.friends ? this.state.friends.length : null}</b>) : null}*/}
+                  </a>
                   <ul class="dropdown-menu notify-drop">
                     <div class="notify-drop-title">
                       

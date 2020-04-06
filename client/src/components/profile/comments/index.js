@@ -14,7 +14,8 @@ constructor(props) {
         comments: [],
         reply: false,
         commentUUID: "",
-        replyComment: ""
+        replyComment: "",
+        updated: false
     }
 }
     postComment = () => {
@@ -32,7 +33,8 @@ constructor(props) {
                     this.setState({
                         comment: ""
                     });
-                    alert("Comment successfully posted!")
+                    alert("Comment successfully posted!");
+                    window.location.reload();
                 }
             }).catch((err) => {
                 console.log(err);
@@ -82,6 +84,26 @@ constructor(props) {
             })
         } else {
             alert("You need to enter a valid message - please make sure you actually typed in your message.");
+        }
+    }
+    componentDidUpdate(prevProps, prevState) {
+        console.log(prevState); 
+        if (this.props.user.username !== prevProps.user.username) {
+           console.log("updated...");
+            axios.post("/gather/profile/comments/individual", {
+                email: this.props.user.email
+            }).then((res) => {
+                for (let key in res.data) {
+                    let comments = res.data[key].profileComments;
+                    console.log(comments);
+                    this.setState({
+                        comments
+                    })
+                }
+                console.log(res.data);
+            }).catch((err) => {
+                console.log(err);
+            })
         }
     }
     render() {

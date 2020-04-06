@@ -23,7 +23,8 @@ constructor(props) {
     	assetIDs: [],
     	process: false,
     	stream_playback_ids: [],
-    	error: ""
+    	error: "",
+    	firstWorked: false
     }
 }
 	addSkillToDB = (e) => {
@@ -62,26 +63,34 @@ constructor(props) {
 	}
 	videoApi = () => {
 		const user = this.props.location.state.user;
-
-		axios.post("/profile/find/user/streams", {
-			email: user.email
-		}).then((res) => {
-			console.log(res.data.streams);
-			const streams = res.data.streams;
-			this.setState({
-				streams,
-				process: true,
-				stream_playback_ids: []
-			}, () => {
-				this.processData();
-			})
-		}).catch((err) => {
-			console.log(err);
-		})
+		console.log(user);
+		// axios.post("/profile/find/user/streams", {
+		// 	email: user.email
+		// }).then((res) => {
+		// 	console.log(res.data);
+		// 	const streams = res.data;
+		// 	for (let key in streams) {
+		// 		let streamsList = streams[key].streams;
+		// 		console.log(streamsList);
+		// 		this.setState({
+		// 			streams: streamsList,
+		// 			process: true
+		// 		}, () => {
+		// 			this.processData();
+		// 		})
+		// 	}
+		// }).catch((err) => {
+		// 	console.log(err);
+		// })
+		this.processData()
 	}
 	processData = () => {
-			if (this.state.streams) {
-				return this.state.streams.map((stream, index) => {
+		const user = this.props.location.state.user;
+
+		for (let key in user) {
+			let streamies = user[key].streams;
+			if (streamies) {
+				return streamies.map((stream, index) => {
 					console.log("STREAM:", stream);
 					if (stream.active_asset_id) {
 						const asyncReturn = async () => {
@@ -116,26 +125,7 @@ constructor(props) {
 					
 				})
 			}
-			// const user = this.props.location.state.user;
-
-			// console.log(user.streams.active_asset_id);
-
-		    // const auth = {
-		    //   username: "f899a074-f11e-490f-b35d-b6c478a5b12a",
-		    //   password: "4vLdjx6uBafGdFiSbmWt5akv4DaD4PkDuCCYdFYXzudywyQSR3Uh27GqlfedlhZ17fbnXbf9Rh/"
-		    // };
-		    // const param = { 
-		  	 //    "reduced_latency": true, 
-			   //  "playback_policy": "public", 
-			   //  "new_asset_settings": { 
-			   //  	"playback_policy": "public" 
-			   //  } 
-		    // }
-		    // const res = await axios.get(`https://api.mux.com/video/v1/assets/${user.streams.active_asset_id}`, param, { auth: auth }).catch((error) => {
-		    // throw error;
-		    // });
-
-		  // console.log(res.data.data);
+		}
 	}
 	redirectToClip = (id) => {
 		console.log("clicked.");
@@ -152,6 +142,9 @@ constructor(props) {
 			username: user.username
 		}).then((res) => {
 			console.log(res.data);
+			if (res.data) {
+				return null;
+			}
 		}).catch((err) => {
 			console.log(err);
 		})
@@ -160,20 +153,37 @@ constructor(props) {
 			receivingID: this.props._id,
 			username: this.props.username
 		}).then((res) => {
-			console.log(res.data);
+			if (res.data) {
+				alert("You've successfully sent this person a friend request!")
+			}
 		}).catch((err) => {
 			console.log(err);
 		})
 	} 
+    componentDidUpdate(prevProps) {
+    	console.log(prevProps);
+    	console.log(this.props);
+        if (this.props.location.state.user !== prevProps.location.state.user) {
+            console.log("updated...");
+           	const user = this.props.location.state.user;
+
+           	this.setState({
+           		stream_playback_ids: []
+           	}, () => {
+           		this.processData();
+           	})
+        }
+    }
     render() {
     	let user = this.props.location.state.user;
-    	console.log(this.props);
-    	console.log(user[0]);
     	if (user.username) {
     		console.log("let user be as it was...");
+    	} else if (user.profile) {
+			user = user;
     	} else {
     		user = user[0];
     	}
+    	console.log(this.state);
         return (
             <div>	
             	<Navigation />
@@ -184,7 +194,7 @@ constructor(props) {
 				                <div class="fb-profile-block-thumb cover-container"></div>
 				                <div class="profile-img">
 				                    <a href="#">
-				                        <img src={user.profile ? user.profile.profilePic : null} alt="profile-picture" />        
+				                        <img src={user.profile.profilePic ? user.profile.profilePic : require("../../../images/selfie.jpg")} alt="profile-picture" />        
 				                    </a>
 				                </div>
 				                <div class="profile-name">

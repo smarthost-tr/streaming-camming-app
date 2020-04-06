@@ -15,12 +15,12 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
 	    const collection = db.collection("users");
 
-	    collection.findOne({ email }, { "streams": true }).then(function(doc) {
-	        if(!doc) {
-	            throw new Error('No record found.');
+	    collection.find({ email }, { "streams": true }).toArray((err, result) => {
+	        if (err) {
+	        	console.log(err);    
 	        }
-	        console.log(doc);
-	        res.send(doc);
+	        console.log(result);
+	        res.send(result);
 	    });
 	});
 });

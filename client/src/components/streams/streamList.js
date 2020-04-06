@@ -55,7 +55,6 @@ constructor(props) {
 					<div className="container-fluid background">
 					<div className="row">
 					{streamsReady ? this.state.streams.map((stream, index) => {
-						console.log(stream);
 						if (stream.playback_ids[0].id && stream.status === "active") {
 							return (
 								<div key={index} className="col-md-3">
