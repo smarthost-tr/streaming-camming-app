@@ -10,7 +10,7 @@ const mongo = require("mongodb");
 mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTopology: true }, cors(), (err, db) => {
 	router.post("/", (req, res) => {
 
-		const { email, sendingID, username } = req.body;
+		const { email, sendingID, username, image } = req.body;
 
 		const collection = db.collection("users");
 
@@ -18,7 +18,8 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 				username,
 				id: sendingID,
 				status: "pending",
-				sender: true
+				sender: true,
+				image
 			}}}, (err, doc) => {
 		    if (err) {
 		        console.log("Something wrong when updating data!");

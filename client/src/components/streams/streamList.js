@@ -65,7 +65,7 @@ constructor(props) {
 							);
 						} 
 					}) : null}
-					{/*{streamsReady ? this.state.assets.map((asset, index) => {
+					{streamsReady ? this.state.assets.map((asset, index) => {
 						console.log(asset);
 						if (asset.playback_ids) {
 							return (
@@ -76,7 +76,7 @@ constructor(props) {
 								</div>
 							);
 						} 
-					}) : null}	*/}
+					}) : null}	
 					</div>
 					</div>
 				

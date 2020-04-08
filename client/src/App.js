@@ -23,6 +23,8 @@ import AllProfilesHomepage from "./components/profile/allProfiles/allProfiles.js
 import ProfilesIndividual from "./components/profile/individual/individual.js";
 import SubscribeHomepage from "./components/subscribe/home/index.js";
 import FriendsListHome from "./components/friends/home/index.js";
+import OthersFriendsList from "./components/friends/otherUsersFriends/index.js";
+import ThankYouPaymentPage from "./components/coins/thankYouPage.js";
 
 class App extends Component {
 constructor(props) {
@@ -62,7 +64,10 @@ constructor(props) {
         <Route path="/profiles" exact component={AllProfilesHomepage} />
         <Route path="/profiles/individual/:id" exact component={ProfilesIndividual} />
         <Route path="/signup/subscriber/payment" exact component={SubscribeHomepage} />
-        <Route path="/friends/list/home" exact component={FriendsListHome} />
+        {this.props.auth ? <Route path="/friends/list/home" exact component={FriendsListHome} /> : <Route path="/friends/list/home" exact component={ErrorUnauthorized} />}
+        <Route path="/others/friends/list/individual/:id" exact component={OthersFriendsList} />
+        <Route path="/thank/you/for/your/payment" exact component={ThankYouPaymentPage} />
+        
       </div>
     </BrowserRouter>
     );

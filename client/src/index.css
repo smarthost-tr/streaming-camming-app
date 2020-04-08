@@ -17,3 +17,6 @@ code {
 #home {
 	background: transparent;
 }
+.hover:hover {
+	cursor: pointer;
+}

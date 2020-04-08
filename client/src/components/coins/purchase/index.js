@@ -233,7 +233,7 @@ constructor(props) {
 				                                    <p class="card-text">Coins can be used to tip and incentivize live streamers to join a private chat with you or make the cammer(s) do certain sexual acts</p>
 				                                    <button onClick={() => {
 				                                    	this.setState({
-				                                    		tokens: 175
+				                                    		tokens: 200
 				                                    	}, () => {
 				                                    		this.props.history.push("/purchase/tokens/payment", { tokens: this.state.tokens });
 				                                    	})
@@ -249,7 +249,7 @@ constructor(props) {
 				                                    <hr className="my-4"/>
 				                                     <button onClick={() => {
 				                                    	this.setState({
-				                                    		tokens: 175
+				                                    		tokens: 200
 				                                    	}, () => {
 				                                    		this.props.history.push("/purchase/tokens/payment", { tokens: this.state.tokens });
 				                                    	})

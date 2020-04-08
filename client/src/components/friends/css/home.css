@@ -1,0 +1,11 @@
+.custom_jumbo {
+	background-image: url("../../../images/pink-wall.jpg");
+	background-repeat: no-repeat;
+	background-size: cover;
+	opacity: 0.6;
+}
+.bold {
+	font-weight: bold;
+	color: black;
+	text-shadow: -1px -1px 0 white, 1px -1px 0 white, -1px 1px 0 white, 1px 1px 0 white;
+}

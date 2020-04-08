@@ -110,3 +110,6 @@ section .section-title {
 .custom_body {
     background-color: white;
 }
+#lower {
+    margin-top: 300px;
+}

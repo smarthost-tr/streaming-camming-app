@@ -24,7 +24,11 @@ constructor(props) {
     	process: false,
     	stream_playback_ids: [],
     	error: "",
-    	firstWorked: false
+    	firstWorked: false,
+    	friends: [],
+    	matches: false,
+    	friend: false,
+    	usernames: []
     }
 }
 	addSkillToDB = (e) => {
@@ -59,72 +63,67 @@ constructor(props) {
 		}).catch((err) => {
 			console.log(err);
 		});
-
+		
+		setTimeout(() => {
+			
+			axios.post("/figure/out/if/friends", {
+				email: this.props.email
+			}).then((res) => {
+				console.log(res.data);
+				for (let key in res.data) {
+					let usernames = res.data[key].friends;
+					this.setState({
+						usernames
+					})
+				}
+			}).catch((err) => {
+				console.log(err);
+			});
+		}, 300)
 	}
 	videoApi = () => {
 		const user = this.props.location.state.user;
-		console.log(user);
-		// axios.post("/profile/find/user/streams", {
-		// 	email: user.email
-		// }).then((res) => {
-		// 	console.log(res.data);
-		// 	const streams = res.data;
-		// 	for (let key in streams) {
-		// 		let streamsList = streams[key].streams;
-		// 		console.log(streamsList);
-		// 		this.setState({
-		// 			streams: streamsList,
-		// 			process: true
-		// 		}, () => {
-		// 			this.processData();
-		// 		})
-		// 	}
-		// }).catch((err) => {
-		// 	console.log(err);
-		// })
-		this.processData()
+
+		this.processData();
 	}
 	processData = () => {
 		const user = this.props.location.state.user;
+	
+		console.log("booyah");
+		if (user.streams) {
+			return user.streams.map((stream, index) => {
+				console.log(stream);
+				if (stream.active_asset_id) {
+					const asyncReturn = async () => {
+						const auth = {
+					      username: "f899a074-f11e-490f-b35d-b6c478a5b12a",
+					      password: "4vLdjx6uBafGdFiSbmWt5akv4DaD4PkDuCCYdFYXzudywyQSR3Uh27GqlfedlhZ17fbnXbf9Rh/"
+					    };
+					    const param = { 
+					  	    "reduced_latency": true, 
+						    "playback_policy": "public", 
+						    "new_asset_settings": { 
+						    	"playback_policy": "public" 
+						    } 
+					    }
+					    const res = await axios.get(`https://api.mux.com/video/v1/assets/${stream.active_asset_id}`, { auth: auth }).catch((error) => {
+					   		if (error) {
+					   			this.setState({
+					   				error: error
+					   			})
+					   		}
+					    });
+						let stream_playback_ids = res.data.data.playback_ids[0].id;
 
-		for (let key in user) {
-			let streamies = user[key].streams;
-			if (streamies) {
-				return streamies.map((stream, index) => {
-					console.log("STREAM:", stream);
-					if (stream.active_asset_id) {
-						const asyncReturn = async () => {
-							const auth = {
-						      username: "f899a074-f11e-490f-b35d-b6c478a5b12a",
-						      password: "4vLdjx6uBafGdFiSbmWt5akv4DaD4PkDuCCYdFYXzudywyQSR3Uh27GqlfedlhZ17fbnXbf9Rh/"
-						    };
-						    const param = { 
-						  	    "reduced_latency": true, 
-							    "playback_policy": "public", 
-							    "new_asset_settings": { 
-							    	"playback_policy": "public" 
-							    } 
-						    }
-						    const res = await axios.get(`https://api.mux.com/video/v1/assets/${stream.active_asset_id}`, { auth: auth }).catch((error) => {
-						   		if (error) {
-						   			this.setState({
-						   				error: error
-						   			})
-						   		}
-						    });
-							let stream_playback_ids = res.data.data.playback_ids[0].id;
+					    this.setState({
+					    	stream_playback_ids: [...this.state.stream_playback_ids, stream_playback_ids]
+					    })
 
-						    this.setState({
-						    	stream_playback_ids: [...this.state.stream_playback_ids, stream_playback_ids]
-						    })
-
-						    console.log(res.data.data.playback_ids[0].id);
-						}
-						asyncReturn();
+					    console.log(res.data.data.playback_ids[0].id);
 					}
-					
-				})
-			}
+					asyncReturn();
+				}
+			})
 		}
 	}
 	redirectToClip = (id) => {
@@ -139,6 +138,7 @@ constructor(props) {
 		axios.post("/send/friend/request/sender", {
 			email: this.props.email,
 			sendingID: user._id,
+			image: user.image,
 			username: user.username
 		}).then((res) => {
 			console.log(res.data);
@@ -150,6 +150,7 @@ constructor(props) {
 		})
 		axios.post("/send/friend/request/reciever", {
 			receivingEmail: user.email,
+			image: this.props.image,
 			receivingID: this.props._id,
 			username: this.props.username
 		}).then((res) => {
@@ -159,23 +160,80 @@ constructor(props) {
 		}).catch((err) => {
 			console.log(err);
 		})
+
+		axios.post("/figure/out/if/friends", {
+			email: this.props.email
+		}).then((res) => {
+			console.log(res.data);
+			for (let key in res.data) {
+				let usernames = res.data[key].friends;
+				this.setState({
+					usernames
+				})
+			}
+		}).catch((err) => {
+			console.log(err);
+		});
+
+		this.setState({
+			matches: true
+		})
 	} 
-    componentDidUpdate(prevProps) {
-    	console.log(prevProps);
-    	console.log(this.props);
+    componentDidUpdate(prevProps, prevState) {
+    	let user = this.props.location.state.user;
+    	if (user.username) {
+    		console.log("let user be as it was...");
+    	} else if (user.profile) {
+			user = user;
+    	} else {
+    		user = user[0];
+    	}
         if (this.props.location.state.user !== prevProps.location.state.user) {
-            console.log("updated...");
            	const user = this.props.location.state.user;
 
            	this.setState({
            		stream_playback_ids: []
            	}, () => {
            		this.processData();
-           	})
+           	});
         }
+        if (prevState.usernames !== this.state.usernames) {
+        	if (this.state.usernames) {
+        		return this.state.usernames.map((username, index) => {
+	        		if (username.username === user.username) {
+	        			console.log("matches!!!@!!!!!")
+	        			this.setState({
+	        				matches: true
+	        			});
+	        		}
+	        	})
+        	}
+        }
+
+    }
+  //   renderFriendRequestButton = () => {
+  //   	const user = this.props.location.state.user;
+		// if (this.state.friends) {
+		// 	return this.state.friends.map((friend, index) => {
+		// 		console.log(friend);
+		// 		if (friend.username === user.username) {
+		// 			console.log("match");
+		// 			this.setState({
+		// 				matches: true
+		// 			})
+		// 		}
+		// 	})
+		// }
+		// // <button className="btn btn-outline pink_button">Send Friend Request</button>
+  //   }
+    renderRedirectOthers = () => {
+    	const user = this.props.location.state.user;
+
+		this.props.history.push(`/others/friends/list/individual/${user.username}`, { user });
     }
     render() {
     	let user = this.props.location.state.user;
+
     	if (user.username) {
     		console.log("let user be as it was...");
     	} else if (user.profile) {
@@ -194,7 +252,7 @@ constructor(props) {
 				                <div class="fb-profile-block-thumb cover-container"></div>
 				                <div class="profile-img">
 				                    <a href="#">
-				                        <img src={user.profile.profilePic ? user.profile.profilePic : require("../../../images/selfie.jpg")} alt="profile-picture" />        
+				                        <img src={user.profile ? user.profile.profilePic : user.image} alt="profile-picture" />        
 				                    </a>
 				                </div>
 				                <div class="profile-name">
@@ -206,7 +264,7 @@ constructor(props) {
 				                        <ul>
 				                            <li><a href="#">Timeline</a></li>
 				                            <li><a href="#">about</a></li>
-				                            <li><Link to="/friends/list/home">Friends</Link></li>
+				                            <li><a className="hover" onClick={this.renderRedirectOthers}>Friends</a></li>
 				                            <li><a href="#">Photos</a></li>
 				                            <li><a href="#">More...</a></li>
 				                        </ul>
@@ -215,7 +273,7 @@ constructor(props) {
 				                        <ul>
 				                            <li><a href="#">Timeline</a></li>
 				                            <li><a href="#">about</a></li>
-				                            <li><a href="#">Friends</a></li>
+				                            <li><a className="hover" onClick={this.renderRedirectOthers}>Friends</a></li>
 				                            <li><a href="#">Photos</a></li>
 				                            <li><a href="#">More...</a></li>
 				                        </ul>
@@ -246,7 +304,13 @@ constructor(props) {
 				                        <li class="tab" style={{ width: "25%" }}>
 				                            <a href="#profile-2" data-toggle="tab" aria-expanded="false">
 				                                <span class="visible-xs"><i class="fa fa-user"></i></span>
-				                                <span onClick={this.videoApi} class="hidden-xs">Videos</span>
+				                                <span onClick={() => {
+				                                	this.setState({
+				                                		stream_playback_ids: []
+				                                	}, () => {
+				                                		this.processData();
+				                                	})
+				                                }} class="hidden-xs">Videos</span>
 				                            </a>
 				                        </li>
 				                        <li class="tab" style={{ width: "25%" }}>
@@ -275,7 +339,7 @@ constructor(props) {
 				                </div>
 				                <div class="col-lg-6 col-md-3 col-sm-3 hidden-xs">
 				                    <div class="pull-right" style={{ float: "right" }}>
-				                        <div class="dropdown">
+				                        {/*<div class="dropdown">
 				                            <a data-toggle="dropdown" class="dropdown-toggle btn-rounded btn btn-primary waves-effect waves-light" href="#"> Add Friend <span class="caret"></span></a>
 				                            <ul style={{ padding: "10px" }} class="dropdown-menu dropdown-menu-right" role="menu">
 				                                <li><Link to="/">Remove from friends list</Link></li>
@@ -285,7 +349,11 @@ constructor(props) {
 				                                	this.sendFriendRequest()
 				                                }}>Send a friend request</a></li>
 				                            </ul>
-				                        </div>
+				                        </div>*/}
+				                       {/* {this.renderFriendRequestButton()}*/}
+				                        {this.state.matches || !this.props.email || this.props.email === user.email ? null : <button onClick={() => {
+				                            this.sendFriendRequest()
+				                        }} className="btn btn-outline pink_button">Send Friend Request</button>}
 				                    </div>
 				                </div>
 				            </div>
@@ -310,22 +378,22 @@ constructor(props) {
 				                                            <div class="about-info-p">
 				                                                <strong>Interested In...</strong>
 				                                                <br />
-				                                                <p class="text-muted">{user.profile ? user.profile.interestedIn : "unknown"}</p>
+				                                                <p class="text-muted">{user.profile ? user.profile.interestedIn : "User is not a cammer/streamer so no content is filled out"}</p>
 				                                            </div>
 				                                            <div class="about-info-p">
 				                                                <strong>Nick-Name</strong>
 				                                                <br />
-				                                                <p class="text-muted">{user.profile ? user.profile.nickName : "unknown"}</p>
+				                                                <p class="text-muted">{user.profile ? user.profile.nickName : "User is not a cammer/streamer so no content is filled out"}</p>
 				                                            </div>
 				                                            <div class="about-info-p">
 				                                                <strong>Body-Type</strong>
 				                                                <br />
-				                                                <p class="text-muted">{user.profile ? user.profile.bodyType : "unknown"}</p>
+				                                                <p class="text-muted">{user.profile ? user.profile.bodyType : "User is not a cammer/streamer so no content is filled out"}</p>
 				                                            </div>
 				                                            <div class="about-info-p m-b-0">
 				                                                <strong>Hair Color + Eye Color</strong>
 				                                                <br />
-				                                                <p class="text-muted">{user.profile ? user.profile.hairColor : "unknown"} + {user.profile ? user.profile.eyeColor : "unknown"}</p>
+				                                                <p class="text-muted">{user.profile ? user.profile.hairColor : "User is not a cammer/streamer so no content is filled out"} + {user.profile ? user.profile.eyeColor : "User is not a cammer/streamer so no content is filled out"}</p>
 				                                         
 				                                            </div>
 				                                        </div>
@@ -338,7 +406,7 @@ constructor(props) {
 				                                        </div>
 				                                        <div class="panel-body">
 				                                            <ul style={{ listStyleType: "none" }}>
-				                                                <li style={{ marginLeft: "-40px" }}>{user.profile ? user.profile.languages : "unknown"}</li>
+				                                                <li style={{ marginLeft: "-40px" }}>{user.profile ? user.profile.languages : "User is not a cammer/streamer so no content is filled out"}</li>
 				                                              
 				                                            </ul>
 				                                        </div>
@@ -354,7 +422,7 @@ constructor(props) {
 				                                            <h3 class="panel-title">Biography</h3>
 				                                        </div>
 				                                        <div class="panel-body">
-				                                            <p>{user.profile ? user.profile.bio : "unknown"}</p>
+				                                            <p>{user.profile ? user.profile.bio : "User is not a cammer/streamer so no content is filled out"}</p>
 
 				                                           {/* <p><strong>But also the leap into electronic typesetting, remaining essentially unchanged.</strong></p>
 
@@ -632,7 +700,8 @@ const mapStateToProps = (state) => {
 	return {
 		email: state.auth.data.email,
 		_id: state.auth.data._id,
-		username: state.auth.data.username
+		username: state.auth.data.username,
+		image: state.auth.data.image
 	}
 }
 

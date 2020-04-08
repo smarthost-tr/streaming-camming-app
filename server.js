@@ -26,6 +26,9 @@ const readFile = util.promisify(fs.readFile);
 const writeFile = util.promisify(fs.writeFile);
 // Setup the Mux SDK
 const Mux = require('@mux/mux-node');
+const paypal = require('paypal-rest-sdk');
+const flash = require('connect-flash');
+const session = require('express-session');
 
 const { Video } =  new Mux("f899a074-f11e-490f-b35d-b6c478a5b12a", "4vLdjx6uBafGdFiSbmWt5akv4DaD4PkDuCCYdFYXzudywyQSR3Uh27GqlfedlhZ17fbnXbf9Rh/");
 
@@ -36,6 +39,12 @@ let STREAM;
 
 mongoDB();
 
+paypal.configure({
+  'mode': 'sandbox', //sandbox or live
+  'client_id': 'AatWS7bPUsaanCxASstt_DROXJgWESP5-qDnlAwM_J0JFp596UlChQvchiHwH6AU6oIEDVbJKunHu5pX',
+  'client_secret': 'EGNFNDTQg9SNZcnYLQG10A73TQaH9DLVaYwMuLyev8o0r8nC4zKGEeE_WFGTZnRb5jwPQPxP2DursFDz'
+});
+
 
 app.use('*', cors());
 
@@ -45,6 +54,13 @@ app.use(express.urlencoded({
 })); 
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(flash());
+app.use(session({ 
+  cookie: { maxAge: 60000 }, 
+  secret: 'woot',
+  resave: false, 
+  saveUninitialized: false
+}));
 
 app.get('*', cors(), function(_, res) {
   res.sendFile(__dirname, './client/build/index.html'), function(err) {
@@ -118,11 +134,13 @@ app.use("/send/friend/request/reciever", require("./routes/friendsList/addFriend
 app.use("/send/friend/request/sender", require("./routes/friendsList/addFriend/sendingFriend.js"));
 app.use("/gather/friends/list/navbar", require("./routes/friendsList/gatherPending/gather.js"));
 app.use("/gather/username/profile", require("./routes/profile/gatherData/gatherUsername.js"));
-
-
-
-
-
+app.use("/handle/friend/request", require("./routes/friendsList/addFriend/approve.js"));
+app.use("/recieving/approval/send/confirmation", require("./routes/friendsList/addFriend/recievingApproval.js"));
+app.use("/gather/friends/list/personalized", require("./routes/friendsList/retrieve/retrieve.js"));
+app.use("/figure/out/if/friends", require("./routes/friendsList/findOutFriend.js"));
+app.use("/paypal/pay", require("./routes/paypal/pay/intitial.js"));
+app.use("/success", require("./routes/paypal/pay/success.js"));
+app.use("/cancel", require("./routes/paypal/pay/cancel.js"));
 
 app.listen(PORT, () => {
 	console.log(`Server listening on port ${PORT}!`);

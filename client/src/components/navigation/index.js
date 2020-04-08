@@ -58,7 +58,54 @@ constructor(props) {
     }).then((res) => {
       console.log(res.data);
       if (res.data) {
-        this.props.history.push(`/profiles/individual/${username}`, { user: res.data })
+        this.props.history.push(`/profiles/individual/${username}`, { user: res.data });
+      }
+    }).catch((err) => {
+      console.log(err);
+    })
+  }
+  addFriend = (friend) => {
+    console.log("clicked... :", friend);
+
+    axios.put("/handle/friend/request", {
+      username: friend.username,
+      email: this.props.authenticated
+    }).then((res) => {
+      console.log(res.data);
+      // if (res.data) {
+      //   this.reRenderFriendsList();
+      // }
+    }).catch((err) => {
+      console.log(err);
+    })
+    axios.put("/recieving/approval/send/confirmation", {
+      username: this.props.username,
+      id: friend.id
+    }).then((res) => {
+      console.log(res.data);
+      // if (res.data) {
+      //   this.reRenderFriendsList();
+      // }
+    }).catch((err) => {
+      console.log(err);
+    })
+
+    setTimeout(() => {
+      window.location.reload();
+    }, 700);
+  }
+  reRenderFriendsList = () => {
+    console.log("reRenderFriendsList");
+    axios.post("/gather/friends/list/navbar", {
+      email: this.props.authenticated
+    }).then((res) => {
+      console.log(res.data);
+      for (let key in res.data) {
+        let friends = res.data[key].friends;
+        console.log(friends);
+        this.setState({
+          friends
+        })
       }
     }).catch((err) => {
       console.log(err);
@@ -85,7 +132,7 @@ constructor(props) {
                 <Link className="nav-link" to="/streams/create">Broadcast Yourself</Link>
               </NavItem> : null}
               <NavItem className="link">
-                <Link className="nav-link" to="/profiles">Profiles/Buy-Content</Link>
+                <Link className="nav-link" to="/profiles">Cammers/Buy-Content</Link>
               </NavItem>
             </Nav>
             	{this.props.authenticated ? null : <NavItem className="link">
@@ -116,7 +163,7 @@ constructor(props) {
                         console.log(friend);
                         if (friend.status === "pending" && friend.sender === false) {
                           return (
-                              <li>
+                              <li key={index}>
                               
                                 <div id="fb" style={{ width: "100%" }}>
                                 <div id="fb-top">
@@ -127,7 +174,9 @@ constructor(props) {
                                   this.gatherUser(friend.username);
                                 }}>{friend.username}</a></b> <br /> <span>14 mutual friends</span></p>
                                 <div id="button-block">
-                                  <div id="confirm">Confirm</div>
+                                  <div onClick={() => {
+                                    this.addFriend(friend);
+                                  }} id="confirm">Confirm</div>
                                   <div id="delete">Delete Request</div>
                                 </div>
                               </div>
@@ -135,12 +184,12 @@ constructor(props) {
                             
                             </li>
                           );
-                        } else {
-                          return <h3 className="text-center">You have no currently pending friend requests...</h3>
                         }
                       }) : <h3 className="text-center">You have no currently pending friend requests...</h3>}
                      
-                      
+                      <div>
+                        <Link to="/friends/list/home" style={{ width: "100%" }} className="btn btn-outline pink_button">Check out your friends list</Link>
+                      </div>
                      
                     </div>
                    {/* <div class="notify-drop-footer text-center">
@@ -160,7 +209,8 @@ constructor(props) {
 const mapStateToProps = (state) => {
 	console.log("State :", state);
 	return {
-		authenticated: state.auth.data.email
+		authenticated: state.auth.data.email,
+    username: state.auth.data.username
 	}
 }
 

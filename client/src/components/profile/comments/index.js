@@ -75,6 +75,7 @@ constructor(props) {
                         replyComment: ""
                     });
                     alert("Successfully posted your reply!");
+                    window.location.refresh();
                 }
             }).catch((err) => {
                 console.log(err);
@@ -177,7 +178,7 @@ constructor(props) {
                                                                         return (
                                                                             <div key={indexxx} class="comment-box-two">
                                                                                 <div class="comment-head">
-                                                                                    <h6 class="comment-name"><a href="http://creaticode.com/blog">{reply.username}</a></h6>
+                                                                                    <h6 class="comment-name"><a href="/">{reply.username}</a></h6>
                                                                                     <span>{reply.date}</span>
                                                                                    
                                                                                     <i class="fa fa-heart"></i>

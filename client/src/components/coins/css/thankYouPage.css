@@ -1,0 +1,7 @@
+#back_back {
+  background-image: url(https://mdbootstrap.com/img/Photos/Others/gradient1.jpg);
+  height: 100vh;
+  margin-bottom: -40px;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
