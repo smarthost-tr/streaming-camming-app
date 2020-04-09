@@ -116,17 +116,17 @@ constructor(props) {
     return (
       <div>
         <Navbar color="light" light expand="md">
-          <NavbarBrand><Link style={{ color: "purple" }} to="/">Jerk N' Squirt</Link></NavbarBrand>
+          <NavbarBrand><Link style={{ color: "purple" }} to="/">Camming Streaming</Link></NavbarBrand>
           <NavbarToggler onClick={this.toggle} />
           <Collapse isOpen={this.state.isOpen} navbar>
             <Nav className="mr-auto" navbar>
   {/*          <NavItem>
                 <Link className="nav-link" to="/">Homepage</Link>
               </NavItem>*/}
-              <NavItem>
-                <Link className="nav-link" to="/purchase/tokens">Purchase Tokens</Link>
-              </NavItem>
 
+              {this.props.authenticated ? <NavItem>
+                <Link className="nav-link" to="/purchase/tokens">Purchase Tokens</Link>
+              </NavItem> : null}
       
            	{this.props.authenticated ? <NavItem>
                 <Link className="nav-link" to="/streams/create">Broadcast Yourself</Link>
@@ -198,7 +198,7 @@ constructor(props) {
                   </ul>
                 </li> : null}
              
-              {this.props.authenticated ? <NavbarText>{store.getState().auth.data.username}, You have (88) tokens</NavbarText> : null}
+              {this.props.authenticated ? <NavbarText>{store.getState().auth.data.username}, You have (<strong>{this.props.tokens.tokens ? this.props.tokens.tokens.toString() : this.props.tokens}</strong>) tokens</NavbarText> : null}
           </Collapse>
         </Navbar>
       </div>
@@ -210,7 +210,8 @@ const mapStateToProps = (state) => {
 	console.log("State :", state);
 	return {
 		authenticated: state.auth.data.email,
-    username: state.auth.data.username
+    username: state.auth.data.username,
+    tokens: state.auth.data.tokens ? state.auth.data.tokens : 0
 	}
 }
 

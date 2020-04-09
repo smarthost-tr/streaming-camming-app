@@ -52,8 +52,8 @@ constructor(props) {
         <Route path="/" exact component={StreamList} />
         {this.props.auth ? <Route path="/streams/create" exact component={StreamCreateAPI} /> : <Route path="/streams/create" exact component={ErrorUnauthorized} />}
         <Route path="/streams/edit/:id" exact component={StreamEdit} />
-        <Route path="/purchase/tokens" exact component={PurchaseTokenDash} />
-        <Route path="/purchase/tokens/payment" exact component={PurchaseTokensPayment} />
+        {this.props.auth ? <Route path="/purchase/tokens" exact component={PurchaseTokenDash} /> : <Route path="/purchase/tokens" exact component={ErrorUnauthorized} />}
+        {this.props.auth ? <Route path="/purchase/tokens/payment" exact component={PurchaseTokensPayment} /> : <Route path="/purchase/tokens/payment" exact component={ErrorUnauthorized} />}
         <Route path="/view/individual/private/stream/:id" exact component={StreamShow} />
         <Route path="/register" exact component={RegisterNewUser} />
         <Route path="/login" exact component={LoginScreen} />
