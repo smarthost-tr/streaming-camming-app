@@ -28,7 +28,8 @@ constructor(props) {
     isOpen: false,
     friends: [],
     users: [],
-    successful: false
+    successful: false,
+    tokens: null
   };
 }
   toggle = () => {
@@ -111,19 +112,59 @@ constructor(props) {
       console.log(err);
     })
   }
+  componentDidUpdate(prevProps, prevState) {
+    console.log("prevState :", prevState);
+    console.log("prevProps :", prevProps);
+    if (prevProps.tokens !== store.getState().auth.data.tokens) {
+        axios.post("/tokens/gather", {
+          email: this.props.authenticated
+        }).then((res) => {
+          console.log(res.data);
+          for (let key in res.data) {
+            let tokens = res.data[key].tokens;
+            console.log(tokens);
+            this.setState({
+              tokens
+            })
+          }
+        }).catch((err) => {
+          console.log(err);
+        })  
+    }
+  }
+  componentDidMount() {
+    setTimeout(() => {
+       axios.post("/tokens/gather", {
+        email: this.props.authenticated
+      }).then((res) => {
+        console.log(res.data);
+        for (let key in res.data) {
+          let tokens = res.data[key].tokens;
+          console.log(tokens);
+          this.setState({
+            tokens
+          })
+        }
+      }).catch((err) => {
+        console.log(err);
+      })
+    }, 300);
+  }
   render () { 
     console.log(this.state);
     return (
       <div>
         <Navbar color="light" light expand="md">
-          <NavbarBrand><Link style={{ color: "purple" }} to="/">Camming Streaming</Link></NavbarBrand>
+          <NavbarBrand><Link style={{ color: "purple" }} to="/">Jerk N' Squirt</Link></NavbarBrand>
           <NavbarToggler onClick={this.toggle} />
           <Collapse isOpen={this.state.isOpen} navbar>
             <Nav className="mr-auto" navbar>
   {/*          <NavItem>
                 <Link className="nav-link" to="/">Homepage</Link>
               </NavItem>*/}
-
+              <NavItem>
+                <Link to="/chat/homepage" className="nav-link">Chat</Link>
+              </NavItem>
               {this.props.authenticated ? <NavItem>
                 <Link className="nav-link" to="/purchase/tokens">Purchase Tokens</Link>
               </NavItem> : null}
@@ -139,7 +180,7 @@ constructor(props) {
                 <Link className="btn btn-outline-info" to="/login">Sign-in</Link>
               </NavItem>}
               
-              {this.props.authenticated ? <NavItem className="link">
+              {this.props.authenticated ? <NavItem className="link sign-out">
                 <button onClick={() => {
                 	this.props.authentication({});
                 }} className="btn btn-outline-danger" to="/register">Sign-Out</button>
@@ -198,7 +239,8 @@ constructor(props) {
                   </ul>
                 </li> : null}
              
-              {this.props.authenticated ? <NavbarText>{store.getState().auth.data.username}, You have (<strong>{this.props.tokens.tokens ? this.props.tokens.tokens.toString() : this.props.tokens}</strong>) tokens</NavbarText> : null}
+              {this.props.authenticated ? <NavbarText>{store.getState().auth.data.username}, (<strong>{this.state.tokens ? this.state.tokens : "Unknown"}</strong>) tokens</NavbarText> : null}
+
           </Collapse>
         </Navbar>
       </div>

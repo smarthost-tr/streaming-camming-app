@@ -1,0 +1,8 @@
+.controller {
+	padding: 100px;
+}
+.controller-back {
+	background-image: url("../../../images/minimal.jpg");
+	background-repeat: no-repeat;
+	background-size: cover;
+}

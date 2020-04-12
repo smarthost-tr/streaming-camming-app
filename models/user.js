@@ -33,6 +33,12 @@ const UserSchema = new mongoose.Schema({
 	},
 	image: {
 		type: String
+	},
+	tokens: {
+		type: Number
+	},
+	chat_uuid: {
+		type: String
 	}
 });
 

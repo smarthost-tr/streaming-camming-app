@@ -51,7 +51,7 @@ var upload = multer({
 mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTopology: true }, cors(), (err, db) => {
 	router.post("/", upload.single("image"), (req, res) => {
 		// deconstruct response body
-		const { security, securityAnswer, gender, firstName, lastName, phoneNumber, email, username, password, birthdate } = req.body;
+		const { security, securityAnswer, gender, chat_uuid, firstName, lastName, phoneNumber, email, username, password, birthdate } = req.body;
 
 		const hashedPassword = bcrypt.hashSync(req.body.password, 8);
 
@@ -70,7 +70,9 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 			username, 
 			password, 
 			birthdate, 
-			image: location
+			image: location,
+			tokens: 35,
+			chat_uuid
 		});
 
 		db.collection("users", (err, collection) => {

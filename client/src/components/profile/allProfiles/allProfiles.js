@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import "../css/profile.css";
 import Modal from 'react-modal';
 import Footer from "../../common/footer/footer.js";
+import ReactLoading from 'react-loading';
  
 const customStyles = {
   content : {
@@ -128,7 +129,7 @@ constructor(props) {
         return (
             <div>
 				<Navigation />
-				<div className="container-fluid">
+				<div className="container-fluid style_container">
 					<div className="row">
 					
 					{this.state.users ? this.state.users.map((user, index) => {
@@ -138,7 +139,7 @@ constructor(props) {
 								    <div onClick={() => {
 								    	console.log("clicked.");
 								    	this.handleClick(user);
-								    }} class="card col-md-2 hover_card" style={{ height: "100%", margin: "0px 12px 30px 12px" }}>
+								    }} class="card col-md-2 hover_card" style={{ height: "100%", margin: "0px 12px 30px 12px", boxShadow: "10px 10px 10px grey" }}>
 								     <img class="card-img" src={user.profile.profilePic} alt="profile-pic" />
 								        <div class="card-img-overlay text-white d-flex justify-content-center align-items-end">
 								          <p>{user.username}</p>
@@ -146,7 +147,7 @@ constructor(props) {
 								    </div>
 								 </React.Fragment>
 							);
-					}) : null}
+					}) : <div className="mx-auto"><ReactLoading type="spinningBubbles" color="black" height={500} width={500} /></div>}
 						{this.renderModalContent()}
 					</div>
 				</div>

@@ -3,6 +3,8 @@ import Navigation from "../../navigation/index.js";
 import "../css/purchase.css";
 import FooterPage from "../../common/footer/footer.js";
 import { withRouter } from "react-router-dom";
+import ParallaxOne from "../../parallaxs/parallaxOne.js";
+
 
 class PurchaseTokenDash extends Component {
 constructor(props) {
@@ -22,8 +24,9 @@ constructor(props) {
             <div>
             	<Navigation />
 				<section id="team" class="pb-5">
-				    <div class="container">
+				    <div class="container-fluid">
 				    	<button onClick={this.renderRedirect} style={{ width: "100%", marginBottom: "20px" }} className="btn btn-outline pink_button">Subscribe to our discounted monthly plan to see ALL of our restricted content!</button>
+				    	<ParallaxOne />
 				        <p class="section-title lead" style={{ fontSize: "1.7rem", textDecoration: "underline" }}>Ready to purchase some coins and get some action?! We offer discounted rates for bulk coin purchases, buy bulk and save.</p>
 				        <div class="row">
 				         	
@@ -265,6 +268,7 @@ constructor(props) {
 				        </div>
 				    </div>
 				</section>
+				<ParallaxOne />
 				<FooterPage />
             </div>
         );

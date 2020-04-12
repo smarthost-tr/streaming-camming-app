@@ -15,7 +15,9 @@ constructor(props) {
         reply: false,
         commentUUID: "",
         replyComment: "",
-        updated: false
+        updated: false,
+        rerender: false,
+        rerenderAgain: false
     }
 }
     postComment = () => {
@@ -31,10 +33,11 @@ constructor(props) {
                 console.log(res.data);
                 if (res.data) {
                     this.setState({
-                        comment: ""
+                        comment: "",
+                        rerender: true
                     });
                     alert("Comment successfully posted!");
-                    window.location.reload();
+                    
                 }
             }).catch((err) => {
                 console.log(err);
@@ -51,7 +54,8 @@ constructor(props) {
                 let comments = res.data[key].profileComments;
                 console.log(comments);
                 this.setState({
-                    comments
+                    comments,
+                    rerender: true
                 })
             }
             console.log(res.data);
@@ -72,10 +76,12 @@ constructor(props) {
                 console.log(res.data);
                 if (res) {
                     this.setState({
-                        replyComment: ""
+                        replyComment: "",
+                        rerenderAgain: true,
+                        reply: false
                     });
                     alert("Successfully posted your reply!");
-                    window.location.refresh();
+                    
                 }
             }).catch((err) => {
                 console.log(err);
@@ -88,7 +94,9 @@ constructor(props) {
         }
     }
     componentDidUpdate(prevProps, prevState) {
-        console.log(prevState); 
+        console.log(prevProps);
+        console.log(prevState);
+        if (prevState) {}
         if (this.props.user.username !== prevProps.user.username) {
            console.log("updated...");
             axios.post("/gather/profile/comments/individual", {
@@ -105,6 +113,57 @@ constructor(props) {
             }).catch((err) => {
                 console.log(err);
             })
+        }
+        if (prevState.comments && this.state.rerender) {
+            return prevState.comments.map((comment, index) => {
+                console.log(comment);
+                if (prevState.comment !== comment.comment && this.state.rerender) {
+                    console.log("running!!");
+                    axios.post("/gather/profile/comments/individual", {
+                        email: this.props.user.email
+                    }).then((res) => {
+                        for (let key in res.data) {
+                            let comments = res.data[key].profileComments;
+                            console.log(comments);
+                            this.setState({
+                                comments,
+                                rerender: false
+                            })
+                        }
+                        console.log(res.data);
+                    }).catch((err) => {
+                        console.log(err);
+                    })
+                } else {
+                    console.log("do nothing.")
+                }
+            })
+        }
+        if (prevState.replyComment && this.state.rerenderAgain) {
+            return prevState.comments.map((comment, index) => {
+                if (comment.reply) {
+                    return comment.reply.map((item, indexxx) => {
+                        if (prevState.comment !== item.comment && this.state.rerenderAgain) {
+                            console.log(item);
+                           axios.post("/gather/profile/comments/individual", {
+                                email: this.props.user.email
+                            }).then((res) => {
+                                for (let key in res.data) {
+                                    let comments = res.data[key].profileComments;
+                                    console.log(comments);
+                                    this.setState({
+                                        comments,
+                                        rerenderAgain: false
+                                    })
+                                }
+                                console.log(res.data);
+                            }).catch((err) => {
+                                console.log(err);
+                            })
+                        }
+                    })
+                }
+            })   
         }
     }
     render() {

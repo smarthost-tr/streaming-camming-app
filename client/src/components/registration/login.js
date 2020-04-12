@@ -5,6 +5,7 @@ import { connect } from "react-redux";
 import { authentication } from "../../actions/index.js";
 import { withRouter } from "react-router-dom";
 import "./registration.css";
+import { sendbirdLogin } from "../../actions/sendbird/loginActions.js";
 
 class LoginScreen extends Component {
 constructor(props) {
@@ -17,6 +18,7 @@ constructor(props) {
 }
 	renderSubmission = (e) => {
 		e.preventDefault();
+
 		console.log("submitted...");
 
 		const { email, password } = this.state;
@@ -28,6 +30,10 @@ constructor(props) {
 			}).then((res) => {
 				console.log(res.data);
 				if (res.data.data) {
+					this.props.sendbirdLogin({ 
+						userId: res.data.data.chat_uuid, 
+						nickname: res.data.data.username
+					})
 					this.props.authentication(res.data.data);
 					this.props.history.push("/");
 				} else {
@@ -92,4 +98,4 @@ constructor(props) {
     }
 }
 
-export default withRouter(connect(null, { authentication })(LoginScreen));
+export default withRouter(connect(null, { authentication, sendbirdLogin })(LoginScreen));

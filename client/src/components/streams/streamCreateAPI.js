@@ -10,6 +10,7 @@ import { streamPlaybackID } from "../../actions/streaming.js";
 import { withRouter } from "react-router-dom";
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import FooterPage from "../common/footer/footer.js";
+import ParallaxTwo from "../parallaxs/parallaxTwo.js";
 
 const apiKey = '46621022';
 
@@ -145,7 +146,8 @@ constructor(props) {
         return (
             <div>	
             	<Navigation />
-            	{!startedStream ? <button className="btn btn-outline-info" style={{ width: "100%", marginBottom: "40px" }} onClick={this.handleClick}>Start A Stream!</button> : null}
+            	<ParallaxTwo />
+            	{!startedStream ? <button className="btn btn-outline pink_button" style={{ width: "100%", marginBottom: "40px", marginTop: "30px" }} onClick={this.handleClick}>Start A Stream!</button> : null}
             	{streamKey ? <hr className="my-4"/> : null}
 
 
@@ -153,7 +155,7 @@ constructor(props) {
 			          onCopy={() => this.setState({
 			          	copied: true
 			          })}>
-			          <button className="btn btn-outline-danger">Copy to clipboard</button>
+			          <button className="btn btn-outline purple_button">Copy to clipboard</button>
 			        </CopyToClipboard> : null}</div>
 
 			    <hr className="my-4"/> 
@@ -165,18 +167,18 @@ constructor(props) {
 	           
 
             	{this.state.streamKey ? <hr className="my-4"/> : null}
-            	{this.state.loaded && this.state.streamKey ? <button onClick={this.handleRedirect} className="btn btn-outline-info" style={{ width: "100%", marginBottom: "50px" }}>Once you started streaming - Use this to go to the Stream</button> : null}
+            	{this.state.loaded && this.state.streamKey ? <button onClick={this.handleRedirect} className="btn btn-outline pink_button" style={{ width: "100%", marginBottom: "50px" }}>Once you started streaming - Use this to go to the Stream</button> : null}
             	{/*<button className="btn btn-outline-success" style={{ width: "100%", marginTop: "30px" }} onClick={this.createNewSession}>Gather Streams Now</button>*/}
 				<div className="container-fluid">
 				   { error ? <h1 style={{ color: "darkred" }} className="text-center">{this.state.error}</h1> : null }
 				  	<div className="row">
 				        <div className="col-md-6">
 				        <hr className="my-4"/>
-							<h3 className="text-center">Broadcast yourself using Open Broadcaster Software (OBS)!</h3>
+							<h3 className="text-left">Broadcast yourself using Open Broadcaster Software (OBS)!</h3>
 							<hr className="my-4"/>
-							<p className="lead">Open Broadcaster Software (OBS) is an open source streaming software which provides broadcasters control to configure stream settings and customizable plugins so they can enhance their stream.</p>
+							<p className="lead text-left">Open Broadcaster Software (OBS) is an open source streaming software which provides broadcasters control to configure stream settings and customizable plugins so they can enhance their stream.</p>
 							<hr className="my-4"/>
-							<p className="lead">Click "Start A Stream" above and you will be provided the information (key and rtmp server url) to start your stream as soon as 30 seconds from now! 
+							<p className="lead text-left">Click "Start A Stream" above and you will be provided the information (key and rtmp server url) to start your stream as soon as 30 seconds from now! 
 							<hr className="my-4"/>
 							Once you create your stream, once you are absolutely sure you're streaming... Click the "load stream" button that display's AFTER creating a stream below to display your live stream!</p>
 							<hr className="my-4"/>
@@ -185,11 +187,12 @@ constructor(props) {
 
 				        <div className="col-md-6">
 							<div>
-								<iframe width="100%" height="425" src="https://www.youtube.com/embed/DTk99mHDX_I" frameBorder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
+								<iframe style={{ boxShadow: "10px 10px 10px grey" }} width="100%" height="425" src="https://www.youtube.com/embed/DTk99mHDX_I" frameBorder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
 							</div>
 				        </div>
 				    </div>
 			    </div>
+			    <ParallaxTwo />
 			    <FooterPage />
             </div>
         );

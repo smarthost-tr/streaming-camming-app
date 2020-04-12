@@ -34,11 +34,13 @@
 }
 .custom_card_two {
 	height: 100%;
-	background: #1E90FF !important;
+	background-color: rgba(0, 0, 0, .5) !important;
 	color: white;
 	margin: 50px 10px 100px 10px;
 }
 .pink_background {
-	background-color: lightpink;
-	height: 1500px;
+	background-image: url("../../../images/sexual.jpg");
+	background-repeat: no-repeat;
+	background-size: cover;
+	height: 100%;
 }

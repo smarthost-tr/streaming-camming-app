@@ -152,14 +152,16 @@
   }
 }
 .modal-dialog {
-    background: black;
+    background-image: url("../../../images/minimal.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 #custommm {
     top: 75%;
 }
 
 .hover_card:hover {
-    box-shadow: 7px 7px 7px black;
+    box-shadow: 7px 7px 7px black !important;
 }
 .profile 
 {
@@ -753,4 +755,9 @@ span.tags
 }
 .tab-pane  {
     background: transparent !important;
+}
+.style_container {
+    background-image: url("../../../images/minimal.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
 }

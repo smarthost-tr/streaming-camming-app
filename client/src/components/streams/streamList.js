@@ -4,6 +4,7 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import "./css/streamList.css";
 import FooterPage from "../common/footer/footer.js";
+import ReactLoading from 'react-loading';
 
 class StreamList extends React.Component {
 constructor(props) {
@@ -66,7 +67,6 @@ constructor(props) {
 						} 
 					}) : null}
 					{streamsReady ? this.state.assets.map((asset, index) => {
-						console.log(asset);
 						if (asset.playback_ids) {
 							return (
 								<div key={index} className="col-md-3" id="dark_image">
@@ -76,8 +76,26 @@ constructor(props) {
 								</div>
 							);
 						} 
-					}) : null}	
+					}) : <div className="mx-auto"><ReactLoading type="spinningBubbles" color="black" height={500} width={500} /></div>}
+					
 					</div>
+					<section class="home-newsletter">
+						<div class="container">
+							<div class="row">
+								<div class="col-sm-12">
+									<div class="single">
+										<h2>Subscribe to our Newsletter</h2>
+									<div class="input-group">
+								         <input type="email" class="form-control" placeholder="Enter your email" />
+								         <span class="input-group-btn">
+								         <button class="btn btn-theme" type="submit">Subscribe</button>
+								         </span>
+								          </div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</section>	
 					</div>
 				
 

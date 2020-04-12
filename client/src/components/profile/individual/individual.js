@@ -7,6 +7,9 @@ import { connect } from "react-redux";
 import ReactPlayer from 'react-player';
 import DropAComment from "../comments/index.js";
 import { Link } from "react-router-dom";
+import Popover from "react-awesome-popover";
+import { sbCreateOpenChannel } from "../../../actions/sendbird/openChannel.js";
+
 
 
 class ProfilesIndividual extends Component {
@@ -28,7 +31,11 @@ constructor(props) {
     	friends: [],
     	matches: false,
     	friend: false,
-    	usernames: []
+    	usernames: [],
+    	streamsDB: [],
+    	channelName: "",
+    	popover: false,
+    	message: ""
     }
 }
 	addSkillToDB = (e) => {
@@ -92,8 +99,8 @@ constructor(props) {
 		console.log("booyah");
 		if (user.streams) {
 			return user.streams.map((stream, index) => {
-				console.log(stream);
 				if (stream.active_asset_id) {
+					console.log(stream);
 					const asyncReturn = async () => {
 						const auth = {
 					      username: "f899a074-f11e-490f-b35d-b6c478a5b12a",
@@ -231,6 +238,52 @@ constructor(props) {
 
 		this.props.history.push(`/others/friends/list/individual/${user.username}`, { user });
     }
+    redirectToAsset = (identifier) => {
+    	const user = this.props.location.state.user;
+		console.log(identifier);
+
+		if (user.streams) {
+			return user.streams.map((stream, index) => {
+				if (stream.active_asset_id) {
+					console.log(stream);
+					const asyncReturn = async () => {
+						const auth = {
+					      username: "f899a074-f11e-490f-b35d-b6c478a5b12a",
+					      password: "4vLdjx6uBafGdFiSbmWt5akv4DaD4PkDuCCYdFYXzudywyQSR3Uh27GqlfedlhZ17fbnXbf9Rh/"
+					    };
+					    const res = await axios.get(`https://api.mux.com/video/v1/assets/${stream.active_asset_id}`, { auth: auth }).catch((error) => {
+					   		if (error) {
+					   			this.setState({
+					   				error: error
+					   			})
+					   		}
+					    });
+						let stream_playback_ids = res.data.data.playback_ids[0].id;
+
+						if (stream_playback_ids === identifier) {
+							console.log("we have a match", stream);
+							this.props.history.push(`/show/individual/asset/profile/page/${stream.active_asset_id}`, { id: stream.active_asset_id });
+						}
+					}
+					asyncReturn();
+				}
+			})
+		}
+    	// this.props.history.push(`/show/individual/asset/profile/page/${id}`, { id });
+    }
+    sendPrivateMessage = () => {
+    	console.log("clicked :", this.state.channelName);
+
+    	this.props.sbCreateOpenChannel({
+    		channelName: this.props.username, 
+    		userId: this.props.username, 
+    		email: this.props.email
+    	});	
+
+    	this.setState({
+    		popover: false
+    	})
+    }
     render() {
     	let user = this.props.location.state.user;
 
@@ -241,7 +294,7 @@ constructor(props) {
     	} else {
     		user = user[0];
     	}
-    	console.log(this.state);
+    	console.log(this.state);   
         return (
             <div>	
             	<Navigation />
@@ -351,9 +404,39 @@ constructor(props) {
 				                            </ul>
 				                        </div>*/}
 				                       {/* {this.renderFriendRequestButton()}*/}
-				                        {this.state.matches || !this.props.email || this.props.email === user.email ? null : <button onClick={() => {
+				                        {this.state.matches || !this.props.email || this.props.email === user.email ? null : <div className="row"><Popover open={this.state.popover}>
+												    <button className="btn btn-outline-info" onClick={() => {
+												    	this.setState({
+												    		popover: true
+												    	})
+												    }} style={{ marginRight: "20px" }}>Send Private Message</button>
+												    <div style={{ padding: "20px", backgroundColor: "white" }}>
+												    	{/*<div class="input-group mb-3">
+														  <div class="input-group-prepend">
+														    <span class="input-group-text" id="basic-addon1">Channel Name</span>
+														  </div>
+														  <input style={{ width: "600px" }} onChange={(e) => {
+															this.setState({
+																channelName: e.target.value
+															})
+														}} type="text" class="form-control" placeholder="Ex. How are you doing?" aria-label="Username" aria-describedby="basic-addon1" />
+														  
+														</div>*/}
+														<div class="form-group">
+														    <label className="text-left" for="exampleFormControlTextarea1">Enter your message</label>
+														    <textarea onChange={(e) => {
+														    	this.setState({
+														    		message: e.target.value
+														    	})
+														    }} style={{ width: "550px" }} class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+														  </div>
+														{this.state.message.length > 0 ? <button onClick={() => {
+															this.sendPrivateMessage();
+														}} className="btn btn-outline-secondary">Send Message!</button> : null}
+												    </div>
+												  </Popover><button onClick={() => {
 				                            this.sendFriendRequest()
-				                        }} className="btn btn-outline pink_button">Send Friend Request</button>}
+				                        }} className="btn btn-outline pink_button">Send Friend Request</button></div>}
 				                    </div>
 				                </div>
 				            </div>
@@ -438,10 +521,10 @@ constructor(props) {
 				                                        <div class="panel-body">
 				                                        	{this.state.skills.length > 0 ? this.state.skills.map((each, index) => {
 																if (each.skills) {
-																	return each.skills.map((skill, index) => {
+																	return each.skills.map((skill, indexxx) => {
 						                                        		console.log(skill);
 						                                        		return (
-																			<div key={index} class="m-b-15">
+																			<div key={indexxx} class="m-b-15">
 								                                                <h5>{skill.skill} <span class="pull-right">{skill.percentage}%</span></h5>
 								                                                <div class="progress">
 																				  <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow={`${skill.percentage}`} aria-valuemin="0" aria-valuemax="100" style={{ width: `${skill.percentage}%` }}></div>
@@ -473,10 +556,12 @@ constructor(props) {
 				                                        	console.log("ID! :", id);
 				                                        	return (
 																<div className="col-md-3">
-				                                        			<img style={{ width: "100%", height: "100%" }} src={`https://image.mux.com/${id}/animated.gif`} alt=""/>
-																	<button onClick={() => {
-																		this.redirectToClip()
-																	}} style={{ width: "100%" }} className="btn btn-outline-info">Purchase this clip</button>
+																<div className="overlay_parent">
+				                                        			<img className="overlay" style={{ width: "100%", height: "100%" }} src={`https://image.mux.com/${id}/animated.gif`} alt="video-custom"/>
+				                                        			<button onClick={() => {
+																		this.redirectToAsset(id);
+																	}} style={{ width: "100%" }} className="btn btn-outline pink_button">VIEW RECORDING</button>
+																</div>	
 				                                        		</div>
 				                                        	);
 
@@ -701,8 +786,9 @@ const mapStateToProps = (state) => {
 		email: state.auth.data.email,
 		_id: state.auth.data._id,
 		username: state.auth.data.username,
-		image: state.auth.data.image
+		image: state.auth.data.image,
+		chat_uuid: state.auth.data.chat_uuid
 	}
 }
 
-export default connect(mapStateToProps, {  })(ProfilesIndividual);
+export default connect(mapStateToProps, { sbCreateOpenChannel })(ProfilesIndividual);

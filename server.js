@@ -141,6 +141,11 @@ app.use("/figure/out/if/friends", require("./routes/friendsList/findOutFriend.js
 app.use("/paypal/pay", require("./routes/paypal/pay/intitial.js"));
 app.use("/success", require("./routes/paypal/pay/success.js"));
 app.use("/cancel", require("./routes/paypal/pay/cancel.js"));
+app.use("/tokens/gather", require("./routes/tokens/gatherTokens.js"));
+app.use("/generate/user/token", require("./routes/getStreamChat/tokens/createToken.js"));
+app.use("/gather/image/profile", require("./routes/gatherUserImage.js"));
+app.use("/post/channel/db", require("./routes/sendbird/saveToDatabase/saveChannel.js"));
+app.use("/gather/personal/channels", require("./routes/sendbird/gatherCredentials/gatherChannels.js"));
 
 app.listen(PORT, () => {
 	console.log(`Server listening on port ${PORT}!`);

@@ -25,19 +25,33 @@ constructor(props) {
             console.log(err);
         })
     }
+    componentDidUpdate(prevProps, prevState) {
+           
+    }
     render() {
     	const tokens = this.props.location.state.tokens;
     	console.log(this.props.location.state.tokens);
         return (
             <div>
 				<Navigation />
-                    <div className="container" style={{ height: "100vh" }}>
+                    <div style={{ height: "100vh", width: "100vw" }}>
                         <div className="row">
                             <div className="col-md-12">
-                                <h1 className="text-center bold">Purchase Tokens Page Two - Tokens being purchased: {tokens}</h1>
-                                    <button onClick={() => {
+                                
+                                <div class="jumbotron bg-cover text-white" id="jumbo">
+                                    <div class="container">
+                                        <h1 className="text-center bold text">You are about to purchase {tokens} tokens!</h1>
+                                        <p class="lead">This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>
+                                            <hr class="my-white" />
+                                        <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>
+                                        <button onClick={() => {
+                                            this.handlePayment();
+                                        }} class="btn btn-primary btn-lg"role="button">Purchase Tokens</button>
+                                    </div>
+                                </div>
+                                    {/*<button onClick={() => {
                                         this.handlePayment();
-                                    }} className="btn btn-outline pink_button" style={{ width: "100%" }}>Purchase Your Coins!</button>
+                                    }} className="btn btn-outline pink_button" style={{ width: "100%" }}>Purchase Your Coins!</button>*/}
                             </div>
                         </div>
                     </div>

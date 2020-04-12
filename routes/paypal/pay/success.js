@@ -54,11 +54,10 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
 				if (payment.state === "approved") {
 					console.log("approved...");
-					collection.findOneAndUpdate({ email: savedEmail[0] }, { $set: { tokens: {
-							tokens: Number(splitted[0])
-						}}}, (err, doc) => {
+					collection.findOneAndUpdate({ email: savedEmail[0] }, { $inc: { "tokens": Number(splitted[0]) }}, (err, doc) => {
 					    if (err) {
 					        console.log("Something wrong when updating data!");
+					        console.log(err);
 					    }
 						console.log(doc);
 					});

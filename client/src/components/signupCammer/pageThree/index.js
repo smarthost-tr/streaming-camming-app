@@ -92,23 +92,23 @@ constructor(props) {
             	<Navigation />
             	<ProgressBar progress={85} />
             	<div style={{ marginTop: "20px" }} className="mx-auto">
-					<h2 className="text-center">You MUST complete your profile before you can stream or appear in the "Profiles" section to post your videos for sale...</h2>
+					<h2 className="text-center text-white underline">You MUST complete your profile before you can stream or appear in the "Profiles" section to post your videos for sale...</h2>
             	</div>
 					<div className="container" style={{ height: "100%" }}>
 						<div className="row">
 							<div className="col-md-3" style={{ marginTop: "50px" }}>
 							     <div className="list-group ">
 					              <a href="#" className="list-group-item list-group-item-action active">Personal/public information while streaming</a>
-					              <a href="#" className="list-group-item list-group-item-action">User Management</a>
-					              <a href="#" className="list-group-item list-group-item-action">Used</a>
+					              <a href="#" className="list-group-item list-group-item-action">Search Friends</a>
+					    {/*          <a href="#" className="list-group-item list-group-item-action">Used</a>
 					              <a href="#" className="list-group-item list-group-item-action">Enquiry</a>
-					              <a href="#" className="list-group-item list-group-item-action">Dealer</a>
+					              <a href="#" className="list-group-item list-group-item-action">Dealer</a>*/}
 					            
 					              
 					              
 					            </div> 
 							</div>
-							<div className="col-md-9">
+							<div className="col-md-9" style={{ marginBottom: "100px" }}>
 							    <div className="card custom_card_two">
 							        <div className="card-body">
 							            <div className="row">

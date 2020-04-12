@@ -119,6 +119,10 @@
   opacity:.8;
   cursor:pointer;
 }
-
+@media only screen and (max-width: 750px) {
+	.sign-out {
+		margin-bottom: 10px;
+	}
+}
 
 

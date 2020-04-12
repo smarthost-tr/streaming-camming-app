@@ -25,6 +25,8 @@ import SubscribeHomepage from "./components/subscribe/home/index.js";
 import FriendsListHome from "./components/friends/home/index.js";
 import OthersFriendsList from "./components/friends/otherUsersFriends/index.js";
 import ThankYouPaymentPage from "./components/coins/thankYouPage.js";
+import AssetShow from "./components/streams/assetShow.js";
+import ChatSendbirdHomepage from "./components/sendbirdChat/chatHomepage.js";
 
 class App extends Component {
 constructor(props) {
@@ -67,6 +69,8 @@ constructor(props) {
         {this.props.auth ? <Route path="/friends/list/home" exact component={FriendsListHome} /> : <Route path="/friends/list/home" exact component={ErrorUnauthorized} />}
         <Route path="/others/friends/list/individual/:id" exact component={OthersFriendsList} />
         <Route path="/thank/you/for/your/payment" exact component={ThankYouPaymentPage} />
+        <Route path="/show/individual/asset/profile/page/:id" exact component={AssetShow} />
+        <Route path="/chat/homepage" exact component={ChatSendbirdHomepage} />
         
       </div>
     </BrowserRouter>
