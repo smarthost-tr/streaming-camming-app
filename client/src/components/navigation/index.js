@@ -155,16 +155,16 @@ constructor(props) {
     return (
       <div>
         <Navbar color="light" light expand="md">
-          <NavbarBrand><Link style={{ color: "purple" }} to="/">Jerk N' Squirt</Link></NavbarBrand>
+          <NavbarBrand><Link style={{ color: "purple" }} to="/">Jerk N' Squirtn'</Link></NavbarBrand>
           <NavbarToggler onClick={this.toggle} />
           <Collapse isOpen={this.state.isOpen} navbar>
             <Nav className="mr-auto" navbar>
   {/*          <NavItem>
                 <Link className="nav-link" to="/">Homepage</Link>
               </NavItem>*/}
-              <NavItem>
+              {this.props.authenticated ? <NavItem>
                 <Link to="/chat/homepage" className="nav-link">Chat</Link>
-              </NavItem>
+              </NavItem> : null}
               {this.props.authenticated ? <NavItem>
                 <Link className="nav-link" to="/purchase/tokens">Purchase Tokens</Link>
               </NavItem> : null}
@@ -239,7 +239,7 @@ constructor(props) {
                   </ul>
                 </li> : null}
              
-              {this.props.authenticated ? <NavbarText>{store.getState().auth.data.username}, (<strong>{this.state.tokens ? this.state.tokens : "Unknown"}</strong>) tokens</NavbarText> : null}
+              {this.props.authenticated ? <NavbarText>{store.getState().auth.data.username.slice(0, 10)}..., (<strong>{this.state.tokens ? this.state.tokens : "Unknown"}</strong>) tokens</NavbarText> : null}
 
           </Collapse>
         </Navbar>

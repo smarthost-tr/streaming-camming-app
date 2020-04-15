@@ -70,8 +70,8 @@ constructor(props) {
         <Route path="/others/friends/list/individual/:id" exact component={OthersFriendsList} />
         <Route path="/thank/you/for/your/payment" exact component={ThankYouPaymentPage} />
         <Route path="/show/individual/asset/profile/page/:id" exact component={AssetShow} />
-        <Route path="/chat/homepage" exact component={ChatSendbirdHomepage} />
         
+        {this.props.auth ? <Route path="/chat/homepage" exact component={ChatSendbirdHomepage} /> : <Route path="/chat/homepage" exact component={ErrorUnauthorized} />}
       </div>
     </BrowserRouter>
     );

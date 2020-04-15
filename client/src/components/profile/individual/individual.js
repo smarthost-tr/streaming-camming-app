@@ -6,11 +6,13 @@ import axios from "axios";
 import { connect } from "react-redux";
 import ReactPlayer from 'react-player';
 import DropAComment from "../comments/index.js";
-import { Link } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
 import Popover from "react-awesome-popover";
-import { sbCreateOpenChannel } from "../../../actions/sendbird/openChannel.js";
+import socketIOClient from "socket.io-client";
+import uuid from "react-uuid";
+import { StreamChat } from 'stream-chat';
 
-
+const client = new StreamChat('qzye22t8v5c4');
 
 class ProfilesIndividual extends Component {
 constructor(props) {
@@ -35,7 +37,9 @@ constructor(props) {
     	streamsDB: [],
     	channelName: "",
     	popover: false,
-    	message: ""
+    	message: "",
+    	endpoint: "http://localhost:5000",
+    	chatTitle: ""
     }
 }
 	addSkillToDB = (e) => {
@@ -87,6 +91,8 @@ constructor(props) {
 				console.log(err);
 			});
 		}, 300)
+
+
 	}
 	videoApi = () => {
 		const user = this.props.location.state.user;
@@ -216,23 +222,8 @@ constructor(props) {
 	        	})
         	}
         }
-
     }
-  //   renderFriendRequestButton = () => {
-  //   	const user = this.props.location.state.user;
-		// if (this.state.friends) {
-		// 	return this.state.friends.map((friend, index) => {
-		// 		console.log(friend);
-		// 		if (friend.username === user.username) {
-		// 			console.log("match");
-		// 			this.setState({
-		// 				matches: true
-		// 			})
-		// 		}
-		// 	})
-		// }
-		// // <button className="btn btn-outline pink_button">Send Friend Request</button>
-  //   }
+
     renderRedirectOthers = () => {
     	const user = this.props.location.state.user;
 
@@ -271,29 +262,101 @@ constructor(props) {
 		}
     	// this.props.history.push(`/show/individual/asset/profile/page/${id}`, { id });
     }
-    sendPrivateMessage = () => {
-    	console.log("clicked :", this.state.channelName);
+    sendPrivateMessage = async () => {
 
-    	this.props.sbCreateOpenChannel({
-    		channelName: this.props.username, 
-    		userId: this.props.username, 
-    		email: this.props.email
-    	});	
-
-    	this.setState({
-    		popover: false
-    	})
-    }
-    render() {
-    	let user = this.props.location.state.user;
+    	const user = this.props.location.state.user;
 
     	if (user.username) {
-    		console.log("let user be as it was...");
+    		
     	} else if (user.profile) {
 			user = user;
     	} else {
     		user = user[0];
     	}
+    	console.log("clicked");
+
+		const { message } = this.state;
+		
+		let error;
+
+		const uniqueID = uuid();
+
+		client.setUser({
+		   id: this.props.username,
+		   name: this.props.username,
+		   image: 'https://getstream.io/random_svg/?id=spring-silence-0&name=Spring+silence'
+		}, this.props.token);
+
+		const conversation = client.channel('messaging', uniqueID, {
+		    name: this.state.chatTitle,
+		    image: this.props.image,
+		    members: [this.props.username, user.username]
+		});
+
+		await conversation.create();
+                    
+		const response = await conversation.sendMessage({
+		    text: message,
+		    customField: '123',
+		});
+     
+    // 	axios.post("/post/initial/private/conversation", {
+    // 		message,
+    // 		email: this.props.email,
+    // 		author: `Private Thread - ${this.props.username} + ${user.username}`,
+    // 		image: this.props.image,
+    // 		sender: this.props.email,
+    // 		reciever: user.email,
+    // 		uniqueID
+    // 	}).then((res) => {
+    // 		console.log(res.data);
+    // 		if (res.data) {
+				// error = false;
+    // 		}
+    // 	}).catch((err) => {
+    // 		console.log(err);
+    // 		error = true;
+    // 		alert("There was an error...");
+    // 	})
+    //    	axios.post("/post/initial/private/conversation/reciever", {
+    // 		message,
+    // 		email: user.email,
+    // 		author: `Private Thread - ${this.props.username} + ${user.username}`,
+    // 		image: this.props.image,
+    //    		sender: this.props.email,
+    // 		reciever: user.email,
+    // 		uniqueID
+    // 	}).then((res) => {
+    // 		console.log(res.data);
+    // 		if (res.data) {
+    // 			alert("Successfully messaged this user!");
+    // 		}
+    // 	}).catch((err) => {
+    // 		console.log(err);
+    // 		alert("There was an error...");
+    // 	})
+
+    	this.setState({
+    		popover: false
+    	});
+    }
+    componentWillUnmount () {
+    	console.log("unmounted...");
+    	client.disconnect();
+    }
+    render() {
+    	const { message } = this.state;
+
+    	let user = this.props.location.state.user;
+
+    	if (user.username) {
+    		
+    	} else if (user.profile) {
+			user = user;
+    	} else {
+    		user = user[0];
+    	}
+   		console.log(user);
     	console.log(this.state);   
         return (
             <div>	
@@ -376,6 +439,7 @@ constructor(props) {
 				                                }} class="hidden-xs">Projects</span>
 				                            </a>
 				                        </li>
+
 				                        {user.email === store.getState().auth.data.email ? <li class="tab" style={{ width: "25%" }}>
 				                            <a href="#settings-2" data-toggle="tab" aria-expanded="false">
 				                                <span class="visible-xs"><i class="fa fa-cog"></i></span>
@@ -386,9 +450,12 @@ constructor(props) {
 				                                }} class="hidden-xs">Settings</span>
 				                            </a>
 				                        </li> : null}
+
 				                        <div class="indicator" style={{ right: "476px", left: "0px" }}></div>
 				                        <div class="indicator" style={{ right: "476px", left: "0px" }}></div>
+
 				                    </ul>
+				                    
 				                </div>
 				                <div class="col-lg-6 col-md-3 col-sm-3 hidden-xs">
 				                    <div class="pull-right" style={{ float: "right" }}>
@@ -404,39 +471,10 @@ constructor(props) {
 				                            </ul>
 				                        </div>*/}
 				                       {/* {this.renderFriendRequestButton()}*/}
-				                        {this.state.matches || !this.props.email || this.props.email === user.email ? null : <div className="row"><Popover open={this.state.popover}>
-												    <button className="btn btn-outline-info" onClick={() => {
-												    	this.setState({
-												    		popover: true
-												    	})
-												    }} style={{ marginRight: "20px" }}>Send Private Message</button>
-												    <div style={{ padding: "20px", backgroundColor: "white" }}>
-												    	{/*<div class="input-group mb-3">
-														  <div class="input-group-prepend">
-														    <span class="input-group-text" id="basic-addon1">Channel Name</span>
-														  </div>
-														  <input style={{ width: "600px" }} onChange={(e) => {
-															this.setState({
-																channelName: e.target.value
-															})
-														}} type="text" class="form-control" placeholder="Ex. How are you doing?" aria-label="Username" aria-describedby="basic-addon1" />
-														  
-														</div>*/}
-														<div class="form-group">
-														    <label className="text-left" for="exampleFormControlTextarea1">Enter your message</label>
-														    <textarea onChange={(e) => {
-														    	this.setState({
-														    		message: e.target.value
-														    	})
-														    }} style={{ width: "550px" }} class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
-														  </div>
-														{this.state.message.length > 0 ? <button onClick={() => {
-															this.sendPrivateMessage();
-														}} className="btn btn-outline-secondary">Send Message!</button> : null}
-												    </div>
-												  </Popover><button onClick={() => {
+				                        {this.state.matches || !this.props.email || this.props.email === user.email ? null : <div className="row"><button onClick={() => {
 				                            this.sendFriendRequest()
 				                        }} className="btn btn-outline pink_button">Send Friend Request</button></div>}
+				                        
 				                    </div>
 				                </div>
 				            </div>
@@ -449,6 +487,47 @@ constructor(props) {
 				                                <div class="col-md-4">
 				                                   
 				                                    <div class="panel panel-default panel-fill">
+				                                    <Popover open={this.state.popover}>
+														    <button className="btn btn-outline-info" onClick={() => {
+														    	this.setState({
+														    		popover: true
+														    	})
+														    }} style={{ marginRight: "20px", width: "100%" }}>Send a private message!</button>
+														    <div style={{ padding: "20px", backgroundColor: "white" }}>
+														    	{/*<div class="input-group mb-3">
+																  <div class="input-group-prepend">
+																    <span class="input-group-text" id="basic-addon1">Channel Name</span>
+																  </div>
+																  <input style={{ width: "600px" }} onChange={(e) => {
+																	this.setState({
+																		channelName: e.target.value
+																	})
+																}} type="text" class="form-control" placeholder="Ex. How are you doing?" aria-label="Username" aria-describedby="basic-addon1" />
+																  
+																</div>*/}
+																<div class="form-group">
+																    <label className="text-left" for="exampleFormControlTextarea1">Enter your message</label>
+																    <textarea onChange={(e) => {
+																    	this.setState({
+																    		message: e.target.value
+																    	})
+																    }} style={{ width: "550px" }} class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+																    <div style={{ marginTop: "20px" }} className="form-group">
+																		<input onChange={(e) => {
+																			this.setState({
+																				chatTitle: e.target.value
+																			})
+																		}} type="text" placeholder="Enter a chat title/header..." value={this.state.chatTitle} className="form-control"/>
+																    </div>
+																  </div>
+																<div class="form-group">
+																	<p className="lead text-dark">Send a new private message and connect with this user today! Private messages are ONLY visible between you and the person you're messaging...</p>    
+																</div>
+																{this.state.message.length > 0 ? <button style={{ marginBottom: "100px" }} onClick={() => {
+																	this.sendPrivateMessage();
+																}} className="btn btn-outline-secondary">Send a private message</button> : null}
+														    </div>
+														  </Popover>
 				                                        <div class="panel-heading">
 				                                            <h3 class="panel-title">Personal Information</h3>
 				                                        </div>
@@ -787,8 +866,9 @@ const mapStateToProps = (state) => {
 		_id: state.auth.data._id,
 		username: state.auth.data.username,
 		image: state.auth.data.image,
-		chat_uuid: state.auth.data.chat_uuid
+		chat_uuid: state.auth.data.chat_uuid,
+		token: state.token.token
 	}
 }
 
-export default connect(mapStateToProps, { sbCreateOpenChannel })(ProfilesIndividual);
+export default withRouter(connect(mapStateToProps, { })(ProfilesIndividual));

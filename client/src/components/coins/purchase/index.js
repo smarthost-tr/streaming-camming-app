@@ -34,7 +34,7 @@ constructor(props) {
 				                <div class="image-flip" ontouchstart="this.classList.toggle('hover');">
 				                    <div class="mainflip">
 				                        <div class="frontside">
-				                            <div class="card">
+				                            <div class="card cardie">
 				                                <div class="card-body custom_body text-center">
 				                                    <p><img class=" img-fluid" src={require("../../../images/sex-1.jpg")} alt="card image"/></p>
 				                                    <h4 class="card-title">Purchase 25 Coins</h4>
@@ -50,7 +50,7 @@ constructor(props) {
 				                            </div>
 				                        </div>
 				                        <div class="backside">
-				                            <div class="card">
+				                            <div class="card cardie">
 				                                <div class="card-body custom_body text-center mt-4">
 				                                    <h4 class="card-title">Purchase 25 Coins</h4>
 				                                    <p class="card-text">These coins can only be used on "Jerk N' Squirt" but can also be cashed out if you wish to do so, don't feel trapped. We are here to create the best experience possible, even if that means returning your money back to your account if you're displeased with our streaming platform.</p>
@@ -73,7 +73,7 @@ constructor(props) {
 				                <div class="image-flip" ontouchstart="this.classList.toggle('hover');">
 				                    <div class="mainflip">
 				                        <div class="frontside">
-				                            <div class="card">
+				                            <div class="card cardie">
 				                                <div class="card-body custom_body text-center">
 				                                    <p><img class=" img-fluid" src={require("../../../images/sex-2.jpg")} alt="card image"/></p>
 				                                    <h4 class="card-title">Purchase 50 Coins</h4>
@@ -89,7 +89,7 @@ constructor(props) {
 				                            </div>
 				                        </div>
 				                        <div class="backside">
-				                            <div class="card">
+				                            <div class="card cardie">
 				                                <div class="card-body custom_body text-center mt-4">
 				                                   <h4 class="card-title">Purchase 50 Coins</h4>
 				                                    <p class="card-text">These coins can only be used on "Jerk N' Squirt" but can also be cashed out if you wish to do so, don't feel trapped. We are here to create the best experience possible, even if that means returning your money back to your account if you're displeased with our streaming platform.</p>
@@ -112,7 +112,7 @@ constructor(props) {
 				                <div class="image-flip" ontouchstart="this.classList.toggle('hover');">
 				                    <div class="mainflip">
 				                        <div class="frontside">
-				                            <div class="card">
+				                            <div class="card cardie">
 				                                <div class="card-body custom_body text-center">
 				                                    <p><img class=" img-fluid" src={require("../../../images/sex-3.jpg")} alt="card image"/></p>
 				                                    <h4 class="card-title">Purchase 75 Tokens</h4>
@@ -128,7 +128,7 @@ constructor(props) {
 				                            </div>
 				                        </div>
 				                        <div class="backside">
-				                            <div class="card">
+				                            <div class="card cardie">
 				                                <div class="card-body custom_body text-center mt-4">
 				                                    <h4 class="card-title">Purchase 75 Coins</h4>
 				                                    <p class="card-text">These coins can only be used on "Jerk N' Squirt" but can also be cashed out if you wish to do so, don't feel trapped. We are here to create the best experience possible, even if that means returning your money back to your account if you're displeased with our streaming platform.</p>
@@ -151,7 +151,7 @@ constructor(props) {
 				                <div class="image-flip" ontouchstart="this.classList.toggle('hover');">
 				                    <div class="mainflip">
 				                        <div class="frontside">
-				                            <div class="card">
+				                            <div class="card cardie">
 				                                <div class="card-body custom_body text-center">
 				                                    <p><img class=" img-fluid" src={require("../../../images/sex-4.jpg")} alt="card image"/></p>
 				                                    <h4 class="card-title">Purchase 100 Coins</h4>
@@ -167,7 +167,7 @@ constructor(props) {
 				                            </div>
 				                        </div>
 				                        <div class="backside">
-				                            <div class="card">
+				                            <div class="card cardie">
 				                                <div class="card-body custom_body text-center mt-4">
 				                                    <h4 class="card-title">Purchase 100 Coins</h4>
 				                                    <p class="card-text">These coins can only be used on "Jerk N' Squirt" but can also be cashed out if you wish to do so, don't feel trapped. We are here to create the best experience possible, even if that means returning your money back to your account if you're displeased with our streaming platform.</p>
@@ -190,7 +190,7 @@ constructor(props) {
 				                <div class="image-flip" ontouchstart="this.classList.toggle('hover');">
 				                    <div class="mainflip">
 				                        <div class="frontside">
-				                            <div class="card">
+				                            <div class="card cardie">
 				                                <div class="card-body custom_body text-center">
 				                                    <p><img class=" img-fluid" src={require("../../../images/sex-5.jpg")} alt="card image"/></p>
 				                                    <h4 class="card-title">Purchase 150 Coins</h4>
@@ -206,7 +206,7 @@ constructor(props) {
 				                            </div>
 				                        </div>
 				                        <div class="backside">
-				                            <div class="card">
+				                            <div class="card cardie">
 				                                <div class="card-body custom_body text-center mt-4">
 				                                    <h4 class="card-title">Purchase 150 Coins</h4>
 				                                    <p class="card-text">These coins can only be used on "Jerk N' Squirt" but can also be cashed out if you wish to do so, don't feel trapped. We are here to create the best experience possible, even if that means returning your money back to your account if you're displeased with our streaming platform.</p>
@@ -229,7 +229,7 @@ constructor(props) {
 				                <div class="image-flip" ontouchstart="this.classList.toggle('hover');">
 				                    <div class="mainflip">
 				                        <div class="frontside">
-				                            <div class="card">
+				                            <div class="card cardie">
 				                                <div class="card-body custom_body text-center">
 				                                    <p><img class=" img-fluid" src={require("../../../images/sex-6.jpg")} alt="card image"/></p>
 				                                    <h4 class="card-title">Purchase 200 Coins</h4>
@@ -245,7 +245,7 @@ constructor(props) {
 				                            </div>
 				                        </div>
 				                        <div class="backside">
-				                            <div class="card">
+				                            <div class="card cardie">
 				                                <div class="card-body custom_body text-center mt-4">
 				                                    <h4 class="card-title">Purchase 200 Coins</h4>
 				                                    <p class="card-text">These coins can only be used on "Jerk N' Squirt" but can also be cashed out if you wish to do so, don't feel trapped. We are here to create the best experience possible, even if that means returning your money back to your account if you're displeased with our streaming platform.</p>

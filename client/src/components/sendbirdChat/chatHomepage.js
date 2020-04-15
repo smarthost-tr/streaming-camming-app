@@ -1,20 +1,27 @@
 import React, { Component } from 'react';
 import Navigation from "../navigation/index.js";
 import { connect } from "react-redux";
-import { getOpenChannelList } from "../../actions/channels.js";
-import { sbCreateOpenChannelListQuery, sbOpenChannelEnter } from "../../actions/sendbird/openChannel.js";
 import './css/chatHomepage.css';
 import Footer from "../common/footer/footer.js";
-import { onOpenChannelPress, channelExit } from "../../actions/channels.js";
 import axios from "axios";
 import _ from "underscore";
+import socketIOClient from "socket.io-client";
+import { Chat, Channel, ChannelHeader, ChannelList, Thread, Window } from 'stream-chat-react';
+import { MessageList, MessageInput } from 'stream-chat-react';
+import { StreamChat } from 'stream-chat';
+import 'stream-chat-react/dist/css/index.css';
+import { setGetStreamUser } from "../../actions/getStream/index.js";
+
+let channel;
+
+const chatClient = new StreamChat('qzye22t8v5c4');
+
 
 class ChatSendbirdHomepage extends Component {
 constructor(props) {
     super(props);
 
 	this.state = {
-		openChannelListQuery: null,
 		target: "",
 		user: "Jeremy Blong",
 		channel: null,
@@ -22,75 +29,104 @@ constructor(props) {
 		channels: [],
 		ready: false,
 		intersection: [],
-		leaveStream: false
+		leaveStream: false,
+		message: "",
+		endpoint: "http://localhost:5000",
+		replies: [],
+		updated: false
 	}
 }
+	componentWillUnmount() {
+		console.log("disconnected...");
+
+	    chatClient.disconnect();
+	}
 	componentDidMount() {
 
+		
+
+		axios.post("/gather/messages/all", {
+			email: this.props.email
+		}).then((res) => {
+			console.log(res.data);
+			for (let key in res.data) {
+				let messages = res.data[key].messages;
+				this.setState({
+					channels: messages,
+					ready: true
+				})
+			}
+		}).catch((err) => {
+			console.log(err);
+		});
+
+
 		setTimeout(() => {
-			const openChannelListQuery = sbCreateOpenChannelListQuery();
-		        this.setState({ 
-		        	openChannelListQuery 
-		        }, () => {
-	            	this.props.getOpenChannelList({
-		            	openChannelListQuery: this.state.openChannelListQuery,
-		            	userId: this.props.userID
-		        	});
+			axios.post("/gather/sub/responses", {
+				email: this.props.email
+			}).then((res) => {
+				console.log(res.data);
+			}).catch((err) => {
+				console.log(err);
+			});
 
-					axios.post("/gather/personal/channels", {
-						email: this.props.email
-					}).then((res) => {
-						console.log(res.data);
-						for (let key in res.data) {
-							let channels = res.data[key].channels;
-						
-							console.log(this.state.channels);
-							console.log(this.props.channels);
-							for (var i = 0; i < channels.length; i++) {
-								let channel = channels[i].channel;
-								console.log(channel);
-								this.setState({
-									channels: [...this.state.channels, channel]
-								})
-							}
-							
-						}
-						console.log(this.props.channels);
-						console.log(this.state.channels);
-						let intersection = _.difference(this.state.channels, this.props.channels);
+			chatClient.setUser({
+			   id: this.props.username,
+			   name: this.props.username,
+			   image: this.props.image
+			}, this.props.token);
 
-						this.setState({
-							intersection,
-							ready: true
-						}, () => {
-							console.log(this.state.intersection)
-						})
-					}).catch((err) => {
-						console.log(err);
-					});
-					
-	        });
-
+			this.setState({
+				getStreamReady: true
+			})
 		}, 500);
+
 	}
 	gatherUserInformation = (channel) => {
 		console.log("clicked...", channel);
-	    this.setState({ 
-      		enterChannel: true,
-      		leaveStream: true,
-      		channel
-  	    }, () => {
-       		this.props.onOpenChannelPress(channel.url);
-			for (var i = 0; i < this.props.channels.length; i++) {
-				let chan = this.props.channels[i];
-				console.log(chan);
-				if (chan.url === channel.url) {
-					console.log("match!");
-       				this.props.sbOpenChannelEnter(chan);
-       			}
-			}
-        });
+
+		this.setState({
+			channel,
+			leaveStream: true
+		})
 	}
+	handleMessageSend = () => {
+
+		const { channel, message, endpoint } = this.state;
+
+		if (channel && message.length > 0) {
+			console.log("worked! sending message.");
+
+			// logic goes here... 
+			axios.post("/reply/private/message/sender", {
+				email: channel.sender,
+				message: message,
+				uuid: channel.id
+			}).then((res) => {
+				console.log(res.data);
+			}).catch((err) => {
+				console.log(err);
+			});
+
+
+			axios.post("/reply/private/message/reciever", {
+				email: channel.reciever,
+				message: message,
+				uuid: channel.id
+			}).then((res) => {
+				console.log(res.data);
+			}).catch((err) => {
+				console.log(err);
+			})
+		   
+			this.setState({
+				message: ""
+			})
+		} else {
+			alert("Please enter text before attempting to send a new message...");
+		}
+	}
+
 	renderConditional = () => {
 		if (this.state.channel && this.state.leaveStream) {
 			return (
@@ -103,7 +139,7 @@ constructor(props) {
 									<span class="online_icon"></span>
 								</div>
 								<div class="user_info">
-									<span>Chat with {this.state.channel ? this.state.channel.name : "Unknown user."}</span>
+									<span>{this.state.channel ? this.state.channel.author : "Unknown user."}</span>
 									<p>1767 Messages</p>
 								</div>
 								<div class="video_cam">
@@ -122,77 +158,67 @@ constructor(props) {
 							</div>
 						</div>
 						<div class="card-body msg_card_body">
-							<div class="d-flex justify-content-start mb-4">
-								<div class="img_cont_msg">
-									<img src="https://static.turbosquid.com/Preview/001292/481/WV/_D.jpg" class="rounded-circle user_img_msg"/>
-								</div>
-								<div class="msg_cotainer">
-									Hi, how are you samim?
-									<span class="msg_time">8:40 AM, Today</span>
-								</div>
+						{this.state.channel ? <div class="d-flex justify-content-start mb-4">
+							<div class="img_cont_msg">
+								<img src={this.state.channel.image} class="rounded-circle user_img_msg"/>
 							</div>
-							<div class="d-flex justify-content-end mb-4">
-								<div class="msg_cotainer_send">
-									Hi Khalid i am good tnx how about you?
-									<span class="msg_time_send">8:55 AM, Today</span>
-								</div>
-								<div class="img_cont_msg">
-							<img src={require("../../images/sex-3.jpg")} class="rounded-circle user_img_msg"/>
-								</div>
+							<div class="msg_cotainer text-left">
+								{this.state.channel.message} <br/>
+								<div style={{ fontSize: "0.5rem" }}>{this.state.channel.date}</div>
 							</div>
-							<div class="d-flex justify-content-start mb-4">
-								<div class="img_cont_msg">
-									<img src="https://static.turbosquid.com/Preview/001292/481/WV/_D.jpg" class="rounded-circle user_img_msg"/>
-								</div>
-								<div class="msg_cotainer">
-									I am good too, thank you for your chat template
-									<span class="msg_time">9:00 AM, Today</span>
-								</div>
-							</div>
-							<div class="d-flex justify-content-end mb-4">
-								<div class="msg_cotainer_send">
-									You are welcome
-									<span class="msg_time_send">9:05 AM, Today</span>
-								</div>
-								<div class="img_cont_msg">
-							<img src={require("../../images/sex-2.jpg")} class="rounded-circle user_img_msg"/>
-								</div>
-							</div>
-							<div class="d-flex justify-content-start mb-4">
-								<div class="img_cont_msg">
-									<img src="https://static.turbosquid.com/Preview/001292/481/WV/_D.jpg" class="rounded-circle user_img_msg"/>
-								</div>
-								<div class="msg_cotainer">
-									I am looking for your next templates
-									<span class="msg_time">9:07 AM, Today</span>
-								</div>
-							</div>
-							<div class="d-flex justify-content-end mb-4">
-								<div class="msg_cotainer_send">
-									Ok, thank you have a good day
-									<span class="msg_time_send">9:10 AM, Today</span>
-								</div>
-								<div class="img_cont_msg">
-						<img src={require("../../images/sex-1.jpg")} class="rounded-circle user_img_msg" />
-								</div>
-							</div>
-							<div class="d-flex justify-content-start mb-4">
-								<div class="img_cont_msg">
-									<img src="https://static.turbosquid.com/Preview/001292/481/WV/_D.jpg" class="rounded-circle user_img_msg"/>
-								</div>
-								<div class="msg_cotainer">
-									Bye, see you
-									<span class="msg_time">9:12 AM, Today</span>
-								</div>
-							</div>
+
+						</div> : null}
+							{this.state.replies ? this.state.replies.map((reply, index) => {
+								console.log("single reply :", reply);
+								{/*if (message.channelUrl === this.state.channel.url) {
+									console.log("WORKED!!!");
+									if (message._sender.nickname === this.props.username) {
+										console.log("CORRECT :", message);
+										return (
+											<div class="d-flex justify-content-start mb-4">
+												<div class="img_cont_msg">
+													<img src="https://static.turbosquid.com/Preview/001292/481/WV/_D.jpg" class="rounded-circle user_img_msg"/>
+												</div>
+												<div class="msg_cotainer">
+													{message.message}
+													<span class="msg_time">8:40 AM, Today</span>
+												</div>
+											</div>
+											
+										);
+									} else {
+										console.log("else ran", message);
+										return (
+											<div class="d-flex justify-content-end mb-4">
+												
+												<div style={{ backgroundColor: "#dcf8c6" }} class="msg_cotainer">
+													{message.message}
+													<span class="msg_time">8:40 AM, Today</span>
+												</div>
+												<div class="img_cont_msg">
+													<img src="https://static.turbosquid.com/Preview/001292/481/WV/_D.jpg" class="rounded-circle user_img_msg"/>
+												</div>
+											</div>
+											
+										);
+									}
+								}*/}
+							}) : console.log("NOTHING HAPPENED - UH-OH.")}
+
 						</div>
 						<div class="card-footer">
 							<div class="input-group">
 								<div class="input-group-append">
 									<span class="input-group-text attach_btn"><i class="fas fa-paperclip"></i></span>
 								</div>
-								<textarea name="" class="form-control type_msg" placeholder="Type your message..."></textarea>
-								<div class="input-group-append">
+								<textarea style={{ color: "white" }} onChange={(e) => {
+									this.setState({
+										message: e.target.value
+									})
+								}} value={this.state.message} name="" class="form-control type_msg" placeholder="Type your message..."></textarea>
+								<div onClick={() => {
+									this.handleMessageSend();
+								}} class="input-group-append">
 									<span class="input-group-text send_btn"><i class="fas fa-location-arrow"></i></span>
 								</div>
 							</div>
@@ -204,7 +230,7 @@ constructor(props) {
 			return (
 			<>
 				<div class="row h-100 custom_row">
-							<div class="col-md-4 col-xl-4 chat"><div class="card mb-sm-3 mb-md-0 contacts_card">
+							<div class="col-md-6 col-xl-6 chat"><div class="card mb-sm-3 mb-md-0 contacts_card">
 								<div class="card-header">
 									<div class="input-group">
 										<input type="text" placeholder="Search..." name="" class="form-control search"/>
@@ -214,11 +240,11 @@ constructor(props) {
 									</div>
 								</div>
 								<div class="card-body contacts_body">
-									<ui class="contacts">
-										{this.state.ready && this.state.intersection ? this.state.intersection.map((channel, index) => {
+									<ul class="contacts">
+										{this.state.ready && this.state.channels ? this.state.channels.map((channel, index) => {
 											console.log(channel);
 											return (
-												<li key={index} onClick={() => {
+												<li style={{ overflowX: "scroll" }} key={index} onClick={() => {
 													this.setState({
 														channel
 													}, () => {
@@ -227,25 +253,25 @@ constructor(props) {
 												}} class="active">
 													<div class="d-flex bd-highlight">
 														<div class="img_cont">
-															<img src={channel.coverUrl} class="rounded-circle user_img"/>
+															<img src={channel.image} class="rounded-circle user_img"/>
 															<span class="online_icon"></span>
 														</div>
 														<div class="user_info">
-															<span>{channel.name}</span>
-															<p>Kalid is online</p>
+															<span>{channel.author}</span>
+															
 														</div>
 													</div>
 												</li>
 											);
 										}) : null}
 									
-									</ui>
+									</ul>
 								</div>
 							<div class="card-footer"></div>
 						</div>
 					</div>
 				
-				<div className="col-md-8 col-xl-8">
+				<div className="col-md-6 col-xl-6">
 					<div class="card">
 						<div class="card-header msg_head">
 							<div class="d-flex bd-highlight">
@@ -291,27 +317,49 @@ constructor(props) {
 			);
 		}
 	}
+	componentDidUpdate(prevProps, prevState) {
+		console.log(prevProps);
+		console.log(prevState);
+		if (prevState.enterChannel !== this.state.enterChannel) {
+			console.log("DOESN'T EQUAL - RUN CONDITION.");
+		}
+
+	}
 	exitChannel = () => {
 		console.log("exit channel clicked...");
-		this.props.channelExit(this.state.channel.url, this.state.channel.channelType);
 
 		this.setState({
 			channel: null,
 			leaveStream: false
 		})
 	}
+
     render() {
     	console.log(this.state);
         return (
             <div>
 				<Navigation />
 	
-					<div class="container-fluid h-100" style={{ margin: "40px 10px" }}>
+				{/*	<div class="container-fluid h-100" style={{ margin: "40px 10px" }}>
 					{this.state.leaveStream ? <button onClick={() => {
 						this.exitChannel();
 					}} className="btn btn-outine pink_button" style={{ padding: "4px 10px", width: "100%", marginBottom: "40px" }}>LEAVE CHANNEL AND RETURN TO MESSAGES</button> : null}
 						{this.renderConditional()}
-					</div>
+					</div>*/}
+					  {this.state.getStreamReady && this.props.username ? <Chat client={chatClient} theme={'messaging dark'}>
+						<ChannelList
+					      filters={{ type: 'messaging', members: { $in: [this.props.username] } }}
+					      sort={{ last_message_at: -1 }}
+					    />
+					    <Channel>
+					      <Window>
+					        <ChannelHeader />
+					        <MessageList />
+					        <MessageInput />
+					      </Window>
+					      <Thread fullWidth />
+					    </Channel>
+					  </Chat> : <h1 className="text-center">loading...</h1>}
 				<Footer />
             </div>
         );
@@ -321,17 +369,12 @@ constructor(props) {
 const mapStateToProps = (state) => {
 	console.log(state);
 	return {
-		userID: state.login.user ? state.login.user.userId : "unknown",
-		channels: state.openChannelReducer.list,
-		email: state.auth.data.email
+		email: state.auth.data.email,
+		username: state.auth.data.username,
+		token: state.token.token,
+		getStreamUser: state.getStream.data
 	}
 }
 
-export default connect(mapStateToProps, { 
-	getOpenChannelList, 
-	sbCreateOpenChannelListQuery, 
-	onOpenChannelPress, 
-	sbOpenChannelEnter, 
-	channelExit
-})(ChatSendbirdHomepage);
+export default connect(mapStateToProps, { setGetStreamUser })(ChatSendbirdHomepage);
 

@@ -94,7 +94,7 @@ constructor(props) {
             	<div style={{ marginTop: "20px" }} className="mx-auto">
 					<h2 className="text-center text-white underline">You MUST complete your profile before you can stream or appear in the "Profiles" section to post your videos for sale...</h2>
             	</div>
-					<div className="container" style={{ height: "100%" }}>
+					<div className="container">
 						<div className="row">
 							<div className="col-md-3" style={{ marginTop: "50px" }}>
 							     <div className="list-group ">
@@ -108,8 +108,8 @@ constructor(props) {
 					              
 					            </div> 
 							</div>
-							<div className="col-md-9" style={{ marginBottom: "100px" }}>
-							    <div className="card custom_card_two">
+							<div className="col-md-9" style={{ marginBottom: "100px"}}>
+							    <div className="card custom_card_two" style={{ height: "100%" }}>
 							        <div className="card-body">
 							            <div className="row">
 							                <div className="col-md-12">
@@ -118,7 +118,7 @@ constructor(props) {
 							                </div>
 							            </div>
 							            <div className="row">
-							                <div className="col-md-12">
+							                <div className="col-md-12" id="custom_container">
 							                    <form type="multipart/form-data" onSubmit={this.handleProfileSubmission}>
 							                    <div className="form-group row">
 					                                <label for="username" className="col-4 col-form-label">Age</label> 

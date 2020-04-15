@@ -6,6 +6,7 @@ import "../css/profile.css";
 import Modal from 'react-modal';
 import Footer from "../../common/footer/footer.js";
 import ReactLoading from 'react-loading';
+
  
 const customStyles = {
   content : {
@@ -31,7 +32,9 @@ constructor(props) {
 		successful: false,
 		modalIsOpen: false,
 		user: null,
-		skills: []
+		skills: [],
+		currentPage: 1,
+		profilesPerPage: 20
 	}
 }
 	componentDidMount() {
@@ -124,7 +127,55 @@ constructor(props) {
 
 		);
 	}
-    render() {
+    handleClickPage = (event) => {
+	    this.setState({
+	      currentPage: Number(event.target.id)
+	    }, () => {
+	    	console.log(this.state.currentPage);
+	    });
+    }
+	render() {
+		
+		const { currentPage, profilesPerPage, users } = this.state; 
+	    	// Logic for displaying users
+	    const lastIndexOfUser = currentPage * profilesPerPage;
+	    const indexOfFirstUser = lastIndexOfUser - profilesPerPage;
+	    const currentUsers = users.slice(indexOfFirstUser, lastIndexOfUser);
+
+	    const renderUsers = currentUsers.map((user, index) => {
+			console.log("user", user);
+				return (	
+					  <React.Fragment index={index}>
+					    <div onClick={() => {
+					    	console.log("clicked.");
+					    	this.handleClick(user);
+					    }} class="card col-md-2 hover_card" style={{ height: "100%", margin: "0px 12px 30px 12px", boxShadow: "10px 10px 10px grey" }}>
+					     <img class="card-img" src={user.profile.profilePic} alt="profile-pic" />
+					        <div class="card-img-overlay text-white d-flex justify-content-center align-items-end">
+					          <p>{user.username}</p>
+					        </div>
+					    </div>
+					 </React.Fragment>
+				);
+		})
+
+	    // Logic for displaying page numbers
+	    const pageNumbers = [];
+	    for (let i = 1; i <= Math.ceil(users.length / profilesPerPage); i++) {
+	      pageNumbers.push(i);
+	    }
+
+	    const renderPageNumbers = pageNumbers.map(number => {
+	      return (
+	        <a className="pagination-tag"
+	          key={number}
+	          id={number}
+	          onClick={this.handleClickPage}
+	        >
+	          {number}
+	        </a>
+	      );
+	    });
     	console.log(this.state);
         return (
             <div>
@@ -132,7 +183,7 @@ constructor(props) {
 				<div className="container-fluid style_container">
 					<div className="row">
 					
-					{this.state.users ? this.state.users.map((user, index) => {
+					{/*{this.state.users ? this.state.users.map((user, index) => {
 						console.log("user", user);
 							return (	
 								  <React.Fragment>
@@ -147,8 +198,15 @@ constructor(props) {
 								    </div>
 								 </React.Fragment>
 							);
-					}) : <div className="mx-auto"><ReactLoading type="spinningBubbles" color="black" height={500} width={500} /></div>}
+					}) : <div className="mx-auto"><ReactLoading type="spinningBubbles" color="black" height={500} width={500} /></div>}*/}
+						{renderUsers}
+					
 						{this.renderModalContent()}
+					</div>
+					<div className="row">
+						<div class="paginate mx-auto">
+							{renderPageNumbers}
+						</div>
 					</div>
 				</div>
 				<Footer />

@@ -44,6 +44,7 @@
     "sendbird": "^3.0.121",
     "simple-peer": "^9.6.2",
     "socket.io": "^2.3.0",
+    "socket.io-client": "^2.3.0",
     "stream-chat": "^1.7.2",
     "uuid": "^7.0.3"
   }

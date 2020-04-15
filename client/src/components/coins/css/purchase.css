@@ -9,9 +9,10 @@ section .section-title {
     text-transform: uppercase;
 }
 
-#team .card {
+#team .cardie {
     border: none;
     background: #ffffff;
+    max-height: 550px !important;
 }
 
 .image-flip:hover .backside,
@@ -87,8 +88,8 @@ section .section-title {
     transform-style: preserve-3d;
 }
 
-.frontside .card,
-.backside .card {
+.frontside .cardie,
+.backside .cardie {
     min-height: 312px;
 }
 

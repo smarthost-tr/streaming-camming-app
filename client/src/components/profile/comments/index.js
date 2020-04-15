@@ -96,7 +96,6 @@ constructor(props) {
     componentDidUpdate(prevProps, prevState) {
         console.log(prevProps);
         console.log(prevState);
-        if (prevState) {}
         if (this.props.user.username !== prevProps.user.username) {
            console.log("updated...");
             axios.post("/gather/profile/comments/individual", {

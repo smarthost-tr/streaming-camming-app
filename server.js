@@ -3,7 +3,6 @@
 /**************/
 const PORT = process.env.PORT || 5000;
 
-
 /*************/
 /*** SETUP ***/
 /*************/
@@ -15,8 +14,6 @@ const mongoDB = require("./config/db.js");
 const cors = require("cors");
 const path = require("path");
 const config = require("config");
-let server = http.createServer(app)
-let io = require('socket.io').listen(server);
 const passport = require("passport");
 // Storage Configuration
 const util = require('util');
@@ -29,11 +26,15 @@ const Mux = require('@mux/mux-node');
 const paypal = require('paypal-rest-sdk');
 const flash = require('connect-flash');
 const session = require('express-session');
+const mongo = require("mongodb");
+const moment = require("moment");
 
 const { Video } =  new Mux("f899a074-f11e-490f-b35d-b6c478a5b12a", "4vLdjx6uBafGdFiSbmWt5akv4DaD4PkDuCCYdFYXzudywyQSR3Uh27GqlfedlhZ17fbnXbf9Rh/");
 
 let STREAM;
 
+{/*var httpsServer = https.createServer(credentials, app).listen(<port>);*/}
+// io.set('origins', 'http://localhost:5000');
 
 //io.set('log level', 2);
 
@@ -45,7 +46,7 @@ paypal.configure({
   'client_secret': 'EGNFNDTQg9SNZcnYLQG10A73TQaH9DLVaYwMuLyev8o0r8nC4zKGEeE_WFGTZnRb5jwPQPxP2DursFDz'
 });
 
-
+app.use(cors());
 app.use('*', cors());
 
 app.use(express.json());
@@ -144,12 +145,18 @@ app.use("/cancel", require("./routes/paypal/pay/cancel.js"));
 app.use("/tokens/gather", require("./routes/tokens/gatherTokens.js"));
 app.use("/generate/user/token", require("./routes/getStreamChat/tokens/createToken.js"));
 app.use("/gather/image/profile", require("./routes/gatherUserImage.js"));
-app.use("/post/channel/db", require("./routes/sendbird/saveToDatabase/saveChannel.js"));
-app.use("/gather/personal/channels", require("./routes/sendbird/gatherCredentials/gatherChannels.js"));
+app.use("/post/channel/db", require("./routes/chat/saveToDatabase/saveChannel.js"));
+app.use("/post/channel/db/other/user", require("./routes/chat/saveToDatabase/saveReceivingChannel.js"));
+app.use("/gather/personal/channels", require("./routes/chat/gatherCredentials/gatherChannels.js"));
+app.use("/post/initial/private/conversation/reciever", require("./routes/chat/initial/reciever.js"));
+app.use("/post/initial/private/conversation", require("./routes/chat/initial/sender.js"));
+app.use("/gather/messages/all", require("./routes/chat/gatherMessages/index.js"));
+app.use("/reply/private/message/sender", require("./routes/chat/reply/sender.js"));
+app.use("/reply/private/message/reciever", require("./routes/chat/reply/reciever.js"));
+app.use("/gather/sub/responses", require("./routes/chat/custom_chat/chatHome.js"));
+app.use("/gather/unique/stream/id", require("./routes/getStreamChat/gatherUniqueStreamId.js"));
+
 
 app.listen(PORT, () => {
 	console.log(`Server listening on port ${PORT}!`);
 });
-
-
- 

@@ -55,7 +55,7 @@ constructor(props) {
             }
         };
 
-        
+
 
 		// check if everything is filled out
 		if (security.length > 0 && securityAnswer.length > 0 && gender.length > 0 && firstName.length > 0 && lastName.length > 0 && phoneNumber.length > 0 && email.length > 0 && username.length > 0 && password.length > 0 && birthdate !== null && image) {
@@ -63,8 +63,8 @@ constructor(props) {
 				// console.log response
 				console.log(res.data);
 				if (res.data.user !== null) {
-					this.props.authentication(res.data.user);
-					this.props.history.push("/");
+					// this.props.authentication(res.data.user);
+					this.props.history.push("/login");
 					alert("Successfully registered!");
 				} else {
 					alert("User already exists, use a different email.");

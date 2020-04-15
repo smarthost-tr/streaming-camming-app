@@ -5,7 +5,11 @@ import { connect } from "react-redux";
 import { authentication } from "../../actions/index.js";
 import { withRouter } from "react-router-dom";
 import "./registration.css";
-import { sendbirdLogin } from "../../actions/sendbird/loginActions.js";
+import { token } from "../../actions/token.js";
+import { StreamChat } from 'stream-chat';
+
+
+const client = new StreamChat('qzye22t8v5c4');
 
 class LoginScreen extends Component {
 constructor(props) {
@@ -26,15 +30,20 @@ constructor(props) {
 		if (this.state.email.length > 0 && this.state.password.length > 0) {
 			axios.post("/authentication/login", {
 				email: email.toLowerCase(),
-				password
+				password,
+				secret: "37ek4bmy38umj9sfbgxtte7jkj7dyr88tfsvexvm7vc7k7k5d4ekvacerq3wj7a5"
 			}).then((res) => {
 				console.log(res.data);
 				if (res.data.data) {
-					this.props.sendbirdLogin({ 
-						userId: res.data.data.chat_uuid, 
-						nickname: res.data.data.username
-					})
 					this.props.authentication(res.data.data);
+					this.props.token(res.data.token);
+		
+					client.setUser({
+					   id: res.data.data.username,
+					   name: res.data.data.username,
+					   image: 'https://getstream.io/random_svg/?id=spring-silence-0&name=Spring+silence'
+					}, res.data.token);
+
 					this.props.history.push("/");
 				} else {
 					alert("Please enter valid credentials.");
@@ -46,6 +55,10 @@ constructor(props) {
 		} else {
 			alert("You must complete both email and password fields.");
 		}
+	}
+	componentWillUnmount () {
+		console.log("disconnecting...");
+		client.disconnect();
 	}
     render() {
         return (
@@ -98,4 +111,4 @@ constructor(props) {
     }
 }
 
-export default withRouter(connect(null, { authentication, sendbirdLogin })(LoginScreen));
+export default withRouter(connect(null, { authentication, token })(LoginScreen));
