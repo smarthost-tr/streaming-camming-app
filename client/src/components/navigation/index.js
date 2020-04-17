@@ -19,6 +19,9 @@ import { connect } from "react-redux";
 import { authentication } from "../../actions/index.js";
 import { store } from "../../store/store.js";
 import axios from "axios";
+import io from "socket.io-client";
+
+const socket = io("http://localhost:5000");
 
 class Navigation extends Component {
 constructor(props) {
@@ -29,7 +32,8 @@ constructor(props) {
     friends: [],
     users: [],
     successful: false,
-    tokens: null
+    tokens: null,
+    cammer: false
   };
 }
   toggle = () => {
@@ -148,33 +152,69 @@ constructor(props) {
       }).catch((err) => {
         console.log(err);
       })
+      axios.post("/check/if/cammer/true", {
+        email: this.props.authenticated
+      }).then((res) => {
+        if (res.data.length === 0) {
+          console.log("undefined/unknown - do nothing.")
+          return null;
+        } else {
+          console.log(res.data);
+          this.setState({
+            cammer: true
+          })
+        }
+        
+      }).catch((err) => {
+        console.log(err);
+      })
     }, 300);
+  }
+  constantRender = () => {
+    socket.on("connection", () => {
+      console.log("connected.");
+    })
   }
   render () { 
     console.log(this.state);
     return (
       <div>
         <Navbar color="light" light expand="md">
-          <NavbarBrand><Link style={{ color: "purple" }} to="/">Jerk N' Squirtn'</Link></NavbarBrand>
+          <NavbarBrand><img onClick={() => {
+            this.props.history.push("/");
+          }} style={{ width: "200px", height: "50px" }} src={require("../../images/logos.png")} alt="logo"/></NavbarBrand>
           <NavbarToggler onClick={this.toggle} />
           <Collapse isOpen={this.state.isOpen} navbar>
             <Nav className="mr-auto" navbar>
   {/*          <NavItem>
                 <Link className="nav-link" to="/">Homepage</Link>
               </NavItem>*/}
+              {this.props.authenticated ? <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Tokens
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                  <Link class="dropdown-item" href="#">Earn Tokens</Link>
+                  <Link class="dropdown-item" to="/purchase/tokens">Purchase Tokens</Link>
+                  <div class="dropdown-divider"></div>
+                  <Link class="dropdown-item" href="#">Something else here</Link>
+                </div>
+              </li> : null}
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Streams/Broadcasting
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                  {this.props.authenticated && this.state.cammer ? <Link class="dropdown-item" to="/streams/create">Start PUBLIC Stream</Link> : null}
+                  <Link class="dropdown-item" to="/profiles">Cammers/Buy-Content</Link>
+                  <div class="dropdown-divider"></div>
+                  {this.props.authenticated ? <Link class="dropdown-item" to="/streams/create/private">Start PRIVATE Stream</Link> : null}
+                </div>
+              </li>
               {this.props.authenticated ? <NavItem>
-                <Link to="/chat/homepage" className="nav-link">Chat</Link>
+                <Link to="/chat/homepage" className="nav-link">Communication</Link>
               </NavItem> : null}
-              {this.props.authenticated ? <NavItem>
-                <Link className="nav-link" to="/purchase/tokens">Purchase Tokens</Link>
-              </NavItem> : null}
-      
-           	{this.props.authenticated ? <NavItem>
-                <Link className="nav-link" to="/streams/create">Broadcast Yourself</Link>
-              </NavItem> : null}
-              <NavItem className="link">
-                <Link className="nav-link" to="/profiles">Cammers/Buy-Content</Link>
-              </NavItem>
+
             </Nav>
             	{this.props.authenticated ? null : <NavItem className="link">
                 <Link className="btn btn-outline-info" to="/login">Sign-in</Link>
@@ -240,7 +280,7 @@ constructor(props) {
                 </li> : null}
              
               {this.props.authenticated ? <NavbarText>{store.getState().auth.data.username.slice(0, 10)}..., (<strong>{this.state.tokens ? this.state.tokens : "Unknown"}</strong>) tokens</NavbarText> : null}
-
+            {this.constantRender()}
           </Collapse>
         </Navbar>
       </div>

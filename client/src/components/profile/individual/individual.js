@@ -299,42 +299,7 @@ constructor(props) {
 		    text: message,
 		    customField: '123',
 		});
-     
-    // 	axios.post("/post/initial/private/conversation", {
-    // 		message,
-    // 		email: this.props.email,
-    // 		author: `Private Thread - ${this.props.username} + ${user.username}`,
-    // 		image: this.props.image,
-    // 		sender: this.props.email,
-    // 		reciever: user.email,
-    // 		uniqueID
-    // 	}).then((res) => {
-    // 		console.log(res.data);
-    // 		if (res.data) {
-				// error = false;
-    // 		}
-    // 	}).catch((err) => {
-    // 		console.log(err);
-    // 		error = true;
-    // 		alert("There was an error...");
-    // 	})
-    //    	axios.post("/post/initial/private/conversation/reciever", {
-    // 		message,
-    // 		email: user.email,
-    // 		author: `Private Thread - ${this.props.username} + ${user.username}`,
-    // 		image: this.props.image,
-    //    		sender: this.props.email,
-    // 		reciever: user.email,
-    // 		uniqueID
-    // 	}).then((res) => {
-    // 		console.log(res.data);
-    // 		if (res.data) {
-    // 			alert("Successfully messaged this user!");
-    // 		}
-    // 	}).catch((err) => {
-    // 		console.log(err);
-    // 		alert("There was an error...");
-    // 	})
+
 
     	this.setState({
     		popover: false
@@ -793,27 +758,27 @@ constructor(props) {
 															      	this.setState({
 															      		percentage: 20
 															      	})
-															      }} class="dropdown-item">20%</a>
+															      }} class="dropdown-item drop">20%</a>
 															      <a onClick={() => {
 															      	this.setState({
 															      		percentage: 40
 															      	})
-															      }} class="dropdown-item">40%</a>
+															      }} class="dropdown-item drop">40%</a>
 															      <a onClick={() => {
 															      	this.setState({
 															      		percentage: 60
 															      	})
-															      }}  class="dropdown-item">60%</a>
+															      }}  class="dropdown-item drop">60%</a>
 															      <a onClick={() => {
 															      	this.setState({
 															      		percentage: 80
 															      	})
-															      }}  class="dropdown-item">80%</a>
+															      }}  class="dropdown-item drop">80%</a>
 															      <a onClick={() => {
 															      	this.setState({
 															      		percentage: 100
 															      	})
-															      }} class="dropdown-item">100%</a>
+															      }} class="dropdown-item drop">100%</a>
 															     </div>
 															     
 															  </div>

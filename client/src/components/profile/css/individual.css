@@ -4,3 +4,10 @@
 .link-a:hover {
 	cursor: pointer;
 }
+.drop {
+	color: black !important;
+}
+.drop:hover {
+	color: tan !important;
+	cursor: pointer;
+}

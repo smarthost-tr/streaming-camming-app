@@ -143,9 +143,8 @@ constructor(props) {
 	    const currentUsers = users.slice(indexOfFirstUser, lastIndexOfUser);
 
 	    const renderUsers = currentUsers.map((user, index) => {
-			console.log("user", user);
 				return (	
-					  <React.Fragment index={index}>
+					  <React.Fragment key={index}>
 					    <div onClick={() => {
 					    	console.log("clicked.");
 					    	this.handleClick(user);

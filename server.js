@@ -15,6 +15,9 @@ const cors = require("cors");
 const path = require("path");
 const config = require("config");
 const passport = require("passport");
+const server = http.createServer(app);
+const socket = require("socket.io");
+const io = socket(server);
 // Storage Configuration
 const util = require('util');
 const fs = require('fs');
@@ -34,9 +37,7 @@ const { Video } =  new Mux("f899a074-f11e-490f-b35d-b6c478a5b12a", "4vLdjx6uBafG
 let STREAM;
 
 {/*var httpsServer = https.createServer(credentials, app).listen(<port>);*/}
-// io.set('origins', 'http://localhost:5000');
 
-//io.set('log level', 2);
 
 mongoDB();
 
@@ -80,7 +81,7 @@ app.get('/*', cors(), function(_, res) {
 });
 
 app.use(function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", '*');
+    res.header("Access-Control-Allow-Origin", 'http://localhost:3000');
     res.header("Access-Control-Allow-Credentials", true);
     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
     res.header("Access-Control-Allow-Headers", 'Origin,X-Requested-With,Content-Type,Accept,content-type,application/json');
@@ -119,7 +120,7 @@ app.use("/streaming/get/individual/broadcast", require("./routes/streaming/getBr
 app.use("/register/new/user", require("./routes/auth/register.js"));
 app.use("/mux/create/stream", require("./routes/mux/index.js"));
 app.use("/mux/get/streams", require("./routes/mux/gatherStream.js"));
-app.use("/get/stream", require("./routes/mux/"));
+// app.use("/get/stream", require("./routes/mux/"));
 app.use("/authentication/login", require("./routes/auth/login.js"));
 app.use("/post/new/stream", require("./routes/streaming/mongodb/saveStreamData.js"));
 app.use("/complete/form/page/one", require("./routes/forms/cammerRegistration/agreement.js"));
@@ -148,15 +149,35 @@ app.use("/gather/image/profile", require("./routes/gatherUserImage.js"));
 app.use("/post/channel/db", require("./routes/chat/saveToDatabase/saveChannel.js"));
 app.use("/post/channel/db/other/user", require("./routes/chat/saveToDatabase/saveReceivingChannel.js"));
 app.use("/gather/personal/channels", require("./routes/chat/gatherCredentials/gatherChannels.js"));
-app.use("/post/initial/private/conversation/reciever", require("./routes/chat/initial/reciever.js"));
-app.use("/post/initial/private/conversation", require("./routes/chat/initial/sender.js"));
-app.use("/gather/messages/all", require("./routes/chat/gatherMessages/index.js"));
-app.use("/reply/private/message/sender", require("./routes/chat/reply/sender.js"));
-app.use("/reply/private/message/reciever", require("./routes/chat/reply/reciever.js"));
+// app.use("/post/initial/private/conversation/reciever", require("./routes/chat/initial/reciever.js"));
+// app.use("/post/initial/private/conversation", require("./routes/chat/initial/sender.js"));
+// app.use("/gather/messages/all", require("./routes/chat/gatherMessages/index.js"));
+// app.use("/reply/private/message/sender", require("./routes/chat/reply/sender.js"));
+// app.use("/reply/private/message/reciever", require("./routes/chat/reply/reciever.js"));
+app.use("/gather/user/info/from/stream", require("./routes/streaming/getByStreamId.js"));
+app.use("/take/away/tokens/tip", require("./routes/tokens/takeAwayTokensTip.js"));
+app.use("/send/tokens/to/user", require("./routes/tokens/sendTokensToUser.js"));
 app.use("/gather/sub/responses", require("./routes/chat/custom_chat/chatHome.js"));
 app.use("/gather/unique/stream/id", require("./routes/getStreamChat/gatherUniqueStreamId.js"));
+app.use("/post/private/stream/id/sender", require("./routes/streaming/private/senderCode.js"));
+app.use("/post/private/stream/id/reciever", require("./routes/streaming/private/recieverCode.js"));
+app.use("/check/stream/live/id", require("./routes/streaming/private/checkCode.js"));
+app.use("/check/if/cammer/true", require("./routes/checkIfCammer.js"));
+app.use("/gather/user/id/specific", require("./routes/gatherSpecificID.js"));
 
 
-app.listen(PORT, () => {
+io.on("connection", socket => {
+  console.log("New client connected");
+  socket.on("tipped", (data) => {
+    console.log(data);
+    io.sockets.emit("tip", data);
+  })
+
+  socket.on("disconnect", () => console.log("Client disconnected"));
+});
+
+
+
+server.listen(PORT, () => {
 	console.log(`Server listening on port ${PORT}!`);
 });

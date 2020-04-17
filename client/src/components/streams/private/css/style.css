@@ -1,0 +1,136 @@
+#cover {
+  background-image: url('http://getwallpapers.com/wallpaper/full/a/5/d/544750.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  height: 100vh;
+  font-family: 'Numans', sans-serif;
+}
+.social_icon span{
+  font-size: 60px;
+  margin-left: 10px;
+  color: #FFC312;
+}
+
+.social_icon span:hover{
+  color: white;
+  cursor: pointer;
+}
+
+.card-header h3{
+  color: white;
+}
+
+.social_icon{
+  position: absolute;
+  right: 20px;
+  top: -45px;
+}
+
+
+
+input:focus{
+  outline: 0 0 0 0  !important;
+  box-shadow: 0 0 0 0 !important;
+
+}
+
+.remember{
+  color: white;
+}
+
+.remember input
+{
+  width: 20px;
+  height: 20px;
+  margin-left: 15px;
+  margin-right: 5px;
+}
+
+.login_btn{
+  color: black;
+  background-color: #FFC312;
+  width: 100px;
+}
+
+.login_btn:hover{
+  color: black;
+  background-color: white;
+}
+
+.links{
+  color: white;
+}
+
+.links a{
+  margin-left: 4px;
+}
+
+.our-team-main
+{
+  width:100%;
+  height:auto;
+  border-bottom:5px #323233 solid;
+  background:#fff;
+  text-align:center;
+  border-radius:10px;
+  overflow:hidden;
+  position:relative;
+  transition:0.5s;
+  margin-bottom:28px;
+}
+
+
+.our-team-main img
+{
+  border-radius:50%;
+  margin-bottom:20px;
+  width: 90px;
+}
+
+.our-team-main h3
+{
+  font-size:20px;
+  font-weight:700;
+}
+
+.our-team-main p
+{
+  margin-bottom:0;
+}
+
+.team-back
+{
+  width:100%;
+  height:auto;
+  position:absolute;
+  top:0;
+  left:0;
+  padding:5px 15px 0 15px;
+  text-align:left;
+  background:#fff;
+  
+}
+
+.team-front
+{
+  width:100%;
+  height:auto;
+  position:relative;
+  z-index:10;
+  background:#fff;
+  padding:15px;
+  bottom:0px;
+  transition: all 0.5s ease;
+}
+
+.our-team-main:hover .team-front
+{
+  bottom:-200px;
+  transition: all 0.5s ease;
+}
+
+.our-team-main:hover
+{
+  border-color:#777;
+  transition:0.5s;
+}

@@ -4,7 +4,6 @@ import axios from "axios";
 import { connect } from "react-redux";
 import StreamList from "./components/streams/streamList.js";
 import { BrowserRouter, Route } from "react-router-dom";
-import ViewStream from "./components/streams/viewStream.js";
 import StreamEdit from "./components/streams/streamEdit.js";
 import StreamDelete from "./components/streams/streamDelete.js";
 import StreamShow from "./components/streams/streamShow.js";
@@ -27,6 +26,9 @@ import OthersFriendsList from "./components/friends/otherUsersFriends/index.js";
 import ThankYouPaymentPage from "./components/coins/thankYouPage.js";
 import AssetShow from "./components/streams/assetShow.js";
 import ChatSendbirdHomepage from "./components/sendbirdChat/chatHomepage.js";
+import LivePrivateStreamHomepage from "./components/streams/private/homepage.js";
+import ProtectedPrivateStream from "./components/streams/private/css/style.css";
+import CreatePrivateStream from "./components/streams/private/create/createPrivateStream.js";
 
 class App extends Component {
 constructor(props) {
@@ -72,6 +74,8 @@ constructor(props) {
         <Route path="/show/individual/asset/profile/page/:id" exact component={AssetShow} />
         
         {this.props.auth ? <Route path="/chat/homepage" exact component={ChatSendbirdHomepage} /> : <Route path="/chat/homepage" exact component={ErrorUnauthorized} />}
+        {this.props.auth ? <Route path="/private/live/stream/:id" exact component={LivePrivateStreamHomepage} /> : <Route path="/private/live/stream/:id" exact component={ErrorUnauthorized} />}
+        {this.props.auth ? <Route path="/streams/create/private" exact component={CreatePrivateStream} /> : <Route path="/streams/create/private" exact component={ErrorUnauthorized} />}
       </div>
     </BrowserRouter>
     );
