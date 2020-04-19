@@ -39,7 +39,8 @@ constructor(props) {
     	popover: false,
     	message: "",
     	endpoint: "http://localhost:5000",
-    	chatTitle: ""
+    	chatTitle: "",
+    	complete: false
     }
 }
 	addSkillToDB = (e) => {
@@ -126,13 +127,23 @@ constructor(props) {
 					   			})
 					   		}
 					    });
-						let stream_playback_ids = res.data.data.playback_ids[0].id;
+
+					    console.log(res);
+						if (res) {
+							if (res.data.data.playback_ids[0].policy === "public") {
+								let stream_playback_ids = res.data.data.playback_ids[0].id;
+
+								this.setState({
+							    	stream_playback_ids: [...this.state.stream_playback_ids, stream_playback_ids]
+							    })
+
+							    console.log(res.data.data.playback_ids[0].id);
+							}
+						}
 
 					    this.setState({
-					    	stream_playback_ids: [...this.state.stream_playback_ids, stream_playback_ids]
+					    	complete: true
 					    })
-
-					    console.log(res.data.data.playback_ids[0].id);
 					}
 					asyncReturn();
 				}
@@ -249,11 +260,13 @@ constructor(props) {
 					   			})
 					   		}
 					    });
-						let stream_playback_ids = res.data.data.playback_ids[0].id;
+						if (res) {
+							let stream_playback_ids = res.data.data.playback_ids[0].id;
 
-						if (stream_playback_ids === identifier) {
-							console.log("we have a match", stream);
-							this.props.history.push(`/show/individual/asset/profile/page/${stream.active_asset_id}`, { id: stream.active_asset_id });
+							if (stream_playback_ids === identifier) {
+								console.log("we have a match", stream);
+								this.props.history.push(`/show/individual/asset/profile/page/${stream.active_asset_id}`, { id: stream.active_asset_id });
+							}
 						}
 					}
 					asyncReturn();
@@ -593,13 +606,13 @@ constructor(props) {
 				                           
 				                            <div class="panel panel-default panel-fill">
 
-				                                <div class="panel-body" style={{ height: "100vh" }}>
+				                                <div class="panel-body" style={{ height: "100%" }}>
 				                                    <div class="timeline-2">
 														<div className="row">
-				                                        {this.state.stream_playback_ids.length > 0 ? this.state.stream_playback_ids.map((id, index) => {
+				                                        {this.state.stream_playback_ids.length > 0 && this.state.complete ? this.state.stream_playback_ids.map((id, index) => {
 				                                        	console.log("ID! :", id);
 				                                        	return (
-																<div className="col-md-3">
+																<div style={{ margin: "20px 10px" }} className="col-md-3">
 																<div className="overlay_parent">
 				                                        			<img className="overlay" style={{ width: "100%", height: "100%" }} src={`https://image.mux.com/${id}/animated.gif`} alt="video-custom"/>
 				                                        			<button onClick={() => {

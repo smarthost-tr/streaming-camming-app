@@ -20,8 +20,14 @@ import { authentication } from "../../actions/index.js";
 import { store } from "../../store/store.js";
 import axios from "axios";
 import io from "socket.io-client";
+import { StreamChat } from 'stream-chat';
+
+
+const client = new StreamChat('qzye22t8v5c4');
 
 const socket = io("http://localhost:5000");
+
+let channel;
 
 class Navigation extends Component {
 constructor(props) {
@@ -33,7 +39,8 @@ constructor(props) {
     users: [],
     successful: false,
     tokens: null,
-    cammer: false
+    cammer: false,
+    showNotificationBanner: true
   };
 }
   toggle = () => {
@@ -168,6 +175,11 @@ constructor(props) {
       }).catch((err) => {
         console.log(err);
       })
+
+
+      this.setState({
+        showNotificationBanner: false
+      })
     }, 300);
   }
   constantRender = () => {
@@ -175,6 +187,7 @@ constructor(props) {
       console.log("connected.");
     })
   }
+
   render () { 
     console.log(this.state);
     return (
@@ -186,9 +199,6 @@ constructor(props) {
           <NavbarToggler onClick={this.toggle} />
           <Collapse isOpen={this.state.isOpen} navbar>
             <Nav className="mr-auto" navbar>
-  {/*          <NavItem>
-                <Link className="nav-link" to="/">Homepage</Link>
-              </NavItem>*/}
               {this.props.authenticated ? <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   Tokens
@@ -293,7 +303,8 @@ const mapStateToProps = (state) => {
 	return {
 		authenticated: state.auth.data.email,
     username: state.auth.data.username,
-    tokens: state.auth.data.tokens ? state.auth.data.tokens : 0
+    tokens: state.auth.data.tokens ? state.auth.data.tokens : 0,
+    token: state.token.token
 	}
 }
 

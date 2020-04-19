@@ -64,7 +64,8 @@ class StreamShow extends Component {
 		streamID: null,
 		loaded: null,
 		startedStream: null,
-		data: []
+		data: [],
+		setUser: null
     }
 
 }
@@ -90,11 +91,15 @@ class StreamShow extends Component {
 			
 			if (this.props.username) {
 				console.log("user is logged in.")
-				client.setUser({
+				const userrr = client.setUser({
 				    id: this.props.username,
 				    name: this.props.username,
 				    image: 'https://getstream.io/random_svg/?id=patient-breeze-7&name=Patient+breeze'},
 				this.props.token);
+
+				this.setState({
+					setUser: userrr
+				})
 
 				channel = client.channel('livestream', this.props.location.state.streamID, {
 				  image: 'https://goo.gl/Zefkbx',
@@ -210,11 +215,11 @@ class StreamShow extends Component {
 		} else {
 			return (
 				<React.Fragment>
-					<div className={`col-md-${this.state.col}`}>
+					<div className={`col-lg-${this.state.col} col-sm-12 col-md-12`}>
 						<ReactPlayer playing={true} style={{ backgroundColor: "black" }} url={`https://stream.mux.com/${this.state.playbackID}.m3u8`} controls width="100%" height="100%" />
 
 					</div>
-					 {this.state.ready ?  <div style={{ maxWidth: "100%" }}><Chat client={client} theme={'livestream dark'}>
+					 {this.state.ready ?  <div className="col-lg-6 col-sm-12 col-md-12"><Chat client={client} theme={'livestream dark'}>
 					    <Channel channel={channel} Message={MessageLivestream}>
 					      <Window hideOnThread>
 					        <ChannelHeader live />
@@ -380,26 +385,47 @@ class StreamShow extends Component {
 
 		const secondID = uuid();
 
-		console.log("creating live stream...!");
+		console.log("creating live stream...!", this.props.location.state.streamID);
 
 		axios.post("/gather/user/info/from/stream", {
 			id: this.props.location.state.streamID
-		}).then(async (res) => {
+		}).then((res) => {
 			console.log(res.data[0]);
 
 			const user = res.data[0];
 
+			axios.post("/get/stream/mux/id", {
+				email: user.email
+			}).then(async (response) => {
+				console.log(response.data[0].streams[response.data[0].streams.length - 1]);
 
-			const conversation = client.channel('messaging', `private-1-on-1-stream-info-${generated}`, {
-				name: `private-1-on-1-stream-info-${generated}`,
-			    members: [this.props.username, user.username],
-			});
+				const last = response.data[0].streams[response.data[0].streams.length - 1].id;
 
-			await conversation.create();
-	                    
-			await conversation.sendMessage({
-			    text: `Your uniquely generated id to access your private stream with ${user.username} is ${generated}. Go to the following url and enter the code provided... http://localhost:3000/private/live/stream/${secondID}`
-			});
+					console.log("set the user.");
+				// client.setUser({
+				//     id: this.props.username,
+				//     name: this.props.username,
+				//     image: 'https://getstream.io/random_svg/?id=patient-breeze-7&name=Patient+breeze'},
+				// this.props.token);
+
+				const conversation = client.channel('messaging', `private-1-on-1-stream-info-${generated}`, {
+					name: `private-1-on-1-stream-info-${generated}`,
+				    members: [this.props.username, user.username],
+				});
+
+				await conversation.create();
+		                    
+				await conversation.sendMessage({
+				    text: `Your uniquely generated id to access your private stream between ${this.props.username} and ${user.username} is ${generated}. Go to the following url and enter the code provided... http://localhost:3000/private/live/stream/${last} - You will be notified when the stream is live and ready to be joined...!`
+				});
+
+
+			}).catch((err) => {
+				console.log(err);
+			})
+
+// this is what should match - 95cfbc77-b5f3-6a36-e06c-6e05d522cb1c
+			
 
 			axios.post("/post/private/stream/id/sender", {
 				id: generated,
@@ -426,7 +452,9 @@ class StreamShow extends Component {
 			});
 
 
-			this.props.history.push(`/chat/homepage`);
+			setTimeout(() => {
+				this.props.history.push(`/chat/homepage`);
+			}, 1500);
 
 
 		}).catch((err) => {
@@ -448,13 +476,17 @@ class StreamShow extends Component {
  				<div className="container-fluid" id="fragment_background" style={{ height: "100%", padding: "30px 20px 0px 0px" }}>
  				{this.props.username ? <div onClick={() => {
  					this.renderModal();
- 				}} className="container"><button className="btn btn-outline purple_button" style={{ width: "100%" }}>Start a 1 on 1 PRIVATE stream</button></div> : null}
+ 				}} className="container-fluid">{this.props.username === this.state.username ? null : <button className="btn btn-outline purple_button" style={{ width: "100%" }}>Start a 1 on 1 PRIVATE stream</button>}</div> : null}
 					<div className="row" style={{ margin: "40px 0px" }}>
 						<div className="mx-auto">
 							{this.props.username ? null : <p className="text-center lead bold" style={{ textDecoration: "underline" }}>You are seeing only a SMALL portion of the avaliable content... please sign-in to join the chat and access all of our restricted features.</p>}
 						</div>
 
-						{this.renderContent()}
+						
+							<div className="row">
+								{this.renderContent()}
+							</div>
+					
 					</div>
 					<div className="container" style={{ paddingBottom: "30px" }}>
 					<h4 className="text-center bold">{this.state.groupMessages !== null ? this.state.groupMessages : null}</h4>

@@ -30,17 +30,12 @@ import LivePrivateStreamHomepage from "./components/streams/private/homepage.js"
 import ProtectedPrivateStream from "./components/streams/private/css/style.css";
 import CreatePrivateStream from "./components/streams/private/create/createPrivateStream.js";
 
+
 class App extends Component {
 constructor(props) {
   super(props);
 
-  
-
-  this.state = {
-
-  };
 }
-
   handleClick = () => {
     console.log("clicked");
     axios.post("/stream").then((res) => {
@@ -83,7 +78,9 @@ constructor(props) {
 }
 const mapStateToProps = (state) => {
   return {
-    auth: state.auth.data.email
+    auth: state.auth.data.email,
+    token: state.token.token,
+    username: state.auth.data.username
   }
 }
 

@@ -56,7 +56,8 @@ constructor(props) {
 					<div className="container-fluid background">
 					<div className="row">
 					{streamsReady ? this.state.streams.map((stream, index) => {
-						if (stream.playback_ids[0].id && stream.status === "active") {
+						console.log(stream.new_asset_settings.playback_policies[0]);
+						if (stream.playback_ids[0].id && stream.status === "active" && stream.new_asset_settings.playback_policies[0] === "public") {
 							return (
 								<div key={index} className="col-md-3">
 									<img className="box" onClick={() => {
@@ -67,7 +68,8 @@ constructor(props) {
 						} 
 					}) : null}
 					{streamsReady ? this.state.assets.map((asset, index) => {
-						if (asset.playback_ids) {
+						console.log(asset);
+						if (asset.status === "ready" && asset.playback_ids[0].policy === "public") {
 							return (
 								<div key={index} className="col-md-3" id="dark_image">
 									<img className="box-two" onClick={() => {

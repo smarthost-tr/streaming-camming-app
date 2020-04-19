@@ -45,20 +45,20 @@ constructor(props) {
 
 		
 
-		axios.post("/gather/messages/all", {
-			email: this.props.email
-		}).then((res) => {
-			console.log(res.data);
-			for (let key in res.data) {
-				let messages = res.data[key].messages;
-				this.setState({
-					channels: messages,
-					ready: true
-				})
-			}
-		}).catch((err) => {
-			console.log(err);
-		});
+		// axios.post("/gather/messages/all", {
+		// 	email: this.props.email
+		// }).then((res) => {
+		// 	console.log(res.data);
+		// 	for (let key in res.data) {
+		// 		let messages = res.data[key].messages;
+		// 		this.setState({
+		// 			channels: messages,
+		// 			ready: true
+		// 		})
+		// 	}
+		// }).catch((err) => {
+		// 	console.log(err);
+		// });
 
 
 		setTimeout(() => {
@@ -77,6 +77,7 @@ constructor(props) {
 			}, this.props.token);
 
 			this.setState({
+				ready: true,
 				getStreamReady: true
 			})
 		}, 500);

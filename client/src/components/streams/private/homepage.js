@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import Footer from "../../common/footer/footer.js";
 import axios from "axios";
 import { connect } from "react-redux";
+import ReactPlayer from 'react-player';
 
 class LivePrivateStreamHomepage extends Component {
 constructor(props) {
@@ -12,11 +13,39 @@ constructor(props) {
 
 	this.state = {
 		id: "",
-		result: null
+		result: null,
+		solution: null,
+		data: [],
+		uniqueID: null,
+		ready: false,
+		token: null
 	}
 }
 	renderSubmission = (e) => {
 		e.preventDefault();
+		
+
+		// find user email and feed to api call below - target streams.id because thats what needs to be fed into the video player in the return/render section at the very bottom - send email when stream is created to both opposite emails so the mongodb can be pulled and use the other persons id
+		
+		axios.post("/get/user/that/matches/id", {
+			id: this.state.id
+		}).then((res) => {
+			console.log(res.data);
+			this.setState({
+				data: res.data
+			})
+		}).catch((err) => {
+			console.log(err);
+		})	
+
+		// axios.post("/mux/get/streams", {
+		// 	streamID: this.state.id
+		// }).then((res) => {
+		// 	console.log(res.data);
+		// }).catch((err) => {
+		// 	console.log(err);
+		// })	
+
 		console.log("submitted...");
 
 		axios.post("/check/stream/live/id", {
@@ -25,21 +54,122 @@ constructor(props) {
 		}).then((res) => {
 			console.log(res.data);
 			if (res.data.length > 0) {
-				return res.data[0].privateStreamCodes.map((each, index) => {
-					if (each.streamCode === this.state.id) {
-						console.log("MATCH.");
+				if (res.data[0].privateStreamCodes.streamCode === this.state.id) {
+					console.log("MATCH.");
+					this.setState({
+						result: res.data[0]
+					}, async () => {
+						  const auth = {
+						    username: "f899a074-f11e-490f-b35d-b6c478a5b12a",
+						    password: "4vLdjx6uBafGdFiSbmWt5akv4DaD4PkDuCCYdFYXzudywyQSR3Uh27GqlfedlhZ17fbnXbf9Rh/"
+						  };
+						  const param = { "reduced_latency": true, 
+							  "playback_policy": "public", 
+							  "new_asset_settings": { 
+							  	"playback_policy": "public" 
+							  } 
+					      }
+						  const identifier = this.state.result.streams[this.state.result.streams.length - 1].id;
+
+						  const res = await axios.get(`https://api.mux.com/video/v1/live-streams/${identifier}`, { auth: auth }).catch((error) => {
+						    throw error;
+						  });
+
+						  const solution = res.data.data;
+
+						  console.log(solution);
+
 						this.setState({
-							result: res.data[0]
+							solution
 						})
-					}
-				})
+					})	
+				}
 			} else {
 				alert("Password doesn't match this streams records...")
 			}
 		}).catch((err) => {
 			console.log(err);
 		})
-	}
+	}	
+	runRefresh = async () => {
+		const auth = {
+		    username: "f899a074-f11e-490f-b35d-b6c478a5b12a",
+		    password: "4vLdjx6uBafGdFiSbmWt5akv4DaD4PkDuCCYdFYXzudywyQSR3Uh27GqlfedlhZ17fbnXbf9Rh/"
+		};
+
+		const signing = await axios.post("https://api.mux.com/video/v1/signing-keys", {}, { auth: auth }).catch((error) => {
+		    throw error;
+		});
+
+		console.log(signing.data);
+
+		const signing_key = signing.data.data.id;
+
+		if (this.state.data) {
+			return this.state.data.map((user, index) => {
+				console.log(user.email);
+
+				if (user.email === this.state.result.email) {
+					console.log("jackpot :", user.email);
+					axios.post("/get/stream/mux/id", {
+						email: user.email
+					}).then((res) => {
+						console.log(res.data);
+						this.setState({
+							uniqueID: res.data[0].streams[res.data[0].streams.length - 1].playback_ids[0].id
+						}, () => {
+							const { uniqueID } = this.state;
+
+							axios.post("/create/mux/json/web/token", {
+								private_key: signing.data.data.private_key,
+								playbackID: uniqueID,
+								identifier: signing.data.data.id
+						  	}).then((res) => {
+						  		console.log(res.data);
+						  		if (res.data) {
+						  			axios.post("/create/mux/token/private", {
+									  	id: this.state.solution.playback_ids[0].id,
+									  	signing: signing.data.data.id,
+									  	private_key: signing.data.data.private_key
+									}).then((responseee) => {
+									  	console.log(responseee.data);
+									  	this.setState({
+									  		token: responseee.data
+									  	});
+
+
+									}).catch((err) => {
+									  	console.log(err);
+									})
+
+						  		}
+						  	}).catch((err) => {
+						  		console.log(err);
+						  	})
+						})
+					}).catch((err) => {
+						console.log(err);
+					});
+				} 
+			})
+		}
+
+		const identifier = this.state.result.streams[this.state.result.streams.length - 1].id;
+
+		const res = await axios.get(`https://api.mux.com/video/v1/live-streams/${identifier}`, { auth: auth }).catch((error) => {
+		    throw error;
+		});
+
+	    const solution = res.data.data;
+
+	  	// put more code here to handle asset logic
+
+		this.setState({
+			solution
+		});
+
+	}	
+
 	renderContent = () => {
 		if (this.state.result === null) {
 			return (
@@ -98,17 +228,30 @@ constructor(props) {
 			</div>
 			);
 		} else {
+			console.log(this.state.result.streams[this.state.result.streams.length - 1].playback_ids[0].id);
 			return (
 				<div>
 					<Navigation />
-						<h1 className="text-center">{this.props.match.params.id}</h1>
+						{/*<h1 className="text-center">{this.props.match.params.id}</h1>*/}
+							{this.state.uniqueID && this.state.token ? <ReactPlayer playing={true} style={{ backgroundColor: "black" }} url={`https://stream.mux.com/${this.state.uniqueID}.m3u8?token=${this.state.token}`} controls width="100%" height="100%" /> : <div class="jumbotron card card-image" id="back_back">
+			                  <div class="text-white text-center py-5 px-4">
+			                    <div>
+			                      <h1 class="card-title h1-responsive pt-3 mb-5 font-bold"><strong>Ready to join the action?? You are about to enter a private 1 on 1 stream!</strong></h1>
+			                      <p class="mx-5 mb-5">When you are ready, click the button below to load your live stream and enjoy the show :)
+			                      </p>
+			                        <button onClick={() => {
+										this.runRefresh();
+									}} className="btn btn-outline purple_button" style={{ width: "100%" }}>LOAD/REFRESH PAGE</button>
+			                    </div>
+			                  </div>
+			                </div> }
 					<Footer />
 				</div>
 			);
 		}
 	}
     render() {
-    	console.log(this.props.match.params.id);
+    	console.log(this.state);
         return (
             <div>
 				{this.renderContent()}
@@ -118,7 +261,8 @@ constructor(props) {
 }
 const mapStateToProps = (state) => {
 	return {
-		email: state.auth.data.email
+		email: state.auth.data.email,
+		username: state.auth.data.username
 	}
 }
 

@@ -164,7 +164,13 @@ app.use("/post/private/stream/id/reciever", require("./routes/streaming/private/
 app.use("/check/stream/live/id", require("./routes/streaming/private/checkCode.js"));
 app.use("/check/if/cammer/true", require("./routes/checkIfCammer.js"));
 app.use("/gather/user/id/specific", require("./routes/gatherSpecificID.js"));
-
+app.use("/set/ready", require("./routes/streaming/private/setReady.js"));
+app.use("/get/stream/mux/id", require("./routes/getMuxID.js"));
+app.use("/get/user/that/matches/id", require("./routes/getUserThatMatchesID.js"));
+app.use("/post/mux/private/stream", require("./routes/mux/createPrivate.js"));
+app.use("/create/mux/token/private", require("./routes/mux/createToken.js"));
+app.use("/create/mux/json/web/token", require("./routes/mux/createJSONWebToken.js"));
+app.use("/check/stream/live/id/two", require("./routes/streaming/findSpecificUserByID.js"));
 
 io.on("connection", socket => {
   console.log("New client connected");
