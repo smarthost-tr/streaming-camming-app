@@ -22,16 +22,11 @@ constructor(props) {
 		loaded: false,
 		streams: [],
 		error: "",
-		connected: null,
-		broadcastID: null, 
-		broadcastUrls: null, 
-		updatedAt: null, 
-		status: null, 
+		broadcastID: null,
+		updatedAt: null,
 		resolution: null,
 		ready: false,
 		hls: "",
-		streamData: null,
-		subscriber: null,
 		playbackID: null,
 		streamKey: "",
 		streamID: "",
@@ -41,7 +36,14 @@ constructor(props) {
 		startedStream: false,
 		copied: false,
 		value: "",
-		data: []
+		data: [],
+		streamSubTitle: "",
+		streamTitle: "",
+		streamDescription: "",
+		race: "",
+		preferences: "",
+		orientation: "",
+		tags: []
 	}
 
 	
@@ -56,7 +58,12 @@ constructor(props) {
 		
 	}
 	handleClick = () => {
-  		axios.post("/mux/create/stream").then((res) => {
+
+		this.setState({
+			tags: [this.state.race, this.state.preferences, this.state.orientation]
+		})
+
+		axios.post("/mux/create/stream").then((res) => {
   			this.setState({
   				playbackID: res.data.playbackID,
   				streamKey: res.data.streamKey,
@@ -113,17 +120,21 @@ constructor(props) {
 		    throw error;
 		  });
 
+		  const { streamTitle, streamSubTitle, streamDescription } = this.state;
+
 		  console.log(res.data);
 		  if (res.data.data.status === "active") {
 		  	// put more code here to handle asset logic
 
-
-
-
 		  	axios.post("/post/new/stream", {
 				data: this.state.data.data,
 				email: this.props.email,
-				active_asset_id: res.data.data.active_asset_id
+				active_asset_id: res.data.data.active_asset_id,
+				tags: this.state.tags,
+				title: streamTitle,
+				desc: streamDescription,
+				subTitle: streamSubTitle,
+				profilePic: this.props.image
 			}).then((res) => {
 				console.log(res.data);
 				if (res) {
@@ -140,6 +151,101 @@ constructor(props) {
 
 		createLive();
 	}	
+	renderCustomFields = () => {
+		return (
+		  <div className="container">
+			<div className="row" style={{ marginTop: "30px" }}>
+				<div className="col-md-6">
+					<div class="form-group">
+					    <label>Stream Title</label>
+					    <input onChange={(e) => {
+					    	this.setState({
+					    		streamTitle: e.target.value
+					    	})
+					    }} type="text" class="form-control" placeholder="Enter your stream title..." /> 
+					</div>
+				</div>
+				<div className="col-md-6">
+					<div class="form-group">
+					    <label>Stream Sub-Title</label>
+					    <input onChange={(e) => {
+					    	this.setState({
+					    		streamSubTitle: e.target.value
+					    	})
+					    }} type="text" class="form-control" placeholder="Enter your stream sub-title..." /> 
+					</div>
+				</div>
+			</div>
+			<div className="row">
+				<div class="col-md-4">
+					<div class="form-group">
+					    <label>Select One Tag From Each Category</label>
+					        <select onChange={(e) => {
+					        	this.setState({
+									orientation: e.target.value
+					        	})
+					        }} id="dates-field2" class="multiselect-ui form-control" multiple="multiple">
+					            <option value="STRAIGHT">STRAIGHT</option>
+					            <option value="GAY">GAY</option>
+					            <option value="BI-SEXUAL">BI-SEXUAL</option>
+					            <option value="TRANS">TRANS</option>
+					        </select>
+					</div>
+				</div>
+				<div class="col-md-4">
+					<div class="form-group">
+					    <label>Select One Tag From Each Category</label>
+					        <select onChange={(e) => {
+					        	this.setState({
+									preferences: e.target.value
+					        	})
+					        }} id="dates-field2" class="multiselect-ui form-control" multiple="multiple">
+					            <option value="JOI">JOI</option>
+					            <option value="ANAL">ANAL</option>
+					            <option value="BBW">BBW</option>
+					            <option value="FEET-FETISH">FEET FETISH</option>
+					            <option value="RED-HEADS">RED-HEADS</option>
+					            <option value="BLONDES">BLONDES</option>
+					            <option value="BRUNETTES">BRUNETTES</option>
+					            <option value="SMALL-TITS">SMALL-TITS</option>
+					            <option value="BIG-TITS">BIG-TITS</option>
+					            <option value="PREGNANT">PREGNANT</option>
+					            <option value="SHAVED">SHAVED-PUSSY</option>
+					            <option value="HAIRY">HAIRY-PUSSY</option>
+					        </select>
+					</div>
+				</div>
+				<div class="col-md-4">
+					<div class="form-group">
+					    <label>Select One Tag From Each Category</label>
+					        <select onChange={(e) => {
+					        	this.setState({
+									race: e.target.value
+					        	})
+					        }} id="dates-field2" class="multiselect-ui form-control" multiple="multiple">
+					            <option value="HISPANIC">HISPANIC</option>
+					            <option value="EBONY">EBONY</option>
+					            <option value="ASIAN">ASIAN</option>
+					            <option value="WHITE">WHITE</option>
+					        </select>
+					</div>
+				</div>
+			</div>
+			<div className="row">
+				<div className="col-md-12">
+					  <div class="form-group">
+					    <label for="exampleFormControlTextarea1">Stream Description</label>
+					    <textarea placeholder="Enter a stream description such as 'two girls on dildo playing with big toy - anal play with some JOI involved...'" onChange={(e) => {
+					    	this.setState({
+					    		streamDescription: e.target.value
+					    	})
+					    }} class="form-control" id="exampleFormControlTextarea1" rows="4"></textarea>
+					  </div>
+				</div>
+			</div>
+		  </div>
+		);
+	}
     render() {
     	const { loaded, token, sessionId, error, showVideo, startedStream, streamKey } = this.state;
     	console.log(this.state);
@@ -147,7 +253,8 @@ constructor(props) {
             <div>	
             	<Navigation />
             	<ParallaxTwo />
-            	{!startedStream ? <button className="btn btn-outline pink_button" style={{ width: "100%", marginBottom: "40px", marginTop: "30px" }} onClick={this.handleClick}>Start A Stream!</button> : null}
+            	{this.renderCustomFields()}
+            	{!startedStream && this.state.orientation.length > 0 && this.state.race.length > 0 && this.state.preferences.length > 0 ? <button className="btn btn-outline pink_button" style={{ width: "100%", marginBottom: "40px", marginTop: "30px" }} onClick={this.handleClick}>Start A Stream!</button> : null}
             	{streamKey ? <hr className="my-4"/> : null}
 
 
@@ -167,7 +274,7 @@ constructor(props) {
 	           
 
             	{this.state.streamKey ? <hr className="my-4"/> : null}
-            	{this.state.loaded && this.state.streamKey ? <button onClick={this.handleRedirect} className="btn btn-outline pink_button" style={{ width: "100%", marginBottom: "50px" }}>Once you started streaming - Use this to go to the Stream</button> : null}
+            	{this.state.loaded && this.state.streamKey ? <button onClick={this.handleRedirect} className="btn btn-outline pink_button" style={{ width: "100%", marginBottom: "50px" }}>Once you've started streaming - Use this to publish and go to the Stream</button> : null}
             	{/*<button className="btn btn-outline-success" style={{ width: "100%", marginTop: "30px" }} onClick={this.createNewSession}>Gather Streams Now</button>*/}
 				<div className="container-fluid">
 				   { error ? <h1 style={{ color: "darkred" }} className="text-center">{this.state.error}</h1> : null }
@@ -201,7 +308,8 @@ constructor(props) {
 const mapStateToProps = (state) => {
 	return {
 		streamID: state.streaming.playbackID,
-		email: state.auth.data.email
+		email: state.auth.data.email,
+		image: state.auth.data.image
 	}
 }
 

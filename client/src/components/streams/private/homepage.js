@@ -24,9 +24,6 @@ constructor(props) {
 	renderSubmission = (e) => {
 		e.preventDefault();
 		
-
-		// find user email and feed to api call below - target streams.id because thats what needs to be fed into the video player in the return/render section at the very bottom - send email when stream is created to both opposite emails so the mongodb can be pulled and use the other persons id
-		
 		axios.post("/get/user/that/matches/id", {
 			id: this.state.id
 		}).then((res) => {

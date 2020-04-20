@@ -12,7 +12,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
 			console.log("This is the req.body: ", req.body);
 
-			const { data, email, active_asset_id } = req.body;
+			const { data, email, active_asset_id, tags, title, desc, subTitle, profilePic } = req.body;
 
 			console.log("Data: ", data);
 
@@ -20,13 +20,18 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
 			collection.findOneAndUpdate({ email: email }, {$push:{ streams: {
 				streamKey: data.stream_key,
-				status: data.status,
+				status: "ready",
 				reconnect_window: data.reconnect_window,
 				playback_ids: data.playback_ids,
 				new_asset_settings: data.new_asset_settings,
 				id: data.id,
 				created_at: data.created_at,
-				active_asset_id
+				active_asset_id,
+				tags,
+				title,
+				desc,
+				subTitle, 
+				profilePic
 			}}}, (err, doc) => {
 			    if (err) {
 			        console.log("Something wrong when updating data!");

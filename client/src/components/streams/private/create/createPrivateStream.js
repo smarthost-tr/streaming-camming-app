@@ -180,7 +180,7 @@ constructor(props) {
 	renderConditional = () => {
 		if (this.state.loaded) {
 			return (
-				<h1 className="text-center">
+				<h4 className="text-center">
 				<hr className="my-4"/>Stream Key: <strong>{this.state.streamKey}</strong><CopyToClipboard style={{ marginLeft: "15px" }} text={this.state.streamKey}
 			          onCopy={() => this.setState({
 			          	copied: true
@@ -199,7 +199,7 @@ constructor(props) {
 				</div> <hr className="my-4"/>{this.state.id ? <button onClick={() => {
 									this.handleRedirect();
 								}} className="btn btn-outline-danger" style={{ width: "100%", margin: "30px 0px" }}>Redirect page and ACTIVATE live stream</button> : null} <hr className="my-4"/> Your OBS server url is: rtmps://global-live.mux.com/app <hr className="my-4"/>
-				</h1>
+				</h4>
 			);
 		} else {
 			return null;
@@ -281,68 +281,18 @@ constructor(props) {
 									{!this.state.loaded ? <button onClick={() => {
 										this.handleClick();
 									}} className="btn btn-outline pink_button" style={{ width: "100%", margin: "30px 0px" }}>Start a PRIVATE Stream</button> : null}
-									<div class="col-lg-4">
-									<div class="our-team-main">
 									
-									<div class="team-front">
-									<img src="http://placehold.it/110x110/4caf50/fff?text=Dilip" class="img-fluid" />
-									<h3>Dilip Kevat</h3>
-									<p>Web Designer</p>
-									</div>
 									
-									<div class="team-back">
-									<span>
-										Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis 
-										natoque penatibus et magnis dis parturient montes,
-										Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis 
-										natoque.
-									</span>
-									</div>
+									<div class="col-lg-12">
+
 									
-									</div>
-									</div>
 									
-									<div class="col-lg-4">
-									<div class="our-team-main">
+										<iframe style={{ boxShadow: "10px 10px 10px grey" }} width="50%" height="400px" src="https://www.youtube.com/embed/BgpDb1XDDfY" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 									
-									<div class="team-front">
-									<img src="http://placehold.it/110x110/e91e63/fff?text=Dilip" class="img-fluid" />
-									<h3>Dilip Kevat</h3>
-									<p>Web Designer</p>
-									</div>
-									
-									<div class="team-back">
-									<span>
-										Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis 
-										natoque penatibus et magnis dis parturient montes,
-										Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis 
-										natoque.
-									</span>
-									</div>
-									
-									</div>
+								
 									</div>
 
-									<div class="col-lg-4">
-									<div class="our-team-main">
-									
-									<div class="team-front">
-									<img src="http://placehold.it/110x110/2196f3/fff?text=Dilip" class="img-fluid" />
-									<h3>Dilip Kevat</h3>
-									<p>Web Designer</p>
-									</div>
-									
-									<div class="team-back">
-									<span>
-										Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis 
-										natoque penatibus et magnis dis parturient montes,
-										Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis 
-										natoque.
-									</span>
-									</div>
-								
-								</div>
-							</div>
+						
 							{!this.state.loaded ? <button onClick={() => {
 								this.handleClick();
 							}} className="btn btn-outline pink_button" style={{ width: "100%", margin: "30px 0px" }}>Start a PRIVATE Stream</button> : null}
@@ -414,7 +364,7 @@ constructor(props) {
 						
 						</div>
 					</div>
-					{this.state.loaded ? <h1 className="text-center">
+					{this.state.loaded ? <h4 className="text-center">
 						<hr className="my-4"/>Stream Key: <strong>{this.state.streamKey}</strong><CopyToClipboard style={{ marginLeft: "15px" }} text={this.state.streamKey}
 			          onCopy={() => this.setState({
 			          	copied: true
@@ -432,7 +382,7 @@ constructor(props) {
 					</div> <hr className="my-4"/>{this.state.id ? <button onClick={() => {
 										this.handleRedirect();
 									}} className="btn btn-outline-danger" style={{ width: "100%", margin: "30px 0px" }}>Redirect page and ACTIVATE live stream</button> : null}<hr className="my-4"/>Your OBS server url is: rtmps://global-live.mux.com/app <hr className="my-4"/>
-					</h1> : null}
+					</h4> : null}
 					<ParallaxTwo />
 				<Footer />
             </div>

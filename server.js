@@ -171,6 +171,10 @@ app.use("/post/mux/private/stream", require("./routes/mux/createPrivate.js"));
 app.use("/create/mux/token/private", require("./routes/mux/createToken.js"));
 app.use("/create/mux/json/web/token", require("./routes/mux/createJSONWebToken.js"));
 app.use("/check/stream/live/id/two", require("./routes/streaming/findSpecificUserByID.js"));
+// saving stream data db stuff 
+app.use("/complete/stream/mongodb", require("./routes/streaming/mongodb/findByStreamPlaybackId.js"));
+app.use("/gather/each/every/stream/mongodb", require("./routes/streaming/mongodb/gatherEachStream.js"));
+// saving stream data db stuff ^^^^^^^^^
 
 io.on("connection", socket => {
   console.log("New client connected");

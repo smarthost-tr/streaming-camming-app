@@ -29,15 +29,18 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 							}, "37ek4bmy38umj9sfbgxtte7jkj7dyr88tfsvexvm7vc7k7k5d4ekvacerq3wj7a5", (err, token) => {
 								if (err) {
 									console.log(err);
+
 								}
 								console.log("User exists!", user);
 								res.json({ message: "User exists!", data: user, token });
 							});
 					} else {
 						console.log("User does NOT exist.");
-						res.json({ message: "User does NOT exist." });
+						res.json({ message: "Please enter valid credentials. Double check your email and password! You'll miss out on your free 35 tokens upon registration!" });
 					}
-				} 
+				} else {
+					res.json({ message: "Please enter valid credentials. Double check your email and password! You'll miss out on your free 35 tokens upon registration!" })
+				}
 			}).catch((err) => {
 				console.log(err);
 			}); 

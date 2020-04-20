@@ -56,7 +56,7 @@ class StreamShow extends Component {
     	username: "",
     	exists: false,
     	tokens: null,
-    	col: 6,
+    	col: 7,
     	userData: [],
     	modalIsOpen: false,
     	playbackID: null,
@@ -207,19 +207,21 @@ class StreamShow extends Component {
 
 		if (!streamIsReady) {
 			return (
-				<div className="col-md-12">
-					<h1 className="text-center" style={{ textDecoration: "underline", paddingTop: "30px" }}>Stream is unavaliable, please check back again in a few moments...</h1>
-					<button style={{ marginTop: "40px", width: "100%" }} onClick={this.checkStreamActive} className="btn btn-outline-warning">Check if stream is active</button>
+				<div className="container" style={{ marginLeft: "-200px" }}>
+					<div className="col-md-12">
+						<h1 className="text-center" style={{ textDecoration: "underline", paddingTop: "30px" }}>Stream is unavaliable, please check back again in a few moments...</h1>
+						<button style={{ marginTop: "40px", width: "100%" }} onClick={this.checkStreamActive} className="btn btn-outline-warning">Check if stream is active</button>
+					</div>
 				</div>
 			);
 		} else {
 			return (
 				<React.Fragment>
-					<div className={`col-lg-${this.state.col} col-sm-12 col-md-12`}>
+					<div style={{ marginLeft: "20px" }} className={`col-lg-${this.state.col} col-sm-12 col-md-12`}>
 						<ReactPlayer playing={true} style={{ backgroundColor: "black" }} url={`https://stream.mux.com/${this.state.playbackID}.m3u8`} controls width="100%" height="100%" />
 
 					</div>
-					 {this.state.ready ?  <div className="col-lg-6 col-sm-12 col-md-12"><Chat client={client} theme={'livestream dark'}>
+					 {this.state.ready ?  <div className="col-lg-4 col-sm-12 col-md-12"><Chat client={client} theme={'livestream dark'}>
 					    <Channel channel={channel} Message={MessageLivestream}>
 					      <Window hideOnThread>
 					        <ChannelHeader live />
@@ -359,7 +361,7 @@ class StreamShow extends Component {
 						                	this.setState({
 												modalIsOpen: false,
 												ready: true,
-												col: 6
+												col: 7
 						                	})
 						                }} className="btn btn-outline-danger">Cancel</button>
 										<div class="bottom-strip"></div>
@@ -416,7 +418,7 @@ class StreamShow extends Component {
 				await conversation.create();
 		                    
 				await conversation.sendMessage({
-				    text: `Your uniquely generated id to access your private stream between ${this.props.username} and ${user.username} is ${generated}. Go to the following url and enter the code provided... http://localhost:3000/private/live/stream/${last} - You will be notified when the stream is live and ready to be joined...!`
+				    text: `Your uniquely generated id to access your private stream between ${this.props.username} and ${user.username} is ${generated}. When you recieve the confirmation message that the host/streamer has started the live stream, use the url below to access the stream... http://localhost:3000/private/live/stream/${last} - You will be notified when the stream is live and ready to be joined...!`
 				});
 
 
@@ -463,11 +465,37 @@ class StreamShow extends Component {
 		});
 
 	}
+	endStream = () => {
+		console.log("end stream clicked.");
+		axios.put("/complete/stream/mongodb", {
+			id: this.props.location.state.streamID,
+		}).then(async (res) => {
+			console.log(res.data);
+			if (res.data) {
+				const auth = {
+				    username: "f899a074-f11e-490f-b35d-b6c478a5b12a",
+				    password: "4vLdjx6uBafGdFiSbmWt5akv4DaD4PkDuCCYdFYXzudywyQSR3Uh27GqlfedlhZ17fbnXbf9Rh/"
+				};
+				const response = await axios.put(`https://api.mux.com/video/v1/live-streams/${this.props.location.state.streamID}/complete`, {}, { auth: auth }).catch((error) => {
+				    throw error;
+				});
+
+				console.log(response);
+
+				if (response) {
+					alert("Successfully ended stream!")
+				}
+			
+			}
+		}).catch((err) => {
+			console.log(err);
+		})
+	}
     render() {
     	const { streamsReady, APISuccess, err, streamIsReady } = this.state;
 
     	console.log(live_stream_id);
-    	console.log(this.state);
+    	console.log(this.props.location.state.streamID);
         return (
         	<div>
         		<Navigation />
@@ -477,6 +505,9 @@ class StreamShow extends Component {
  				{this.props.username ? <div onClick={() => {
  					this.renderModal();
  				}} className="container-fluid">{this.props.username === this.state.username ? null : <button className="btn btn-outline purple_button" style={{ width: "100%" }}>Start a 1 on 1 PRIVATE stream</button>}</div> : null}
+ 				{this.props.username === this.state.username ? <button onClick={() => {
+ 					this.endStream();
+ 				}} className="btn btn-outline purple_button">END STREAM</button> : null}
 					<div className="row" style={{ margin: "40px 0px" }}>
 						<div className="mx-auto">
 							{this.props.username ? null : <p className="text-center lead bold" style={{ textDecoration: "underline" }}>You are seeing only a SMALL portion of the avaliable content... please sign-in to join the chat and access all of our restricted features.</p>}
@@ -515,6 +546,7 @@ class StreamShow extends Component {
 						</div>}
 					</div>
  				</div>
+ 				<hr className="my-4"/>
  				{this.state.userData.length === 1 ? <StreamShowSub user={this.state.userData} /> : <h1 className="text-center">loading...</h1>}
  				<Footer />
         	</div>

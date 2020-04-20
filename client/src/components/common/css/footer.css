@@ -10,6 +10,7 @@ section .section-title {
 }
 #footer {
     background: #1E90FF !important;
+    min-height: 730px;
 }
 #footer h5{
 	padding-left: 10px;

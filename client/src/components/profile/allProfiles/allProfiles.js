@@ -135,28 +135,32 @@ constructor(props) {
 	    });
     }
 	render() {
+
+		let renderUsers;
 		
 		const { currentPage, profilesPerPage, users } = this.state; 
 	    	// Logic for displaying users
 	    const lastIndexOfUser = currentPage * profilesPerPage;
 	    const indexOfFirstUser = lastIndexOfUser - profilesPerPage;
-	    const currentUsers = users.slice(indexOfFirstUser, lastIndexOfUser);
+	    let currentUsers = users.slice(indexOfFirstUser, lastIndexOfUser);
 
-	    const renderUsers = currentUsers.map((user, index) => {
-				return (	
-					  <React.Fragment key={index}>
-					    <div onClick={() => {
-					    	console.log("clicked.");
-					    	this.handleClick(user);
-					    }} class="card col-md-2 hover_card" style={{ height: "100%", margin: "0px 12px 30px 12px", boxShadow: "10px 10px 10px grey" }}>
-					     <img class="card-img" src={user.profile.profilePic} alt="profile-pic" />
-					        <div class="card-img-overlay text-white d-flex justify-content-center align-items-end">
-					          <p>{user.username}</p>
-					        </div>
-					    </div>
-					 </React.Fragment>
-				);
-		})
+	    if (currentUsers) {
+	    	renderUsers = currentUsers.map((user, index) => {
+					return (	
+						  <React.Fragment key={index}>
+						    <div onClick={() => {
+						    	console.log("clicked.");
+						    	this.handleClick(user);
+						    }} class="card col-md-2 hover_card" style={{ height: "100%", margin: "0px 12px 30px 12px", boxShadow: "10px 10px 10px grey" }}>
+						     <img class="card-img" src={user.profile.profilePic} alt="profile-pic" />
+						        <div class="card-img-overlay text-white d-flex justify-content-center align-items-end">
+						          <p>{user.username}</p>
+						        </div>
+						    </div>
+						 </React.Fragment>
+					);
+			})
+	    }
 
 	    // Logic for displaying page numbers
 	    const pageNumbers = [];
@@ -198,7 +202,7 @@ constructor(props) {
 								 </React.Fragment>
 							);
 					}) : <div className="mx-auto"><ReactLoading type="spinningBubbles" color="black" height={500} width={500} /></div>}*/}
-						{renderUsers}
+						{renderUsers ? renderUsers : null}
 					
 						{this.renderModalContent()}
 					</div>

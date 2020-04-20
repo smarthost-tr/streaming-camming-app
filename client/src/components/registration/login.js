@@ -46,7 +46,7 @@ constructor(props) {
 
 					this.props.history.push("/");
 				} else {
-					alert("Please enter valid credentials.");
+					alert(res.data.message);
 				}
 
 			}).catch((err) => {
