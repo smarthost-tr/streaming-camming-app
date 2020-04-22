@@ -192,7 +192,7 @@ constructor(props) {
     console.log(this.state);
     return (
       <div>
-        <Navbar color="light" light expand="md">
+        <Navbar className="navigation" expand="md">
           <NavbarBrand><img onClick={() => {
             this.props.history.push("/");
           }} style={{ width: "200px", height: "50px" }} src={require("../../images/logos.png")} alt="logo"/></NavbarBrand>
@@ -217,8 +217,8 @@ constructor(props) {
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                   {this.props.authenticated && this.state.cammer ? <Link class="dropdown-item" to="/streams/create">Start PUBLIC Stream</Link> : null}
                   <Link class="dropdown-item" to="/profiles">Cammers/Buy-Content</Link>
-                  <div class="dropdown-divider"></div>
-                  {this.props.authenticated ? <Link class="dropdown-item" to="/streams/create/private">Start PRIVATE Stream</Link> : null}
+                  
+                  {this.props.authenticated && this.state.cammer ? <React.Fragment><div class="dropdown-divider"></div><Link class="dropdown-item" to="/streams/create/private">Start PRIVATE Stream</Link></React.Fragment> : null}
                 </div>
               </li>
               {this.props.authenticated ? <NavItem>
@@ -227,15 +227,15 @@ constructor(props) {
 
             </Nav>
             	{this.props.authenticated ? null : <NavItem className="link">
-                <Link className="btn btn-outline-info" to="/login">Sign-in</Link>
+                <Link className="btn btn-outline aqua_button_custom" to="/login">Sign-in</Link>
               </NavItem>}
               
               {this.props.authenticated ? <NavItem className="link sign-out">
                 <button onClick={() => {
                 	this.props.authentication({});
-                }} className="btn btn-outline-danger" to="/register">Sign-Out</button>
+                }} className="btn btn-outline-light" to="/register">Sign-Out</button>
               </NavItem> : <NavItem className="link">
-                <Link className="btn btn-outline-success" to="/register">Sign Up</Link>
+                <Link className="btn btn-outline green_button_custom" to="/register">Sign Up</Link>
               </NavItem>}
               {this.props.authenticated ? <NavItem className="link">
                 <Link className="btn btn-outline pink_button" to="/signup/camming/one">Become A Cammer!</Link>
@@ -249,7 +249,7 @@ constructor(props) {
                       
                     </div>
                    
-                    <div class="drop-content">
+                    <div class="drop-content" style={{ padding: "20px 25px" }}>
                       {this.state.friends ? this.state.friends.map((friend, index) => {
                         console.log(friend);
                         if (friend.status === "pending" && friend.sender === false) {
@@ -276,10 +276,10 @@ constructor(props) {
                             </li>
                           );
                         }
-                      }) : <h3 className="text-center">You have no currently pending friend requests...</h3>}
+                      }) : <h3 className="text-center text-dark">You have no currently pending friend requests...</h3>}
                      
                       <div>
-                        <Link to="/friends/list/home" style={{ width: "100%" }} className="btn btn-outline pink_button">Check out your friends list</Link>
+                        <Link to="/friends/list/home" style={{ width: "100%", color: "black" }} className="btn btn-outline purple_neon_btn_black">Check out your friends list</Link>
                       </div>
                      
                     </div>

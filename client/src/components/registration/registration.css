@@ -1,7 +1,7 @@
 .register{
-    background: -webkit-linear-gradient(left, #3931af, #00c6ff);
+    background: black;
     padding: 3%;
-    height: 100vh;
+    height: 100%;
 }
 .register-left{
     text-align: center;
@@ -20,8 +20,14 @@
     margin-bottom: 3%;
     cursor: pointer;
 }
+.formies span {
+    color: white;
+}
+.custom-file label {
+    color: black !important;
+}
 .register-right{
-    background: #f8f9fa;
+    background: #871eff;
     border-top-left-radius: 10% 50%;
     border-bottom-left-radius: 10% 50%;
 }
@@ -95,4 +101,7 @@
 }
 .register-form {
     background-color: transparent !important;
+}
+.register_two {
+    height: 100vh;
 }

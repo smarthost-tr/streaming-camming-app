@@ -153,7 +153,7 @@ constructor(props) {
 	}	
 	renderCustomFields = () => {
 		return (
-		  <div className="container">
+		  <div className="container selector">
 			<div className="row" style={{ marginTop: "30px" }}>
 				<div className="col-md-6">
 					<div class="form-group">
@@ -162,7 +162,7 @@ constructor(props) {
 					    	this.setState({
 					    		streamTitle: e.target.value
 					    	})
-					    }} type="text" class="form-control" placeholder="Enter your stream title..." /> 
+					    }} type="text" class="form-control purple_input" placeholder="Enter your stream title..." /> 
 					</div>
 				</div>
 				<div className="col-md-6">
@@ -172,7 +172,7 @@ constructor(props) {
 					    	this.setState({
 					    		streamSubTitle: e.target.value
 					    	})
-					    }} type="text" class="form-control" placeholder="Enter your stream sub-title..." /> 
+					    }} type="text" class="form-control purple_input" placeholder="Enter your stream sub-title..." /> 
 					</div>
 				</div>
 			</div>
@@ -184,7 +184,7 @@ constructor(props) {
 					        	this.setState({
 									orientation: e.target.value
 					        	})
-					        }} id="dates-field2" class="multiselect-ui form-control" multiple="multiple">
+					        }} id="dates-field2" class="multiselect-ui form-control purple_input" multiple="multiple">
 					            <option value="STRAIGHT">STRAIGHT</option>
 					            <option value="GAY">GAY</option>
 					            <option value="BI-SEXUAL">BI-SEXUAL</option>
@@ -199,7 +199,7 @@ constructor(props) {
 					        	this.setState({
 									preferences: e.target.value
 					        	})
-					        }} id="dates-field2" class="multiselect-ui form-control" multiple="multiple">
+					        }} id="dates-field2" class="multiselect-ui form-control purple_input" multiple="multiple">
 					            <option value="JOI">JOI</option>
 					            <option value="ANAL">ANAL</option>
 					            <option value="BBW">BBW</option>
@@ -222,7 +222,7 @@ constructor(props) {
 					        	this.setState({
 									race: e.target.value
 					        	})
-					        }} id="dates-field2" class="multiselect-ui form-control" multiple="multiple">
+					        }} id="dates-field2" class="multiselect-ui form-control purple_input" multiple="multiple">
 					            <option value="HISPANIC">HISPANIC</option>
 					            <option value="EBONY">EBONY</option>
 					            <option value="ASIAN">ASIAN</option>
@@ -235,7 +235,7 @@ constructor(props) {
 				<div className="col-md-12">
 					  <div class="form-group">
 					    <label for="exampleFormControlTextarea1">Stream Description</label>
-					    <textarea placeholder="Enter a stream description such as 'two girls on dildo playing with big toy - anal play with some JOI involved...'" onChange={(e) => {
+					    <textarea className="purple_input" placeholder="Enter a stream description such as 'two girls on dildo playing with big toy - anal play with some JOI involved...'" onChange={(e) => {
 					    	this.setState({
 					    		streamDescription: e.target.value
 					    	})
@@ -254,15 +254,15 @@ constructor(props) {
             	<Navigation />
             	<ParallaxTwo />
             	{this.renderCustomFields()}
-            	{!startedStream && this.state.orientation.length > 0 && this.state.race.length > 0 && this.state.preferences.length > 0 ? <button className="btn btn-outline pink_button" style={{ width: "100%", marginBottom: "40px", marginTop: "30px" }} onClick={this.handleClick}>Start A Stream!</button> : null}
+            	{!startedStream && this.state.orientation.length > 0 && this.state.race.length > 0 && this.state.preferences.length > 0 ? <button className="btn btn-outline green_button_custom" style={{ width: "100%", marginBottom: "40px", marginTop: "30px" }} onClick={this.handleClick}>Start A Stream!</button> : null}
             	{streamKey ? <hr className="my-4"/> : null}
 
 
-	            <div>{streamKey ? "Your UNIQUE stream key is: " + streamKey : null}  <div>{streamKey ? <CopyToClipboard text={streamKey}
+	            <div className="mx-auto text-center">{streamKey ? "Your UNIQUE stream key is: " + streamKey : null}  <div className="mx-auto">{streamKey ? <CopyToClipboard text={streamKey}
 			          onCopy={() => this.setState({
 			          	copied: true
 			          })}>
-			          <button className="btn btn-outline purple_button">Copy to clipboard</button>
+			          <button className="btn btn-outline green_button_custom">Copy to clipboard</button>
 			        </CopyToClipboard> : null}</div>
 
 			    <hr className="my-4"/> 
@@ -274,7 +274,7 @@ constructor(props) {
 	           
 
             	{this.state.streamKey ? <hr className="my-4"/> : null}
-            	{this.state.loaded && this.state.streamKey ? <button onClick={this.handleRedirect} className="btn btn-outline pink_button" style={{ width: "100%", marginBottom: "50px" }}>Once you've started streaming - Use this to publish and go to the Stream</button> : null}
+            	{this.state.loaded && this.state.streamKey ? <button onClick={this.handleRedirect} className="btn btn-outline green_button_custom" style={{ width: "100%", marginBottom: "50px" }}>Once you've started streaming - Use this to publish and go to the Stream</button> : null}
             	{/*<button className="btn btn-outline-success" style={{ width: "100%", marginTop: "30px" }} onClick={this.createNewSession}>Gather Streams Now</button>*/}
 				<div className="container-fluid">
 				   { error ? <h1 style={{ color: "darkred" }} className="text-center">{this.state.error}</h1> : null }

@@ -6,6 +6,7 @@ import axios from "axios";
 import { authentication } from "../../actions/index.js";
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
+import ReCAPTCHA from "react-google-recaptcha";
 
 class RegisterNewUser extends Component {
 constructor(props) {
@@ -22,7 +23,10 @@ constructor(props) {
 		password: "",
 		birthdate: new Date(),
 		phoneNumber: "",
-        image: null
+        image: null,
+        captcha: null,
+        visable: true,
+        referral: ""
 	}
 }
 	onChange = (date) => {
@@ -33,7 +37,7 @@ constructor(props) {
 	handleSubmission = (e) => {
 		e.preventDefault();
 		// deconstruct to make more readable
-		const { security, securityAnswer, gender, firstName, lastName, phoneNumber, image, email, username, password, birthdate } = this.state;
+		const { security, securityAnswer, gender, firstName, lastName, phoneNumber, image, email, username, password, birthdate, captcha } = this.state;
 
         const formData = new FormData();
 
@@ -58,7 +62,7 @@ constructor(props) {
 
 
 		// check if everything is filled out
-		if (security.length > 0 && securityAnswer.length > 0 && gender.length > 0 && firstName.length > 0 && lastName.length > 0 && phoneNumber.length > 0 && email.length > 0 && username.length > 0 && password.length > 0 && birthdate !== null && image) {
+		if (captcha !== null && security.length > 0 && securityAnswer.length > 0 && gender.length > 0 && firstName.length > 0 && lastName.length > 0 && phoneNumber.length > 0 && email.length > 0 && username.length > 0 && password.length > 0 && birthdate !== null && image) {
 			axios.post("/register/new/user", formData, config).then((res) => {
 				// console.log response
 				console.log(res.data);
@@ -78,6 +82,11 @@ constructor(props) {
 		// make request to back-end to create user
 		
 	}
+    handleOnChange = (value) => {
+        this.setState({
+            captcha: value
+        })
+    }
 	render() {
 		console.log(this.state);
 		return (
@@ -113,12 +122,21 @@ constructor(props) {
                                             }} class="form-control" placeholder="Last Name - This will NOT being publicly avaliable *" value={this.state.lastName} />
                                         </div>
                                         <div class="form-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text" id="basic-addon1"> <i onClick={() => {
+                                                this.setState({
+                                                    visable: !this.state.visable
+                                                })
+                                            }} class="fas fa-eye"></i></span>
+                                          
                                             <input type="password" onChange={(e) => {
                                             	this.setState({
                                             		password: e.target.value
                                             	})
-                                            }} class="form-control" placeholder="Password *" value={this.state.password} />
+                                            }} type={this.state.visable ? "password" : "text"} class="form-control" placeholder="Password *" value={this.state.password} />
+                                            </div>
                                         </div>
+                                       
                                         <div class="form-group">
                                             <input onChange={(e) => {
                                             	this.setState({
@@ -127,7 +145,7 @@ constructor(props) {
                                             }} type="text" class="form-control"  placeholder="Username *" value={this.state.username} />
                                         </div>
 
-                                        <div class="form-group">
+                                        <div class="form-group formies">
                                             <div class="maxl">
                                                 <label style={{ marginRight: "15px" }} class="radio inline"> 
                                                     <input onChange={(e) => {
@@ -143,7 +161,7 @@ constructor(props) {
 		                                            		gender: e.target.value
 		                                            	})
 		                                            }} type="radio" name="gender" value="female" />
-                                                    <span>Female </span> 
+                                                    <span> Female </span> 
                                                 </label>
                                                 <label style={{ marginRight: "15px" }} class="radio inline"> 
                                                     <input onChange={(e) => {
@@ -159,9 +177,17 @@ constructor(props) {
 		                                            		gender: e.target.value
 		                                            	})
 		                                            }} type="radio" name="gender" value="couple" />
-                                                    <span>Couple </span> 
+                                                    <span> Couple </span> 
                                                 </label>
                                             </div>
+                                        </div>
+                                        <div className="form-group">
+                                        <label>Enter a referral code if you have one</label>
+                                            <input onChange={(e) => {
+                                                this.setState({
+                                                    referral: e.target.value
+                                                })
+                                            }} type="email" class="form-control" placeholder="Optional - Referral Code" value={this.state.referral} />
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -200,8 +226,8 @@ constructor(props) {
                                             }} type="text" class="form-control" placeholder="Enter Your Answer *" value={this.state.securityAnswer} />
                                         </div>
                                         <div class="form-group">
-                                        	<label className="text-left" style={{ marginRight: "30px" }}>Birthdate</label>
-                                            <DatePicker style={{ zIndex: 999 }}
+                                        	<label className="text-left" style={{ marginRight: "30px", color: "white" }}>Birthdate</label>
+                                            <DatePicker style={{ zIndex: 999, color: "white" }}
 									          onChange={this.onChange}
 									          value={this.state.birthdate}
 									        />
@@ -210,17 +236,21 @@ constructor(props) {
                                             <div className="col-md-12">
                                                 <div style={{ float: "left" }} class="input-group mb-3">
                                                   <div class="custom-file">
-                                                    <input name="image" onChange={(e) => {
+                                                    <input id="in" name="image" onChange={(e) => {
                                                         this.setState({
                                                             image: e.target.files[0]
                                                         })
-                                                    }} type="file" class="custom-file-input" id="inputGroupFile01"/>
+                                                    }} type="file" class="custom-file-input"/>
                                                     <label class="custom-file-label" for="inputGroupFile01">{this.state.image ? "You selected a profile picture!" : "Choose a profile picture"}</label>
                                                   </div>
                                                 </div>
                                             </div>
                                         </div>
-                                        <input type="submit" class="btnRegister" onClick={this.handleSubmission}  value="Register"/>
+                                        <ReCAPTCHA
+                                            sitekey="6LdWSewUAAAAAPkoHnqEuypiiZjBmZlPJHGbDXBN"
+                                            onChange={this.handleOnChange}
+                                          />
+                                        <button style={{ marginTop: "20px" }} className="btn btn-outline aqua_button_custom" type="submit" onClick={this.handleSubmission}>Submit Information </button>
                                     </div>
                                 </div>
                             </div>

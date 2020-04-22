@@ -29,7 +29,8 @@ import ChatSendbirdHomepage from "./components/sendbirdChat/chatHomepage.js";
 import LivePrivateStreamHomepage from "./components/streams/private/homepage.js";
 import ProtectedPrivateStream from "./components/streams/private/css/style.css";
 import CreatePrivateStream from "./components/streams/private/create/createPrivateStream.js";
-
+import ContactPage from "./components/common/contact/contact.js";
+import ReferAFriendPage from "./components/refer/referAFriend.js";
 
 class App extends Component {
 constructor(props) {
@@ -71,6 +72,8 @@ constructor(props) {
         {this.props.auth ? <Route path="/chat/homepage" exact component={ChatSendbirdHomepage} /> : <Route path="/chat/homepage" exact component={ErrorUnauthorized} />}
         {this.props.auth ? <Route path="/private/live/stream/:id" exact component={LivePrivateStreamHomepage} /> : <Route path="/private/live/stream/:id" exact component={ErrorUnauthorized} />}
         {this.props.auth ? <Route path="/streams/create/private" exact component={CreatePrivateStream} /> : <Route path="/streams/create/private" exact component={ErrorUnauthorized} />}
+        <Route path="/contact/page" exact component={ContactPage} />
+        <Route path="/refer/friend" exact component={ReferAFriendPage} />
       </div>
     </BrowserRouter>
     );

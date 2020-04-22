@@ -72,3 +72,14 @@ span.multiselect-native-select select {
 	margin-left: -20px;
 	margin-right: 0
 }
+.purple_input {
+	border: 3px solid #871eff;
+	color: teal;
+}
+.purple_input:active {
+	border: 3px solid #871eff;
+	color: teal;
+}
+.selector label {
+	color: #87e1ff;
+}

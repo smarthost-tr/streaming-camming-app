@@ -2,6 +2,12 @@ html, body {
 	overflow-x: hidden;
 	margin: 0;
 	padding: 0;
+	background-color: black !important;
+ 	color: white !important;
+}
+h1, h2, h3, h4, h5, h6, p {
+	text-shadow: none !important;
+	color: white !important;
 }
 
 code {

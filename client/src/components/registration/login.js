@@ -65,7 +65,7 @@ constructor(props) {
             <div>
 				<div>
 				<Navigation />
-					<div class="container-fluid register">
+					<div class="container-fluid register register_two">
 		                <div class="row">
 		                    <div class="col-md-3 register-left">
 		                        <img src="https://image.ibb.co/n7oTvU/logo_white.png" alt=""/>
@@ -96,7 +96,7 @@ constructor(props) {
 		                                        </div>
 		                                        
 		                                        
-		                                    	<button onClick={this.renderSubmission} className="btn btn-outline-success" style={{ width: "100%" }}>Submit Credentials</button>
+		                                    	<button onClick={this.renderSubmission} className="btn btn-outline aqua_button_custom" style={{ width: "100%" }}>Submit Credentials</button>
 		                                </div>
 		                            </div>
 		                        </div>

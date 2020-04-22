@@ -12,6 +12,7 @@ import socketIOClient from "socket.io-client";
 import uuid from "react-uuid";
 import { StreamChat } from 'stream-chat';
 
+
 const client = new StreamChat('qzye22t8v5c4');
 
 class ProfilesIndividual extends Component {
@@ -385,8 +386,8 @@ constructor(props) {
 				            <div class="row user-tabs">
 				                <div class="col-lg-6 col-md-9 col-sm-9">
 				                    <ul class="nav nav-tabs tabs" style={{ width: "100%" }}>
-				                        <li class="active tab" style={{ width: "25%" }}>
-				                            <a href="#home-2" data-toggle="tab" aria-expanded="false" class="active">
+				                        <li class="tab" style={{ width: "25%" }}>
+				                            <a href="#home-2" data-toggle="tab" aria-expanded="false">
 				                                <span class="visible-xs"><i class="fa fa-home"></i></span>
 				                                <span onClick={() => {
 				                                	this.setState({
@@ -451,7 +452,7 @@ constructor(props) {
 				                       {/* {this.renderFriendRequestButton()}*/}
 				                        {this.state.matches || !this.props.email || this.props.email === user.email ? null : <div className="row"><button onClick={() => {
 				                            this.sendFriendRequest()
-				                        }} className="btn btn-outline pink_button">Send Friend Request</button></div>}
+				                        }} className="btn btn-outline pink_button" style={{ margin: "15px 15px 15px 0px" }}>Send Friend Request</button></div>}
 				                        
 				                    </div>
 				                </div>
@@ -466,7 +467,7 @@ constructor(props) {
 				                                   
 				                                    <div class="panel panel-default panel-fill">
 				                                    <Popover open={this.state.popover}>
-														    <button className="btn btn-outline-info" onClick={() => {
+														    <button className="btn btn-outline green_button_custom" onClick={() => {
 														    	this.setState({
 														    		popover: true
 														    	})
@@ -484,12 +485,12 @@ constructor(props) {
 																  
 																</div>*/}
 																<div class="form-group">
-																    <label className="text-left" for="exampleFormControlTextarea1">Enter your message</label>
+																    <label className="text-left text-dark" for="exampleFormControlTextarea1">Enter your message</label>
 																    <textarea onChange={(e) => {
 																    	this.setState({
 																    		message: e.target.value
 																    	})
-																    }} style={{ width: "550px" }} class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+																    }} style={{ width: "550px", color: "black" }} class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
 																    <div style={{ marginTop: "20px" }} className="form-group">
 																		<input onChange={(e) => {
 																			this.setState({
@@ -542,7 +543,7 @@ constructor(props) {
 
 				                                    <div class="panel panel-default panel-fill">
 				                                        <div class="panel-heading">
-				                                            <h3 class="panel-title">Primary Language</h3>
+				                                            <h3 class="panel-title" style={{ color: "#37be43" }}>Primary Language</h3>
 				                                        </div>
 				                                        <div class="panel-body">
 				                                            <ul style={{ listStyleType: "none" }}>

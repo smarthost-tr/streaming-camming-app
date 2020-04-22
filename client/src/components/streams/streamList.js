@@ -13,15 +13,15 @@ const responsive = {
   superLargeDesktop: {
     // the naming can be any, depends on you.
     breakpoint: { max: 4000, min: 3000 },
-    items: 5
+    items: 6
   },
   desktop: {
     breakpoint: { max: 3000, min: 1024 },
-    items: 3
+    items: 4
   },
   tablet: {
     breakpoint: { max: 1024, min: 464 },
-    items: 2
+    items: 3
   },
   mobile: {
     breakpoint: { max: 464, min: 0 },
@@ -349,6 +349,71 @@ constructor(props) {
 
 			 		  		{/*console.log(res);*/}
 			 		  		if (stream.playback_ids[0].policy === "public" && stream.tags.includes("GAY")) {
+			 		  			console.log(stream);
+								return (
+									<div style={{ margin: "20px 10px 20px 10px", maxHeight: "50vh"  }} onClick={() => {
+											this.props.history.push(`/view/individual/private/stream/${stream.id}`, { streamID: stream.id })
+										}} class="card">
+							            <div class="thumbnail">
+							                <img width="360" height="270" src={`https://image.mux.com/${stream.playback_ids[0].id}/animated.gif`} alt="thumbnail"/>
+							                <a class="thumb-cover"></a>
+							                <div class="details">
+							                    <div class="authors-container">
+							                        <div class="author">
+							                            <a class="card-user account-photo  account-product-owner">
+							                            <div class="mask">
+							                                <img class="photo" src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="Thumb"/>
+							                            </div>
+							                            </a>
+							                        </div>
+							                    </div>
+							                    <div class="numbers">
+							                       {stream.tags ? stream.tags.map((tag, indexxxx) => {
+							                       		return  (
+							                       			<b key={indexxxx} class="downloads"><i class="fa fa-arrow-circle-o-down"></i>{tag + ", "}</b>
+							                       		);
+							                       }) : null}
+							                        <b class="comments-icon"><i class="fa fa-comment"></i></b>
+							                    </div>
+							                   
+							                    <div class="clearfix"></div>
+							                </div>
+							                {/*<b class="actions">
+							                    <a class="btn btn-neutral btn-round btn-fill" href="#">More Details</a>
+							                    <a onClick={() => {
+												this.props.history.push(`/view/individual/private/stream/${stream.id}`, { streamID: stream.id })
+												}} class="btn btn-info btn-round" href="#">Live Preview</a>
+							                </b>*/}
+							            </div>
+							            <div class="card-info">
+							                <a href="#">
+							                    <h3>{stream.title}
+							                        <div class="time pull-right">{stream.subTitle}</div>
+							                    
+							                    
+							                    </h3>
+							                    <div class="circle-red"><i class="fa fa-circle-o"></i></div>
+							                    <p>{stream.desc}</p>
+							                </a>
+							        </div>
+					        	</div>
+				 		  		);
+			 		  		}
+			 		  	}) : <ReactLoading type="cylon" color="pink" height={500} width={500} />}
+					</Carousel>
+					<Carousel responsive={responsive}>
+					{this.state.readyStreams ? this.state.readyStreams.slice(0, 20).map((stream, index) => {
+			 		  	{/*	const auth = {
+							    username: "f899a074-f11e-490f-b35d-b6c478a5b12a",
+							    password: "4vLdjx6uBafGdFiSbmWt5akv4DaD4PkDuCCYdFYXzudywyQSR3Uh27GqlfedlhZ17fbnXbf9Rh/"
+							};
+
+			 		  		const res = axios.get(`https://api.mux.com/video/v1/assets/${stream.id}`, {}, { auth: auth }).catch((err) => {
+			 		  			throw err;
+			 		  		})*/}
+
+			 		  		{/*console.log(res);*/}
+			 		  		if (stream.playback_ids[0].policy === "public" && stream.tags.includes("TRANS")) {
 			 		  			console.log(stream);
 								return (
 									<div style={{ margin: "20px 10px 20px 10px", maxHeight: "50vh"  }} onClick={() => {

@@ -1,16 +1,20 @@
 import React from "react";
 import "../css/footer.css";
+import { Link } from "react-router-dom";
+
+
 
 const FooterPage = () => {
 	return (
 		<section id="footer">
+		<hr className="my-4"/>
 			<div class="container">
 				<div class="row text-center text-xs-center text-sm-left text-md-left">
 					<div class="col-xs-12 col-sm-4 col-md-4">
 						<h5>Quick links</h5>
 						<ul class="list-unstyled quick-links">
-							<li><a href="javascript:void();"><i class="fa fa-angle-double-right"></i>Home</a></li>
-							<li><a href="javascript:void();"><i class="fa fa-angle-double-right"></i>About</a></li>
+							<li><Link to="/contact/page"><i class="fa fa-angle-double-right"></i>Contact</Link></li>
+							<li><Link to="/refer/friend"><i class="fa fa-angle-double-right"></i>Refer A Friend/Cammer</Link></li>
 							<li><a href="javascript:void();"><i class="fa fa-angle-double-right"></i>FAQ</a></li>
 							<li><a href="javascript:void();"><i class="fa fa-angle-double-right"></i>Get Started</a></li>
 							<li><a href="javascript:void();"><i class="fa fa-angle-double-right"></i>Videos</a></li>

@@ -186,7 +186,7 @@ constructor(props) {
                                     <br/>
                                     <button onClick={() => {
                                         this.postComment()
-                                    }} type="button" class="btn btn-outline-dark pull-right" style={{ width: "100%" }}>Drop a comment!</button></React.Fragment> : null}
+                                    }} type="button" class="btn btn-outline aqua_button_custom pull-right" style={{ width: "100%" }}>Drop a comment!</button></React.Fragment> : null}
                                   
                                     <hr />
                                     <div class="media-body">
@@ -201,7 +201,7 @@ constructor(props) {
                                                 }} placeholder="Enter your response to the comment you're replying to here such as... Hey i loved that video! You looked great, thanks again for the good time." class="form-control" id="exampleFormControlTextarea1" value={this.state.replyComment} rows="3"></textarea>
                                                 <button onClick={() => {
                                                     this.postReplyComment()
-                                                }} style={{ marginTop: "30px" }} className="btn btn-outline-dark">Submit Reply To Comment</button>
+                                                }} style={{ marginTop: "30px", width: "100%" }} className="btn btn-outline aqua_button_custom">Submit Reply To Comment</button>
                                               </div> : null}
                                             <ul id="comments-list" class="comments-list">
                                                
@@ -250,7 +250,7 @@ constructor(props) {
                                                                 </li>
                                                             );
 
-                                                        }) : <h1 className="text-center text-dark">Unfortunetly, There are no comments yet, you can change that!</h1>}
+                                                        }) : <h1 className="text-center text-white">Unfortunetly, There are no comments yet, you can change that!</h1>}
 
                                                        
                                                     </ul>

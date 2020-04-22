@@ -217,7 +217,7 @@ class StreamShow extends Component {
 		} else {
 			return (
 				<React.Fragment>
-					<div style={{ marginLeft: "20px" }} className={`col-lg-${this.state.col} col-sm-12 col-md-12`}>
+					<div style={{ marginLeft: "20px", boxShadow: "5px 5px 5px #871eff" }} className={`col-lg-${this.state.col} col-sm-12 col-md-12`}>
 						<ReactPlayer playing={true} style={{ backgroundColor: "black" }} url={`https://stream.mux.com/${this.state.playbackID}.m3u8`} controls width="100%" height="100%" />
 
 					</div>
@@ -495,7 +495,6 @@ class StreamShow extends Component {
     	const { streamsReady, APISuccess, err, streamIsReady } = this.state;
 
     	console.log(live_stream_id);
-    	console.log(this.props.location.state.streamID);
         return (
         	<div>
         		<Navigation />
@@ -504,10 +503,10 @@ class StreamShow extends Component {
  				<div className="container-fluid" id="fragment_background" style={{ height: "100%", padding: "30px 20px 0px 0px" }}>
  				{this.props.username ? <div onClick={() => {
  					this.renderModal();
- 				}} className="container-fluid">{this.props.username === this.state.username ? null : <button className="btn btn-outline purple_button" style={{ width: "100%" }}>Start a 1 on 1 PRIVATE stream</button>}</div> : null}
- 				{this.props.username === this.state.username ? <button onClick={() => {
+ 				}} className="container-fluid">{this.props.username === this.state.username ? null : <button className="btn btn-outline purple_neon_btn" style={{ width: "100%" }}>Start a 1 on 1 PRIVATE stream</button>}</div> : null}
+ 				{this.props.username === this.state.username ? <div className="mx-auto"><button onClick={() => {
  					this.endStream();
- 				}} className="btn btn-outline purple_button">END STREAM</button> : null}
+ 				}} className="btn btn-outline purple_neon_btn" style={{ width: "100%" }}>END STREAM</button></div> : null}
 					<div className="row" style={{ margin: "40px 0px" }}>
 						<div className="mx-auto">
 							{this.props.username ? null : <p className="text-center lead bold" style={{ textDecoration: "underline" }}>You are seeing only a SMALL portion of the avaliable content... please sign-in to join the chat and access all of our restricted features.</p>}
@@ -523,16 +522,16 @@ class StreamShow extends Component {
 					<h4 className="text-center bold">{this.state.groupMessages !== null ? this.state.groupMessages : null}</h4>
 					{this.props.username ? null : <p className="text-center lead bold" style={{ textDecoration: "underline", paddingBottom: "23px" }}>You are seeing only a SMALL portion of the avaliable content... please sign-in to join the chat and access all of our restricted features.</p>}
 						{(this.state.exists && this.state.username === this.props.username) ? null : <div className="row">
-						<label>Enter a tip amount to send to this streamer</label>
+						<label id="label">Enter a tip amount to send to this streamer</label>
 							<div class="input-group mb-3">
 							  <div class="input-group-prepend">
-							    <span style={{ width: "100%" }} class="input-group-text">You have {this.state.tokens} tokens</span>
+							    <span style={{ width: "100%", backgroundColor: "#871eff", color: "white" }} class="input-group-text">You have {this.state.tokens} tokens</span>
 							  </div>
 							  <input onChange={(e) => {
 							  	this.setState({
 							  		tip: e.target.value
 							  	})
-							  }} style={{ width: "100%" }} placeholder="Enter a whole number tip value..." type="text" class="form-control" aria-label="Amount (to the nearest dollar)" />
+							  }} style={{ width: "100%" }} placeholder="Enter a whole number tip value..." type="text" class="form-control searchTerm" aria-label="Amount (to the nearest dollar)" />
 							  <div class="input-group-append">
 							    <button onClick={() => {
 							    	if (this.state.tokens !== 0) {
@@ -540,7 +539,7 @@ class StreamShow extends Component {
 							    	} else {
 							    		alert("Please enter a tip amount if you'd like to send a tip.")
 							    	}
-							    }} class="btn btn-outline-secondary" type="button">Send Tip!</button>
+							    }} class="btn btn-outline-secondary green_button_custom" type="button">Send Tip!</button>
 							  </div>
 							</div>
 						</div>}

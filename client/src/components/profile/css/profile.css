@@ -1,3 +1,4 @@
+
 .emp-profile{
     padding: 3%;
     margin-top: 3%;
@@ -371,7 +372,9 @@ span.tags
 .block-menu ul li:first-child a{
   border-left: 1px solid #e9eaed;
 }
-
+.modal-body {
+  background-color: #871eff;
+}
 /* ==============
   Panels
 ===================*/

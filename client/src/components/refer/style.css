@@ -1,0 +1,11 @@
+.jum {
+	background-image: url("../../images/sexy.jpg");
+	background-repeat: no-repeat;
+	background-size: cover;
+	height: 100vh;
+}
+.transparency {
+	background: rgba(86, 0, 184, 0.7);
+	padding: 40px 50px;
+	border-radius: 25px;
+}

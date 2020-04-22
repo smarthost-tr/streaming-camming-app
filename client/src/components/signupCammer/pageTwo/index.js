@@ -70,7 +70,7 @@ constructor(props) {
 					</div>
 					{this.state.verficiationID !== null && this.state.verficiationPhoto !== null ? <div className="row">
 						<div className="col-md-12">
-							<Link to="/signup/camming/three" style={{ width: "100%", marginBottom: "40px" }} className="btn btn-outline pink_button">Submit Idenification Photos</Link>
+							<Link to="/signup/camming/three" style={{ width: "100%", marginBottom: "40px" }} className="btn btn-outline green_button_custom">Submit Idenification Photos</Link>
 						</div>
 					</div> : null}
 				</div>

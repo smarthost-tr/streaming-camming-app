@@ -14,7 +14,7 @@
     margin-bottom:25px;
 }
 .custom_panel {
-	background: white;
+	background: #871eff;
 }
 .panel-heading {
 	background: black;
@@ -43,7 +43,9 @@
 	margin-top: 30px;
 	position: relative;
 }
-
+.comments-list li {
+	list-style-type: none;
+}
 /**
  * Lineas / Detalles
  -----------------------*/
@@ -220,13 +222,17 @@
 }
 
 .comment-box-two .comment-content {
-	background: lightgrey;
+	background: #37be43;
 	padding: 12px;
 	font-size: 15px;
-	color: #595959;
+	color: white;
 	-webkit-border-radius: 0 0 4px 4px;
 	-moz-border-radius: 0 0 4px 4px;
 	border-radius: 0 0 4px 4px;
+}
+.comment-box-two .comment-head {
+	background: #37be43;
+
 }
 
 .comment-box-two .comment-name.by-author, .comment-box-two .comment-name.by-author a {color: #03658c;}

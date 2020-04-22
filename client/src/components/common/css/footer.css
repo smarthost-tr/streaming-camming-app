@@ -4,12 +4,11 @@ section {
 
 section .section-title {
     text-align: center;
-    color: #007b5e;
     margin-bottom: 50px;
     text-transform: uppercase;
 }
 #footer {
-    background: #1E90FF !important;
+    background: black !important;
     min-height: 730px;
 }
 #footer h5{
@@ -17,10 +16,10 @@ section .section-title {
     border-left: 3px solid #eeeeee;
     padding-bottom: 6px;
     margin-bottom: 20px;
-    color:#ffffff;
+    color:#37be43;
 }
 #footer a {
-    color: #ffffff;
+    color: #871eff !important;
     text-decoration: none !important;
     background-color: transparent;
     -webkit-text-decoration-skip: objects;
@@ -72,7 +71,7 @@ section .section-title {
         margin-bottom: 10px;
     }
     #footer {
-        background: #1E90FF !important;
+        background: black !important;
         margin-top: 50px;
     }
 }

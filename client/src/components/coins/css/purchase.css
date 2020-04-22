@@ -11,7 +11,6 @@ section .section-title {
 
 #team .cardie {
     border: none;
-    background: #ffffff;
     max-height: 550px !important;
 }
 
@@ -52,7 +51,8 @@ section .section-title {
     -ms-transform: rotateY(0deg);
     z-index: 2;
     margin-bottom: 30px;
-    box-shadow: 10px 10px 10px grey;
+    box-shadow: 10px 10px 10px #87e1ff;
+
 }
 
 .backside {
@@ -100,7 +100,7 @@ section .section-title {
 
 .frontside .card .card-title,
 .backside .card .card-title {
-    color: #007b5e !important;
+    color: white !important;
 }
 
 .frontside .card .card-body img {
@@ -109,7 +109,7 @@ section .section-title {
     border-radius: 50%;
 }
 .custom_body {
-    background-color: white;
+    background-color: #871eff !important;
     border: 2px solid black;
 }
 #lower {

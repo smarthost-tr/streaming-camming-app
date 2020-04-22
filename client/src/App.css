@@ -1,38 +1,40 @@
-.App {
-  text-align: center;
+.purple_neon_btn {
+  box-shadow: 4px 4px 4px #871eff !important;
+  color: white !important;
+  background: black;
+  border: 3px solid #871eff !important;
+}
+.purple_neon_btn:hover {
+  box-shadow: 5px 5px 5px pink !important;
+  color: white !important;
+  background: black;
+  border: 3px solid pink !important;
+}
+/* #871eff - purple */
+.my-4 {
+  border-bottom: 3px solid #871eff !important;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.green_button_custom {
+  color: white !important;
+  background: white;
+  border: 3px solid #37be43 !important;
 }
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.green_button_custom:hover {
+  color: white !important;
+  background: transparent;
+  border: 3px solid lightgreen !important;
+  box-shadow: 3px 3px 3px lightgreen !important;
+  color: lightgreen;
 }
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+.aqua_button_custom {
+  color: white !important;
+  background: white;
+  border: 3px solid #87e1ff !important;
 }
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.aqua_button_custom:hover {
+  color: white !important;
+  background: transparent;
+  border-bottom: 3px solid #87e1ff !important;
+  box-shadow: 5px 5px 5px pink;
 }

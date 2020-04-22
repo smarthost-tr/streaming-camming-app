@@ -11,3 +11,33 @@
 	color: tan !important;
 	cursor: pointer;
 }
+.panel-body strong {
+	color: #37be43;
+}
+.user-tabs {
+	background: #871eff;
+}
+.fb-profile-block-menu li a {
+	color: #37be43 !important;
+}
+.panel-body th {
+	color: #37be43 !important;
+}
+.panel-body td {
+	color: #871eff !important;
+}
+.panel-body li {
+	color: #871eff !important;
+}
+.user-tabs .tab {
+	background: black !important;
+}
+.user-tabs .tab:active {
+	background: black !important;
+}
+.user-tabs .tab span {
+	color: white !important;
+}
+.tabs {
+	background: black;
+}

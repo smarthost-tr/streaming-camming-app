@@ -24,6 +24,7 @@
     "react-copy-to-clipboard": "^5.0.2",
     "react-date-picker": "^8.0.0",
     "react-dom": "^16.13.1",
+    "react-google-recaptcha": "^2.0.1",
     "react-images-upload": "^1.2.8",
     "react-js-pagination": "^3.0.3",
     "react-loading": "^2.0.3",

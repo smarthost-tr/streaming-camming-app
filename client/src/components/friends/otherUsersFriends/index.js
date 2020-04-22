@@ -120,7 +120,7 @@ constructor(props) {
 								);
 							}
 						}) : null}
-						{this.state.friends.length === 0 ? <h1 className="text-center">We noticed you haven't added any friends yet, send some invites to make a few! :)</h1> : null}
+						{/*{this.state.friends.length === 0 ? <h1 className="text-center">We noticed you haven't added any friends yet, send some invites to make a few! :)</h1> : null}*/}
 
 
 					</div>

@@ -99,23 +99,23 @@ constructor(props) {
 			                    <a><img id="modal_img" src={this.state.user ? this.state.user.profile.profilePic : "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcRbezqZpEuwGSvitKy3wrwnth5kysKdRqBW54cAszm_wiutku3R"} name="aboutme" width="140" height="140" border="0" class="img-circle" /></a>
 			                    <h3 class="media-heading">Username: {this.state.user ? this.state.user.username : null} <br/><small>Age: {this.state.user ? this.state.user.profile.age : null}</small><button onClick={() => {
 			                    	this.redirectUser(this.state.user);
-			                    }} className="btn btn-outline purple_button" style={{ width: "100%" }}>Visit This Model's Profile</button></h3>
+			                    }} className="btn btn-outline aqua_button_custom" style={{ width: "100%", marginTop: "20px" }}>Visit This Model's Profile</button></h3>
 			                    <hr className="my-4"/>
-			                    <button className="btn btn-outline pink_button" onClick={this.closeModal} style={{ width: "100%" }}>close</button>
-			                    <span><strong style={{ marginBottom: "30px" }}>Skills: </strong></span>
+			                    <button className="btn btn-outline aqua_button_custom" onClick={this.closeModal} style={{ width: "100%", marginBottom: "20px" }}>close</button>
+			                    <span><strong style={{ marginBottom: "30px", color: "white" }}>Skills: </strong></span>
 			                    <div className="horizontal">
 			                    {this.state.skills.length > 0 ? this.state.skills.map((each, index) => {
 									if (each.skills) {
 										return each.skills.map((skill, index) => {
 	                                		console.log(skill);
 	                                		return (
-												<span class="label label-warning tag">{skill.skill} - {skill.percentage}%</span>
+												<span class="label label-warning tag text-dark">{skill.skill} - {skill.percentage}%</span>
 	                                		);
 										})
 									} else {
-										return <h3 className="text-center">No skills have been listed...</h3>
+										return <h3 className="text-center text-dark">No skills have been listed...</h3>
 									}
-	                        	}) : <h3 className="text-center">No skills have been listed...</h3>}
+	                        	}) : <h3 className="text-center text-dark">No skills have been listed...</h3>}
 			                    </div>
 		                    </div>
 		                    <hr className="my-4" />
@@ -184,7 +184,7 @@ constructor(props) {
             <div>
 				<Navigation />
 				<div className="container-fluid style_container">
-					<div className="row">
+					<div className="row" style={{ padding: "20px 0px" }}>
 					
 					{/*{this.state.users ? this.state.users.map((user, index) => {
 						console.log("user", user);

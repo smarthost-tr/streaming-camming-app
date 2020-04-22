@@ -22,7 +22,7 @@ constructor(props) {
 		console.log(user);
 		return (
 			<div>
-				<div class="container-fluid emp-profile">
+				<div style={{ marginBottom: "-50px", paddingBottom: "50px" }} class="container-fluid emp-profile">
 				       	<form onSubmit={this.renderSubmit}>
 				                <div class="row">
 				                    <div class="col-md-4">
@@ -40,10 +40,10 @@ constructor(props) {
 				                                        First Name: {user.firstName} <br/> 
 				                                        Username: {user.username}
 				                                    </h5>
-				                                    <h6>
+				                                    <h6 style={{ color: "white" }}>
 				                                        Cam Model / Streamer
 				                                    </h6>
-				                                    <p class="proile-rating">RANKINGS : <span>8/10</span></p>
+				                                    <p style={{ color: "#37be43" }} class="proile-rating">RANKINGS : <span style={{ color: "#37be43" }}>8/10</span></p>
 				                            <ul class="nav nav-tabs" id="myTab" role="tablist">
 				                                <li class="nav-item">
 				                                    <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">About</a>

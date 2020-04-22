@@ -1,8 +1,11 @@
+.navigation {
+  background: #871eff !important;
+}
 .nav-link {
 	margin-left: 6px;
 	margin-right: 6px;
 	margin-top: 0px;
-	color: black;
+	color: white !important;
 }
 .link {
 	list-style-type: none;
@@ -10,11 +13,24 @@
 }
 .pink_button {
 	border: 2px solid pink !important;
+  color: white !important;
 }
 .pink_button:hover {
 	border: 2px solid purple !important;
 }
 
+.purple_neon_btn_black {
+  box-shadow: 5px 5px 5px #871eff !important;
+  color: black !important;
+  background: black;
+  border: 3px solid #871eff !important;
+}
+.purple_neon_btn_black:hover {
+  box-shadow: 5px 5px 5px pink !important;
+  color: black !important;
+  background: white;
+  border: 3px solid pink !important;
+}
 .notify-drop {
 	width: 50vw !important;
 	min-width: 50vw !important;
