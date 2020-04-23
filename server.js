@@ -175,6 +175,7 @@ app.use("/check/stream/live/id/two", require("./routes/streaming/findSpecificUse
 app.use("/complete/stream/mongodb", require("./routes/streaming/mongodb/findByStreamPlaybackId.js"));
 app.use("/gather/each/every/stream/mongodb", require("./routes/streaming/mongodb/gatherEachStream.js"));
 // saving stream data db stuff ^^^^^^^^^
+app.use("/search/user", require("./routes/friendsList/searchUser.js"));
 
 io.on("connection", socket => {
   console.log("New client connected");

@@ -221,9 +221,18 @@ constructor(props) {
                   {this.props.authenticated && this.state.cammer ? <React.Fragment><div class="dropdown-divider"></div><Link class="dropdown-item" to="/streams/create/private">Start PRIVATE Stream</Link></React.Fragment> : null}
                 </div>
               </li>
-              {this.props.authenticated ? <NavItem>
-                <Link to="/chat/homepage" className="nav-link">Communication</Link>
-              </NavItem> : null}
+              {this.props.authenticated ? <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Communication
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                  <Link class="dropdown-item" to="/chat/homepage">Messaging</Link>
+                  <Link class="dropdown-item" to="/find/fuck/buddies/map">Find Locals To Fuck</Link>
+                  <div class="dropdown-divider"></div>
+                  <Link class="dropdown-item" href="#">Something else here</Link>
+                </div>
+              </li>  : null}
+
 
             </Nav>
             	{this.props.authenticated ? null : <NavItem className="link">
@@ -235,7 +244,7 @@ constructor(props) {
                 	this.props.authentication({});
                 }} className="btn btn-outline-light" to="/register">Sign-Out</button>
               </NavItem> : <NavItem className="link">
-                <Link className="btn btn-outline green_button_custom" to="/register">Sign Up</Link>
+                <Link className="btn btn-outline <green></green>_button_custom" to="/register">Sign Up</Link>
               </NavItem>}
               {this.props.authenticated ? <NavItem className="link">
                 <Link className="btn btn-outline pink_button" to="/signup/camming/one">Become A Cammer!</Link>

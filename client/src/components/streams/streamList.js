@@ -7,7 +7,7 @@ import FooterPage from "../common/footer/footer.js";
 import ReactLoading from 'react-loading';
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
-
+import SearchContainer from "./search/search.js";
 
 const responsive = {
   superLargeDesktop: {
@@ -155,20 +155,7 @@ constructor(props) {
 			<div>
 			 	<Navigation />
 					<div style={{ padding: "70px 0px" }} className="container-fluid background">
-					<div className="container">
-						<div className="row">
-							<div className="col-md-12">
-							<div class="wrap custom_wrap" style={{ width: "100%" }}>
-							   <div style={{ width: "100%" }} class="search">
-							      <input style={{ width: "80%" }} type="text" class="searchTerm" placeholder="What are you looking for?" />
-							      <button type="submit" class="searchButton">
-							        <i class="fa fa-search"></i>
-							     </button>
-							   </div>
-							</div>
-							</div>
-						</div>
-					</div>
+					<SearchContainer />
 						<div className="row">
 
 						{this.renderStreams()}

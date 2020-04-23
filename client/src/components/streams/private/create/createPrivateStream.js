@@ -122,7 +122,7 @@ constructor(props) {
 						}).then((responseee) => {
 							console.log(responseee.data);
 							if (responseee) {
-								this.props.history.push(`/private/live/stream/${code}`, { streamID: this.state.streamID });
+								this.props.history.push(`/chat/homepage`, { streamID: this.state.streamID });
 							}
 						}).catch((err) => {
 							console.log(err);
@@ -185,7 +185,7 @@ constructor(props) {
 			          onCopy={() => this.setState({
 			          	copied: true
 			          })}>
-			          <button className="btn btn-outline purple_button">Copy to clipboard</button>
+			          <button className="btn btn-outline aqua_button_custom">Copy to clipboard</button>
 			        </CopyToClipboard> <hr className="my-4"/>
 				  <div class="input-group mb-3">
 				  <div class="input-group-prepend">
@@ -198,7 +198,7 @@ constructor(props) {
 				  }} type="text" class="form-control" placeholder="b1fe178-b2ef-cff-4702-f6dbffa5224" aria-label="Username" aria-describedby="basic-addon1" />
 				</div> <hr className="my-4"/>{this.state.id ? <button onClick={() => {
 									this.handleRedirect();
-								}} className="btn btn-outline-danger" style={{ width: "100%", margin: "30px 0px" }}>Redirect page and ACTIVATE live stream</button> : null} <hr className="my-4"/> Your OBS server url is: rtmps://global-live.mux.com/app <hr className="my-4"/>
+								}} className="btn btn-outline green_button_custom" style={{ width: "100%", margin: "30px 0px" }}>Redirect page and ACTIVATE live stream</button> : null} <hr className="my-4"/> Your OBS server url is: rtmps://global-live.mux.com/app <hr className="my-4"/>
 				</h4>
 			);
 		} else {
@@ -282,15 +282,16 @@ constructor(props) {
 										this.handleClick();
 									}} className="btn btn-outline pink_button" style={{ width: "100%", margin: "30px 0px" }}>Start a PRIVATE Stream</button> : null}
 									
-									
-									<div class="col-lg-12">
+								<div className="mx-auto">
+									<div class="col-lg-12 mx-auto" style={{ marginBottom: "20px" }}>
 
 									
 									
-										<iframe style={{ boxShadow: "10px 10px 10px grey" }} width="50%" height="400px" src="https://www.youtube.com/embed/BgpDb1XDDfY" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+										<iframe style={{ boxShadow: "10px 10px 10px grey" }} width="600px" height="400px" src="https://www.youtube.com/embed/BgpDb1XDDfY" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 									
 								
 									</div>
+								</div>
 
 						
 							{!this.state.loaded ? <button onClick={() => {
@@ -369,7 +370,7 @@ constructor(props) {
 			          onCopy={() => this.setState({
 			          	copied: true
 			          })}>
-			          <button className="btn btn-outline purple_button">Copy to clipboard</button>
+			          <button className="btn btn-outline aqua_button_custom">Copy to clipboard</button>
 			        </CopyToClipboard><hr className="my-4"/> <div class="input-group mb-3">
 					  <div class="input-group-prepend">
 					    <span class="input-group-text" id="basic-addon1" style={{ width: "100%", margin: "0px 20px" }}>Enter your unique ID from your invitation msg from your inbox</span>
@@ -381,9 +382,9 @@ constructor(props) {
 					  }} type="text" class="form-control" placeholder="b1fe178-b2ef-cff-4702-f6dbffa5224" aria-label="Username" aria-describedby="basic-addon1" />
 					</div> <hr className="my-4"/>{this.state.id ? <button onClick={() => {
 										this.handleRedirect();
-									}} className="btn btn-outline-danger" style={{ width: "100%", margin: "30px 0px" }}>Redirect page and ACTIVATE live stream</button> : null}<hr className="my-4"/>Your OBS server url is: rtmps://global-live.mux.com/app <hr className="my-4"/>
+									}} className="btn btn-outline green_button_custom" style={{ width: "100%", margin: "30px 0px" }}>Redirect page and ACTIVATE live stream</button> : null}<hr className="my-4"/>Your OBS server url is: rtmps://global-live.mux.com/app <hr className="my-4"/>
 					</h4> : null}
-					<ParallaxTwo />
+					<ParallaxOne />
 				<Footer />
             </div>
         );

@@ -15,11 +15,9 @@ constructor(props) {
 	}
 	render () {
 		let user;
-		console.log(this.props);
 		for (let key in this.props) {
 			user = this.props[key][0];
 		}
-		console.log(user);
 		return (
 			<div>
 				<div style={{ marginBottom: "-50px", paddingBottom: "50px" }} class="container-fluid emp-profile">
@@ -67,7 +65,7 @@ constructor(props) {
 				                            <a href="">Bootply Profile</a>*/}
 				                            {user.skills ? <p>SKILLS</p> : null}
 				                            {user.skills ? user.skills.map((skill, index) => {
-				                            	console.log(skill);
+				                            	
 				                            	return (
 					                            	<React.Fragment>
 														<a href="">{skill.skill} - {skill.percentage}%</a><br/>

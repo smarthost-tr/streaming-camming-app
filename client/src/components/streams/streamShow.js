@@ -75,7 +75,6 @@ class StreamShow extends Component {
 			axios.post("/gather/user/info/from/stream", {
 				id: this.props.location.state.streamID
 			}).then((res) => {
-				console.log(res.data);
 				for (let key in res.data) {
 					let username = res.data[key].username;
 					this.setState({
@@ -87,7 +86,7 @@ class StreamShow extends Component {
 			}).catch((err) => {
 				console.log(err);
 			})
-			console.log(this.props.location.state.streamID);
+
 			
 			if (this.props.username) {
 				console.log("user is logged in.")
@@ -106,7 +105,6 @@ class StreamShow extends Component {
 				  name: `PUBLIC STREAM RECORD: ${this.props.location.state.streamID}`,
 				});
 			} else {
-				console.log("user ISNT logged in.");
 				this.setState({
 					col: 12
 				})
@@ -115,10 +113,8 @@ class StreamShow extends Component {
 		    axios.post("/tokens/gather", {
 	          email: this.props.email
 	        }).then((res) => {
-	          console.log(res.data);
 	          for (let key in res.data) {
 	            let tokens = res.data[key].tokens;
-	            console.log(tokens);
 	            this.setState({
 	              tokens
 	            })
@@ -135,11 +131,7 @@ class StreamShow extends Component {
 
 		const unique = uuid();
 
-		console.log(this.props);
-
 		live_stream_id = this.props.location.state ? this.props.location.state.streamID : "QfWl200mvXbD4MQKbMe13CvB7ubl52q97";
-
-		console.log(live_stream_id);
 
 		const createLive = async () => {
 		  const auth = {
@@ -150,7 +142,6 @@ class StreamShow extends Component {
 		    throw error;
 		  });
 		  const { data } = res.data;
-		  console.log(res.data);
 		  if (data.status === "active") {
 		  	this.setState({
 			  	streams: data,
@@ -174,7 +165,6 @@ class StreamShow extends Component {
 		    throw error;
 		  });
 		  const { data } = res.data;
-		  console.log(res.data);
 		  if (data.status === "active") {
 		  	this.setState({
 			  	streams: data,
@@ -182,14 +172,12 @@ class StreamShow extends Component {
 			  	streamIsReady: true
 			}, () => {
 				axios.get(`https://stream.mux.com/${this.state.playbackID}.m3u8`).then((res) => {
-					console.log(res.data);
 					if (res) {
 						this.setState({
 							streamIsReady: true
 						})
 					}
 				}).catch((err) => {
-					console.log(err);
 					this.setState({
 						err: err.message
 					})
@@ -247,44 +235,46 @@ class StreamShow extends Component {
 		axios.post("/gather/user/info/from/stream", {
 			id: this.props.location.state.streamID
 		}).then((res) => {
-			console.log(res.data);
 			for (let key in res.data) {
 				const recieverEmail = res.data[key].email;
 				const recieverUsername = res.data[key].username;
 				const streamer = res.data[key].username;
 				
-				axios.post("/send/tokens/to/user", {
-					email: recieverEmail,
+				axios.post("/take/away/tokens/tip", {
+					email: this.props.email,
 					tokens: Math.round(this.state.tip)
 				}).then((res) => {
 
 					console.log(res.data);
+					if (res.data.error) {
+						alert(res.data.error);
+					} else {
+						axios.post("/send/tokens/to/user", {
+							email: recieverEmail,
+							tokens: Math.round(this.state.tip)
+						}).then(async (res) => {
+							console.log(res.data);
+							
+							const { endpoint, tip } = this.state;
 
-					axios.post("/take/away/tokens/tip", {
-						email: this.props.email,
-						tokens: Math.round(this.state.tip)
-					}).then(async (res) => {
-						console.log(res.data);
-						
-						const { endpoint, tip } = this.state;
+						    const socket = io(endpoint);
 
-					    const socket = io(endpoint);
-
-					    socket.emit("tipped", {
-					    	tip,
-					    	user: this.props.username
-					    })
-        
-    
-						alert(`You tipped ${this.state.tip} tokens!`)
-						this.setState({
-							tip: 0,
-							tokens: this.state.tokens - tip
+						    socket.emit("tipped", {
+						    	tip,
+						    	user: this.props.username
+						    })
+	        
+	    
+							alert(`You tipped ${this.state.tip} tokens!`)
+							this.setState({
+								tip: 0,
+								tokens: this.state.tokens - tip
+							})
+						}).catch((err) => {
+							console.log(err);
+							alert("Uh oh - There was an error.")
 						})
-					}).catch((err) => {
-						console.log(err);
-						alert("Uh oh - There was an error.")
-					})
+					}
 				}).catch((err) => {
 					console.log(err);
 					alert("Uh oh - There was an error.")
@@ -304,8 +294,6 @@ class StreamShow extends Component {
 		})
 	}
 	componentDidUpdate(prevProps, prevState) {
-		console.log(prevProps);
-		console.log(prevState);
 		if (prevState.tokens !== this.state.tokens) {
 			console.log("updated...");
 			axios.post("/tokens/gather", {

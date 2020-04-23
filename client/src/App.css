@@ -38,3 +38,10 @@
   border-bottom: 3px solid #87e1ff !important;
   box-shadow: 5px 5px 5px pink;
 }
+#map { 
+  position: relative;
+  height: 100vh;
+  top: 0; 
+  bottom: 0; 
+  width: 100%; 
+}

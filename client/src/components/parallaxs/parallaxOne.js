@@ -14,7 +14,7 @@ constructor(props) {
             <div className="parallax-one" style={{ width: "100vw", borderTop: "10px solid black", borderBottom: "10px solid black" }}>
 				<Parallax
 		            blur={0}
-		            bgImage={require('../../images/sex-3.jpg')}
+		            bgImage={require('../../images/nature.jpg')}
 		            bgImageAlt="the cat"
 		            strength={500}
 		        >

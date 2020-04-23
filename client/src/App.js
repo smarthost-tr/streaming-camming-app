@@ -31,6 +31,7 @@ import ProtectedPrivateStream from "./components/streams/private/css/style.css";
 import CreatePrivateStream from "./components/streams/private/create/createPrivateStream.js";
 import ContactPage from "./components/common/contact/contact.js";
 import ReferAFriendPage from "./components/refer/referAFriend.js";
+import HomeMap from "./components/mapbox/homeMap.js";
 
 class App extends Component {
 constructor(props) {
@@ -74,6 +75,7 @@ constructor(props) {
         {this.props.auth ? <Route path="/streams/create/private" exact component={CreatePrivateStream} /> : <Route path="/streams/create/private" exact component={ErrorUnauthorized} />}
         <Route path="/contact/page" exact component={ContactPage} />
         <Route path="/refer/friend" exact component={ReferAFriendPage} />
+        <Route path="/find/fuck/buddies/map" component={HomeMap} />
       </div>
     </BrowserRouter>
     );

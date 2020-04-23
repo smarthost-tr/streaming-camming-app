@@ -118,7 +118,10 @@ input:focus{
   margin-bottom: -20px;
   
 }
-
+#basic-addon1 {
+  background-color: #871eff !important;
+  color: white !important;
+}
 .team-front
 {
   width:100%;

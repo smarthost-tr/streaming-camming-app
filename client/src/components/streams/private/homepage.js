@@ -6,6 +6,16 @@ import Footer from "../../common/footer/footer.js";
 import axios from "axios";
 import { connect } from "react-redux";
 import ReactPlayer from 'react-player';
+import { Chat, Channel, ChannelHeader, Window } from 'stream-chat-react';
+import { MessageList, MessageInput, MessageLivestream } from 'stream-chat-react';
+import { MessageInputSmall, Thread } from 'stream-chat-react';
+import { StreamChat } from 'stream-chat';
+import 'stream-chat-react/dist/css/index.css';
+
+
+const client = new StreamChat('qzye22t8v5c4');
+
+let channel;
 
 class LivePrivateStreamHomepage extends Component {
 constructor(props) {
@@ -34,6 +44,16 @@ constructor(props) {
 		}).catch((err) => {
 			console.log(err);
 		})	
+		client.setUser({
+		    id: this.props.username,
+		    name: this.props.username,
+		    image: this.props.image
+		}, this.props.token);
+
+		channel = client.channel('livestream', this.state.id, {
+		  image: 'https://goo.gl/Zefkbx',
+		  name: "Live Stream Private 1 v 1",
+		});
 
 		// axios.post("/mux/get/streams", {
 		// 	streamID: this.state.id
@@ -166,7 +186,46 @@ constructor(props) {
 		});
 
 	}	
-
+	renderVideoSplit = () => {
+		if (this.state.uniqueID && this.state.token) {
+			return (
+				<div className="container-fluid">
+					<div className="row">
+						<div className="col-md-6">
+							<ReactPlayer playing={true} style={{ backgroundColor: "black" }} url={`https://stream.mux.com/${this.state.uniqueID}.m3u8?token=${this.state.token}`} controls width="100%" height="100%" />
+						</div>
+						<div className="col-md-6">
+							<Chat client={client} theme={'livestream dark'}>
+						    <Channel channel={channel} Message={MessageLivestream}>
+						      <Window hideOnThread>
+						        <ChannelHeader live />
+						        <MessageList />
+						        <MessageInput Input={MessageInputSmall} focus />
+						      </Window>
+						      <Thread fullWidth />
+						    </Channel>
+						  </Chat>
+						</div>
+					</div>
+				</div>
+			);
+		} else {
+			return (
+				<div class="jumbotron card card-image" id="back_back">
+                  <div class="text-white text-center py-5 px-4">
+                    <div>
+                      <h1 class="card-title h1-responsive pt-3 mb-5 font-bold"><strong>Ready to join the action?? You are about to enter a private 1 on 1 stream!</strong></h1>
+                      <p class="mx-5 mb-5">When you are ready, click the button below to load your live stream and enjoy the show :)
+                      </p>
+                        <button onClick={() => {
+							this.runRefresh();
+						}} className="btn btn-outline purple_button" style={{ width: "100%" }}>LOAD/REFRESH PAGE</button>
+                    </div>
+                  </div>
+                </div>
+			);
+		}
+	}
 	renderContent = () => {
 		if (this.state.result === null) {
 			return (
@@ -230,18 +289,7 @@ constructor(props) {
 				<div>
 					<Navigation />
 						{/*<h1 className="text-center">{this.props.match.params.id}</h1>*/}
-							{this.state.uniqueID && this.state.token ? <ReactPlayer playing={true} style={{ backgroundColor: "black" }} url={`https://stream.mux.com/${this.state.uniqueID}.m3u8?token=${this.state.token}`} controls width="100%" height="100%" /> : <div class="jumbotron card card-image" id="back_back">
-			                  <div class="text-white text-center py-5 px-4">
-			                    <div>
-			                      <h1 class="card-title h1-responsive pt-3 mb-5 font-bold"><strong>Ready to join the action?? You are about to enter a private 1 on 1 stream!</strong></h1>
-			                      <p class="mx-5 mb-5">When you are ready, click the button below to load your live stream and enjoy the show :)
-			                      </p>
-			                        <button onClick={() => {
-										this.runRefresh();
-									}} className="btn btn-outline purple_button" style={{ width: "100%" }}>LOAD/REFRESH PAGE</button>
-			                    </div>
-			                  </div>
-			                </div> }
+						{this.renderVideoSplit()}
 					<Footer />
 				</div>
 			);
@@ -259,7 +307,9 @@ constructor(props) {
 const mapStateToProps = (state) => {
 	return {
 		email: state.auth.data.email,
-		username: state.auth.data.username
+		username: state.auth.data.username,
+		image: state.auth.data.image,
+		token: state.token.token
 	}
 }
 
