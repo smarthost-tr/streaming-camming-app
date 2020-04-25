@@ -1,0 +1,16 @@
+.overflow {
+	overflow-y: scroll;
+	height: 100vh;
+}
+.flex {
+	display: flex;
+	flex-wrap: wrap;
+	margin-top: 30px;
+	margin-bottom: 30px;
+}
+.top_image {
+	box-shadow: 5px 5px 5px #871eff;
+}
+.top_image:hover {
+	box-shadow: 5px 5px 5px #37be43;
+}

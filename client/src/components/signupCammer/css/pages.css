@@ -43,7 +43,10 @@
 	background-repeat: no-repeat;
 	background-size: cover;
 	height: 100%;
+	
 }
 #custom_container {
 	height: calc(100% + (20px + 30px)) !important;
+
 }
+/* purple #871eff */

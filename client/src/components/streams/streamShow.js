@@ -17,8 +17,15 @@ import Footer from "../common/footer/footer.js";
 import StreamShowSub from "./streamShowSub.js";
 import 'stream-chat-react/dist/css/index.css';
 import Modal from 'react-modal';
+import WavFile from "../../assets/cash.wav";
+import Casino from "../../assets/casino.wav";
+import Game from "../../assets/game.wav";
+import RewardTwo from "../../assets/reward-2.wav";
+import WinMoney from "../../assets/win-money.wav";
+import Yay from "../../assets/yay.mp3";
+import ConfettiAnimation from "./animations/confetti.js";
 
- 
+
 const customStyles = {
   content : {
     top                   : '50%',
@@ -38,6 +45,7 @@ const socket = io('http://127.0.0.1:5000', {
 
 let live_stream_id, channel;
 
+
 class StreamShow extends Component {
   constructor(props) {
     super(props);
@@ -51,7 +59,6 @@ class StreamShow extends Component {
     	streamIsReady: false,
     	ready: false,
     	tip: 0,
-    	endpoint: "http://127.0.0.1:5000",
     	groupMessages: null,
     	username: "",
     	exists: false,
@@ -65,12 +72,14 @@ class StreamShow extends Component {
 		loaded: null,
 		startedStream: null,
 		data: [],
-		setUser: null
-    }
-
+		setUser: null,
+		sound: false,
+		confetti: false
+    }	
 }
-	componentDidMount() {
 
+	componentDidMount() {
+		
 		setTimeout(() => {
 			axios.post("/gather/user/info/from/stream", {
 				id: this.props.location.state.streamID
@@ -230,8 +239,6 @@ class StreamShow extends Component {
 	}
 	sendTip = () => {
 
-		console.log(Math.round(this.state.tip));
-
 		axios.post("/gather/user/info/from/stream", {
 			id: this.props.location.state.streamID
 		}).then((res) => {
@@ -252,22 +259,41 @@ class StreamShow extends Component {
 						axios.post("/send/tokens/to/user", {
 							email: recieverEmail,
 							tokens: Math.round(this.state.tip)
-						}).then(async (res) => {
+						}).then((res) => {
 							console.log(res.data);
 							
 							const { endpoint, tip } = this.state;
-
-						    const socket = io(endpoint);
 
 						    socket.emit("tipped", {
 						    	tip,
 						    	user: this.props.username
 						    })
 	        
-	    
-							alert(`You tipped ${this.state.tip} tokens!`)
+	    					socket.emit("sound", {
+	    						sound: true,
+	    						tip
+	    					});
+
+	    					if (tip >= 2000) {
+	    						console.log("tip is over 8 tokens!!!!");
+	    						socket.emit("confetti", {
+	    							confetti: true
+	    						})
+								
+
+								setTimeout(() => {
+									socket.emit("confetti", {
+		    							confetti: false
+		    						})
+								}, 20000);
+
+
+	    					}
+
+							alert(`You tipped ${this.state.tip} tokens!`);
+
 							this.setState({
-								tip: 0,
+								tip: "",
 								tokens: this.state.tokens - tip
 							})
 						}).catch((err) => {
@@ -285,81 +311,27 @@ class StreamShow extends Component {
 			alert("Uh oh - There was an error.")
 		})
 	}
-	renderSocketEmittions = () => {
-		socket.on("tip", (data) => {
-			console.log(data);
-			this.setState({
-				groupMessages: `${data.user} just tipped ${data.tip} tokens!`
-			})
-		})
-	}
 	componentDidUpdate(prevProps, prevState) {
-		if (prevState.tokens !== this.state.tokens) {
-			console.log("updated...");
-			axios.post("/tokens/gather", {
-	          email: this.props.email
-	        }).then((res) => {
-	          console.log(res.data);
-	          for (let key in res.data) {
-	            let tokens = res.data[key].tokens;
-	            console.log(tokens);
-	            this.setState({
-	              tokens
-	            })
-	          }
-	        }).catch((err) => {
-	          console.log(err);
-	        }) 
-		}
-	}
-	closeModal = () => {
-
-	}
-	modalShow = () => {
-		if (this.state.modalIsOpen) {
-			return (
-				<div>
-					<Modal id="modalll"
-			          isOpen={this.state.modalIsOpen}
-			          onRequestClose={this.closeModal}
-			          style={customStyles}
-			          contentLabel="Example Modal"
-			        >
-			 
-
-						    <div class="modal-dialog modal-md" role="document">
-						        <div class="modal-content" id="modal_content">
-						            <div class="modal-body">
-										<div class="top-strip"></div>
-						                <a class="h2" href="https://www.fiverr.com/sunlimetech/design-and-fix-your-bootstrap-4-issues" target="_blank">Jerk N' Squirtn</a>
-						                <h3 class="pt-5 mb-0 text-white">Are you sure you'd like to start a live stream?</h3>
-						                <p class="pb-1 text-white"><small>This will cost you roughly 20 tokens per minute</small></p>
-						                <form>
-						                    <div class="input-group mb-3 w-75 mx-auto">
-						    				  
-						    				  <div class="input-group-append">
-						    					<button onClick={() => {
-						    						this.createPrivateStream();
-						    					}} style={{ width: "100%", color: "white" }} class="btn btn-outline pink_button" type="button" id="button-addon2"><i class="fa fa-paper-plane"></i>START LIVE 1 ON 1 STREAM</button>
-						    				  </div>
-						    				</div>
-						    			</form>
-						                <p class="pb-1 text-white"><small>This is a PRIVATE one on one stream with just you and the streamer only. Most of our users prefer this method of communication!</small></p>
-						                <button onClick={() => {
-						                	this.setState({
-												modalIsOpen: false,
-												ready: true,
-												col: 7
-						                	})
-						                }} className="btn btn-outline-danger">Cancel</button>
-										<div class="bottom-strip"></div>
-						            </div>
-						        </div>
-						    </div>
-					
-			        </Modal>
-				</div>
-			);
+		// if (prevState.tokens !== this.state.tokens) {
+		// 	console.log("updated...");
+		// 	axios.post("/tokens/gather", {
+	 //          email: this.props.email
+	 //        }).then((res) => {
+	 //          for (let key in res.data) {
+	 //            let tokens = res.data[key].tokens;
+	 //            this.setState({
+	 //              tokens
+	 //            })
+	 //          }
+	 //        }).catch((err) => {
+	 //          console.log(err);
+	 //        }) 
+		// }
+		console.log(prevState);
+		if (prevState.sound !== false) {
+			socket.emit("sound", {
+				sound: false
+			})
 		}
 	}
 	renderModal = () => {
@@ -479,19 +451,112 @@ class StreamShow extends Component {
 			console.log(err);
 		})
 	}
+	// playAudio = () => {
+	// 	if (this.state.sound) {
+	// 		document.getElementById("audio").play();
+	// 		this.setState({
+	// 			sound: false
+	// 		})
+	// 	}
+	// }
+
+	renderCustomModal = () => {
+		if (this.state.modalIsOpen) {
+			return (
+				<div>
+					<Modal id="modalll"
+			          isOpen={this.state.modalIsOpen}
+			          style={customStyles}
+			          contentLabel="Example Modal"
+			        >
+					
+
+						    <div class="modal-dialog modal-md" role="document">
+						        <div class="modal-content" id="modal_content">
+						            <div class="modal-body">
+										<div class="top-strip"></div>
+						                <a class="h2" href="https://www.fiverr.com/sunlimetech/design-and-fix-your-bootstrap-4-issues" target="_blank">Jerk N' Squirtn</a>
+						                <h3 class="pt-5 mb-0 text-white">Are you sure you'd like to start a live stream?</h3>
+						                <p class="pb-1 text-white"><small>This will cost you roughly 20 tokens per minute</small></p>
+						                <form>
+						                    <div class="input-group mb-3 w-75 mx-auto">
+						    				  
+						    				  <div class="input-group-append">
+						    					<button onClick={() => {
+						    						this.createPrivateStream();
+						    					}} style={{ width: "100%", color: "white" }} class="btn btn-outline pink_button" type="button" id="button-addon2"><i class="fa fa-paper-plane"></i>START LIVE 1 ON 1 STREAM</button>
+						    				  </div>
+						    				</div>
+						    			</form>
+						                <p class="pb-1 text-white"><small>This is a PRIVATE one on one stream with just you and the streamer only. Most of our users prefer this method of communication!</small></p>
+						                <button onClick={() => {
+						                	this.setState({
+												modalIsOpen: false,
+												ready: true,
+												col: 7
+						                	})
+						                }} className="btn btn-outline-danger">Cancel</button>
+										<div class="bottom-strip"></div>
+						            </div>
+						        </div>
+						    </div>
+					
+			        </Modal>
+				</div>
+			);
+		}
+	}
+	webSock = () => {
+		socket.on("boom", (data) => {
+			console.log('data', data);
+			if (data.tip <= 50) {
+				document.getElementById("audio").play();
+			} else if (data.tip <= 100) {
+				document.getElementById("casino-file").play();
+			} else if (data.tip <= 300) {
+				document.getElementById("game-file").play();
+			} else if (data.tip <= 500) {
+				document.getElementById("reward-two-file").play();
+			} else if (data.tip <= 1000) {
+				document.getElementById("win-money").play();
+			} else if (data.tip <= 1500) {
+				document.getElementById("yay-file").play();
+			}		
+		});
+		socket.on("poof", (data) => {
+			console.log("BOOYAH :", data);
+			this.setState({
+				confetti: data.confetti
+			})
+		})
+	}
     render() {
+
     	const { streamsReady, APISuccess, err, streamIsReady } = this.state;
 
-    	console.log(live_stream_id);
+    	console.log(this.state);
         return (
         	<div>
         		<Navigation />
-        		{this.modalShow()}
-        		{this.renderSocketEmittions()}
+				{this.webSock()}
+				{this.state.confetti ? <ConfettiAnimation /> : null}
+				
  				<div className="container-fluid" id="fragment_background" style={{ height: "100%", padding: "30px 20px 0px 0px" }}>
+ 				<div className="mx-auto">
+ 				{/*{this.state.modalIsOpen ?  : null}*/}
+
+				<audio id="audio"><source src={WavFile} type="audio/mpeg"></source></audio>
+				<audio id="casino-file"><source src={Casino} type="audio/mpeg"></source></audio>
+				<audio id="game-file"><source src={Game} type="audio/mpeg"></source></audio>
+				<audio id="reward-two-file"><source src={RewardTwo} type="audio/mpeg"></source></audio>
+				<audio id="win-money"><source src={WinMoney} type="audio/mpeg"></source></audio>
+				<audio id="yay-file"><source src={Yay} type="audio/mpeg"></source></audio>
+ 				</div>
+ 				{this.renderCustomModal()}
  				{this.props.username ? <div onClick={() => {
  					this.renderModal();
  				}} className="container-fluid">{this.props.username === this.state.username ? null : <button className="btn btn-outline purple_neon_btn" style={{ width: "100%" }}>Start a 1 on 1 PRIVATE stream</button>}</div> : null}
+ 				
  				{this.props.username === this.state.username ? <div className="mx-auto"><button onClick={() => {
  					this.endStream();
  				}} className="btn btn-outline purple_neon_btn" style={{ width: "100%" }}>END STREAM</button></div> : null}
@@ -506,8 +571,10 @@ class StreamShow extends Component {
 							</div>
 					
 					</div>
+					
 					<div className="container" style={{ paddingBottom: "30px" }}>
 					<h4 className="text-center bold">{this.state.groupMessages !== null ? this.state.groupMessages : null}</h4>
+					
 					{this.props.username ? null : <p className="text-center lead bold" style={{ textDecoration: "underline", paddingBottom: "23px" }}>You are seeing only a SMALL portion of the avaliable content... please sign-in to join the chat and access all of our restricted features.</p>}
 						{(this.state.exists && this.state.username === this.props.username) ? null : <div className="row">
 						<label id="label">Enter a tip amount to send to this streamer</label>
@@ -515,9 +582,10 @@ class StreamShow extends Component {
 							  <div class="input-group-prepend">
 							    <span style={{ width: "100%", backgroundColor: "#871eff", color: "white" }} class="input-group-text">You have {this.state.tokens} tokens</span>
 							  </div>
-							  <input onChange={(e) => {
+							  <input value={this.state.tip} onChange={(e) => {
 							  	this.setState({
-							  		tip: e.target.value
+							  		tip: e.target.value,
+							  		confetti: false
 							  	})
 							  }} style={{ width: "100%" }} placeholder="Enter a whole number tip value..." type="text" class="form-control searchTerm" aria-label="Amount (to the nearest dollar)" />
 							  <div class="input-group-append">

@@ -6,7 +6,10 @@ import { connect } from "react-redux";
 import ProgressBar from "../progress.js";
 import Footer from "../../common/footer/footer.js";
 import ImageUploader from 'react-images-upload';
-
+import PlacesAutocomplete, {
+  geocodeByAddress,
+  getLatLng,
+} from 'react-places-autocomplete';
 
 class PageThreeCammerSignup extends Component {
 constructor(props) {
@@ -23,7 +26,11 @@ constructor(props) {
 		smokeOrDrink: "smokes_occasionally",
 		nickName: "",
 		bio: "",
-		pictures: []
+		pictures: [],
+		meetup: "NO-MEETUP",
+		showLocationInput: false,
+		address: "",
+		addresslatLng: null
 	}
 }
 	onDrop = (picture) => {
@@ -31,25 +38,30 @@ constructor(props) {
             pictures: this.state.pictures.concat(picture)
         });
     }
+    handleChange = address => {
+    	this.setState({ 
+    		address 
+    	});
+    };
+ 
+    handleSelect = address => {
+	    geocodeByAddress(address)
+	      .then(results => getLatLng(results[0]))
+	      .then(latLng => {
+	      	console.log('Success', latLng);
+	      	this.setState({
+	      		address,
+	      		addresslatLng: latLng
+	      	})
+	      })
+	      .catch(error => console.error('Error', error));
+    };
 	handleProfileSubmission = (e) => {
 		e.preventDefault();
 
 		const formData = new FormData();
 
-		const { pictures, age, interestedIn, hairColor, eyeColor, languages, bodyType, breastSize, smokeOrDrink, nickName, bio } = this.state;
-
-        formData.append('image', pictures);
-        formData.append("age", age);
-        formData.append("interestedIn", interestedIn);
-        formData.append("hairColor", hairColor);
-        formData.append("eyeColor", eyeColor);
-        formData.append("languages", languages);
-        formData.append("bodyType", bodyType);
-        formData.append("breastSize", breastSize);
-        formData.append("smokeOrDrink", smokeOrDrink);
-        formData.append("nickName", nickName);
-        formData.append("bio", bio);
-        formData.append("email", this.props.email);
+		const { pictures, age, interestedIn, hairColor, eyeColor, languages, bodyType, breastSize, smokeOrDrink, nickName, bio, addresslatLng, meetup } = this.state;
 
         const config = {
             headers: {
@@ -59,7 +71,28 @@ constructor(props) {
 
 		console.log("form submitted...");
 
-		if (age !== null && interestedIn.length > 0 && hairColor.length > 0 && eyeColor.length > 0 && languages.length > 0 && bodyType.length > 0 && breastSize.length > 0 && smokeOrDrink.length > 0 && nickName.length > 0 && bio.length > 0) {
+		if (age !== null && interestedIn.length > 0 && hairColor.length > 0 && eyeColor.length > 0 && languages.length > 0 && bodyType.length > 0 && breastSize.length > 0 && smokeOrDrink.length > 0 && nickName.length > 0 && bio.length > 0 && meetup.length > 0) {
+
+			formData.append('image', pictures);
+	        formData.append("age", age);
+	        formData.append("interestedIn", interestedIn);
+	        formData.append("hairColor", hairColor);
+	        formData.append("eyeColor", eyeColor);
+	        formData.append("languages", languages);
+	        formData.append("bodyType", bodyType);
+	        formData.append("breastSize", breastSize);
+	        formData.append("smokeOrDrink", smokeOrDrink);
+	        formData.append("nickName", nickName);
+	        formData.append("bio", bio);
+	        formData.append("email", this.props.email);
+	        formData.append("meetupCoords", addresslatLng);
+	        formData.append("meetup", meetup);
+	        if (addresslatLng) {
+	        	formData.append("lat", addresslatLng.lat);
+	        	formData.append("lng", addresslatLng.lng);
+	        }
+
+
 			axios.post("/profile/append/data/one", formData, config).then((res) => {
 				console.log(res.data);
 				if (res) {
@@ -86,7 +119,7 @@ constructor(props) {
 		}
 	}
     render() {
-    	console.log(this.state.pictures);
+    	console.log(this.state);
         return (
             <div className="pink_background">
             	<Navigation />
@@ -173,13 +206,13 @@ constructor(props) {
 					                              <div className="form-group row">
 					                                <label for="select" className="col-4 col-form-label">Primary Language</label> 
 					                                <div className="col-8">
-					                                  <select value={this.state.languages} onChange={(e) => {
+					                                  <select value={this.state.languages || "english"} onChange={(e) => {
 					                                  	console.log(e.target.value)
 					                                  	this.setState({
 															languages: e.target.value
 					                                  	})
 					                                  }} id="select" name="languages" className="custom-select">
-					                                    <option selected value="english">English</option>
+					                                    <option value="english">English</option>
 					                                    <option value="spanish">Spanish</option>
 					                                    <option value="french">French</option>
 					                                    <option value="german">German</option>
@@ -222,7 +255,7 @@ constructor(props) {
 					                              <div className="form-group row">
 					                                <label for="newpass" className="col-4 col-form-label">Smoke/Drink?</label> 
 					                                <div className="col-8">
-					                                   <select value={this.state.smokeOrDrink} onChange={(e) => {
+					                                   <select value={this.state.smokeOrDrink || "Neither Smokes nor Drinks"} onChange={(e) => {
 					                                   	console.log(e.target.value);
 					                                  	this.setState({
 															smokeOrDrink: e.target.value
@@ -237,6 +270,21 @@ constructor(props) {
 					                                  </select>
 					                                </div>
 					                              </div> 
+					                               <div className="form-group row">
+					                                <label for="newpass" className="col-4 col-form-label">Do you want to meet up with locals to fuck? Select YES or NO</label> 
+					                                <div className="col-8">
+					                                   <select value={this.state.meetup || "NO-MEETUP"} onChange={(e) => {
+					                                  	this.setState({
+															meetup: e.target.value
+					                                  	})
+					                                  }} id="select" name="select" className="custom-select">
+														<option value="NO-MEETUP">No, I do NOT want to fuck random people</option>
+					                                    <option value="YES-MEETUP">YES, I want to fuck random people</option>
+					                                    
+					                                  </select>
+					                                </div>
+					                              </div> 
+
 					                              <div className="col-md-8" style={{ float: "right" }}>
 													<div class="input-group">
 													  <div class="input-group-prepend">
@@ -249,15 +297,54 @@ constructor(props) {
 													    	})
 													    }} name="upload" type="file" class="custom-file-input" id="inputGroupFile01"
 													      aria-describedby="inputGroupFileAddon01" />
-													    <label class="custom-file-label" for="inputGroupFile01">Choose a file</label>
+													    <label class="custom-file-label" for="inputGroupFile01">{this.state.pictures.length !== 0 ? "File Selected!" : "Choose a file"}</label>
 													  </div>
 													</div>
 					                              </div>
 					                              <div className="form-group row">
 					                                <div className="offset-4 col-8">
-					                                  <button name="submit" type="submit" className="btn btn-primary">Update My Profile</button>
+					                                  <button name="submit" type="submit" className="btn btn-outline aqua_button_custom">Update My Profile</button>
 					                                </div>
 					                              </div>
+					                             {this.state.meetup === "YES-MEETUP" ? <div className="form-group row"><div className="mx-auto" style={{ float: "right" }}><label style={{ margin: "10px 15px" }}> Select Your Address - This will ONLY show a 10-15 mile radius - not your exact location. We believe HIGHLY in protecting our clients and your safety is a top priority. </label><PlacesAutocomplete 
+												        value={this.state.address}
+												        onChange={this.handleChange}
+												        onSelect={this.handleSelect}
+												      >
+												        {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
+												          <div>
+												            <input style={{ width: "100%", padding: "10px 30px" }}
+												            className="form-control"
+												              {...getInputProps({
+												                placeholder: 'Search Places ...',
+												                className: 'location-search-input',
+												              })}
+												            />
+												            <div className="autocomplete-dropdown-container">
+												              {loading && <div>Loading...</div>}
+												              {suggestions.map(suggestion => {
+												                const className = suggestion.active
+												                  ? 'suggestion-item--active'
+												                  : 'suggestion-item';
+												                // inline style for demonstration purpose
+												                const style = suggestion.active
+												                  ? { backgroundColor: '#fafafa', cursor: 'pointer' }
+												                  : { backgroundColor: '#ffffff', cursor: 'pointer' };
+												                return (
+												                  <div
+												                    {...getSuggestionItemProps(suggestion, {
+												                      className,
+												                      style,
+												                    })}
+												                  >
+												                    <span style={{ color: "black" }}>{suggestion.description}</span>
+												                  </div>
+												                );
+												              })}
+												            </div>
+												          </div>
+												        )}
+												      </PlacesAutocomplete></div></div> : null}
 					                            </form>
 							                </div>
 							            </div>

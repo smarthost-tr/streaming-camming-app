@@ -219,6 +219,7 @@ constructor(props) {
                   <Link class="dropdown-item" to="/profiles">Cammers/Buy-Content</Link>
                   
                   {this.props.authenticated && this.state.cammer ? <React.Fragment><div class="dropdown-divider"></div><Link class="dropdown-item" to="/streams/create/private">Start PRIVATE Stream</Link></React.Fragment> : null}
+                  <Link class="dropdown-item" to="/all/streams/public">View All Public Streams</Link>
                 </div>
               </li>
               {this.props.authenticated ? <li class="nav-item dropdown">
@@ -242,9 +243,10 @@ constructor(props) {
               {this.props.authenticated ? <NavItem className="link sign-out">
                 <button onClick={() => {
                 	this.props.authentication({});
+                  this.props.history.push("/");
                 }} className="btn btn-outline-light" to="/register">Sign-Out</button>
               </NavItem> : <NavItem className="link">
-                <Link className="btn btn-outline <green></green>_button_custom" to="/register">Sign Up</Link>
+                <Link className="btn btn-outline green_button_custom" to="/register">Sign Up</Link>
               </NavItem>}
               {this.props.authenticated ? <NavItem className="link">
                 <Link className="btn btn-outline pink_button" to="/signup/camming/one">Become A Cammer!</Link>

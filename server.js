@@ -181,7 +181,18 @@ io.on("connection", socket => {
   console.log("New client connected");
   socket.on("tipped", (data) => {
     console.log(data);
-    io.sockets.emit("tip", data);
+    // io.sockets.emit("tip", data);
+  })
+
+  socket.on("sound", (data) => {
+    console.log("sound", data);
+    if (data.sound === true) {
+      io.sockets.emit("boom", data);
+    }
+  })
+  socket.on("confetti", (data) => {
+    console.log(data);
+    io.sockets.emit("poof", data);
   })
 
   socket.on("disconnect", () => console.log("Client disconnected"));

@@ -48,15 +48,42 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
 		const image_uuid = uuid();
 
-		console.log("fileeeeee ------------- :", req.file);
+		console.log("req.body ------------- :", req.body);
 
-		const { age, interestedIn, hairColor, eyeColor, languages, bodyType, breastSize, smokeOrDrink, nickName, bio, email, imageBinary } = req.body;
+		const { age, interestedIn, hairColor, eyeColor, languages, bodyType, breastSize, smokeOrDrink, nickName, bio, email, imageBinary, meetupCoords, meetup, lng, lat } = req.body;
 
 		const { location } = req.file;
 
 		const collection = db.collection("users");
 
-		collection.findOneAndUpdate({ email }, { $set: { profile: {
+		if (meetup === "YES-MEETUP") {
+			collection.findOneAndUpdate({ email }, { $set: { profile: {
+					age, 
+					interestedIn, 
+					hairColor, 
+					eyeColor, 
+					languages, 
+					bodyType, 
+					breastSize, 
+					smokeOrDrink, 
+					nickName, 
+					bio,
+					cammer: true,
+					profilePic: location,
+					meetup: true,
+					meetupCoordsLat: lat,
+					meetupCoordsLng: lng
+				}}}, (err, doc) => {
+			    if (err) {
+			        console.log("Something wrong when updating data!");
+			    }
+			    if (doc) {
+			    	console.log(doc)
+					res.send({ data: doc });
+			    }
+			});
+		} else if (meetup === "NO-MEETUP") {
+			collection.findOneAndUpdate({ email }, { $set: { profile: {
 				age, 
 				interestedIn, 
 				hairColor, 
@@ -68,7 +95,8 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 				nickName, 
 				bio,
 				cammer: true,
-				profilePic: location
+				profilePic: location,
+				meetup: false
 			}}}, (err, doc) => {
 		    if (err) {
 		        console.log("Something wrong when updating data!");
@@ -78,6 +106,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 				res.send({ data: doc });
 		    }
 		});
+		}
 	});
 });
 

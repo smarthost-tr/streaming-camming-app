@@ -32,6 +32,7 @@ import CreatePrivateStream from "./components/streams/private/create/createPriva
 import ContactPage from "./components/common/contact/contact.js";
 import ReferAFriendPage from "./components/refer/referAFriend.js";
 import HomeMap from "./components/mapbox/homeMap.js";
+import StreamListAll from "./components/streams/streamListAll.js";
 
 class App extends Component {
 constructor(props) {
@@ -76,6 +77,7 @@ constructor(props) {
         <Route path="/contact/page" exact component={ContactPage} />
         <Route path="/refer/friend" exact component={ReferAFriendPage} />
         <Route path="/find/fuck/buddies/map" component={HomeMap} />
+        <Route path="/all/streams/public" exact component={StreamListAll} />
       </div>
     </BrowserRouter>
     );
