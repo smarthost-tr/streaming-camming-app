@@ -1,0 +1,70 @@
+nav > .nav.nav-tabs{
+
+  border: none;
+    color:#fff;
+    background:#272e38;
+    border-radius:0;
+
+}
+nav > div a.nav-item.nav-link,
+nav > div a.nav-item.nav-link.active
+{
+  border: none;
+    padding: 18px 25px;
+    color:#fff;
+    background:#272e38;
+    border-radius:0;
+}
+
+nav > div a.nav-item.nav-link.active:after
+ {
+  content: "";
+  position: relative;
+  bottom: -60px;
+  left: -10%;
+  border: 15px solid transparent;
+  border-top-color: #e74c3c;
+}
+.tab-content{
+    background: #871eff;
+    line-height: 25px;
+    border: 1px solid #ddd;
+    border-top:5px solid #871eff;
+    border-bottom:5px solid #871eff;
+    padding:30px 25px;
+
+}
+
+nav > div a.nav-item.nav-link:hover,
+nav > div a.nav-item.nav-link:focus
+{
+  border: none;
+    background: #e74c3c;
+    color:#fff;
+    border-radius:0;
+    transition:background 0.20s linear;
+}
+
+.carddd {
+  background-color: transparent !important;
+  display: inline;
+}
+div.scrollmenu {
+  background-color: #333;
+  width: 100%;
+  overflow: auto;
+  white-space: nowrap;
+}
+
+div.scrollmenu .columns {
+  display: inline-block;
+  height: 100%;
+  color: white;
+  text-align: center;
+  padding: 14px;
+  text-decoration: none;
+  color: black;
+}
+.list-group-item {
+  overflow-x: scroll;
+}

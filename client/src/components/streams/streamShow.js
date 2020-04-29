@@ -26,6 +26,7 @@ import Yay from "../../assets/yay.mp3";
 import ConfettiAnimation from "./animations/confetti.js";
 
 
+
 const customStyles = {
   content : {
     top                   : '50%',
@@ -74,11 +75,16 @@ class StreamShow extends Component {
 		data: [],
 		setUser: null,
 		sound: false,
-		confetti: false
+		confetti: false,
+		corner: false,
+		confettiHide: false
     }	
 }
 
 	componentDidMount() {
+		window.addEventListener('scroll', this.listenScrollEvent);
+
+		document.getElementById("fun-poof").style.display = "none";
 		
 		setTimeout(() => {
 			axios.post("/gather/user/info/from/stream", {
@@ -204,8 +210,8 @@ class StreamShow extends Component {
 
 		if (!streamIsReady) {
 			return (
-				<div className="container" style={{ marginLeft: "-200px" }}>
-					<div className="col-md-12">
+				<div className="container">
+					<div className="col-md-12 col-lg-12">
 						<h1 className="text-center" style={{ textDecoration: "underline", paddingTop: "30px" }}>Stream is unavaliable, please check back again in a few moments...</h1>
 						<button style={{ marginTop: "40px", width: "100%" }} onClick={this.checkStreamActive} className="btn btn-outline-warning">Check if stream is active</button>
 					</div>
@@ -213,22 +219,29 @@ class StreamShow extends Component {
 			);
 		} else {
 			return (
-				<React.Fragment>
-					<div style={{ marginLeft: "20px", boxShadow: "5px 5px 5px #871eff" }} className={`col-lg-${this.state.col} col-sm-12 col-md-12`}>
-						<ReactPlayer playing={true} style={{ backgroundColor: "black" }} url={`https://stream.mux.com/${this.state.playbackID}.m3u8`} controls width="100%" height="100%" />
-
+				<div className="container-fluid">
+					<div className="row">
+				        {/* Other elements can be in between `StickyContainer` and `Sticky`,
+				        but certain styles can break the positioning logic used. */}
+				        
+				           
+						        <div id="vid_container" style={{ marginLeft: "20px", boxShadow: "5px 5px 5px #871eff" }}>
+									<ReactPlayer id={this.state.corner ? "corner_me" : "no-corner"} playing={true} style={{ backgroundColor: "black" }} url={`https://stream.mux.com/${this.state.playbackID}.m3u8`} controls width="100%" height="100%" />				        		
+								</div>
+				           
+				         
+						 {this.state.ready ?  <div id="chattt"><Chat client={client} theme={'livestream dark'}>
+						    <Channel channel={channel} Message={MessageLivestream}>
+						      <Window hideOnThread>
+						        <ChannelHeader live />
+						        <MessageList />
+						       	<MessageInput Input={MessageInputSmall} focus />
+						      </Window>
+						      <Thread fullWidth />
+						    </Channel>
+						  </Chat></div> : null}
 					</div>
-					 {this.state.ready ?  <div className="col-lg-4 col-sm-12 col-md-12"><Chat client={client} theme={'livestream dark'}>
-					    <Channel channel={channel} Message={MessageLivestream}>
-					      <Window hideOnThread>
-					        <ChannelHeader live />
-					        <MessageList />
-					       	<MessageInput Input={MessageInputSmall} focus />
-					      </Window>
-					      <Thread fullWidth />
-					    </Channel>
-					  </Chat></div> : null}
-				</React.Fragment>
+				</div>
 			);
 		}
 	}
@@ -267,6 +280,11 @@ class StreamShow extends Component {
 						    socket.emit("tipped", {
 						    	tip,
 						    	user: this.props.username
+						    });
+
+						    socket.emit("tip-record", {
+						    	message: `${this.props.username} just tipped ${this.state.tip} tokens!`,
+						    	generatedID: uuid()
 						    })
 	        
 	    					socket.emit("sound", {
@@ -285,7 +303,7 @@ class StreamShow extends Component {
 									socket.emit("confetti", {
 		    							confetti: false
 		    						})
-								}, 20000);
+								}, 13000);
 
 
 	    					}
@@ -327,6 +345,8 @@ class StreamShow extends Component {
 	 //          console.log(err);
 	 //        }) 
 		// }
+		window.addEventListener('scroll', this.listenScrollEvent);
+
 		console.log(prevState);
 		if (prevState.sound !== false) {
 			socket.emit("sound", {
@@ -507,6 +527,7 @@ class StreamShow extends Component {
 		}
 	}
 	webSock = () => {
+		let finished = false;
 		socket.on("boom", (data) => {
 			console.log('data', data);
 			if (data.tip <= 50) {
@@ -525,13 +546,27 @@ class StreamShow extends Component {
 		});
 		socket.on("poof", (data) => {
 			console.log("BOOYAH :", data);
-			this.setState({
-				confetti: data.confetti
-			})
+			if (data.confetti === true) {
+				document.getElementById("fun-poof").style.display = "block";
+				document.getElementById("yay-file").play();
+			} else {
+				document.getElementById("fun-poof").style.display = "none";
+			}
 		})
 	}
+  	listenScrollEvent = (e) => {
+	    if (window.scrollY > 600) {
+	      this.setState({ 
+	      	corner: true
+	      })
+	    } else {
+	      this.setState({
+	      	corner: false
+	      })
+	    }
+  	}
     render() {
-
+		
     	const { streamsReady, APISuccess, err, streamIsReady } = this.state;
 
     	console.log(this.state);
@@ -539,7 +574,9 @@ class StreamShow extends Component {
         	<div>
         		<Navigation />
 				{this.webSock()}
-				{this.state.confetti ? <ConfettiAnimation /> : null}
+				<div id="fun-poof">
+					<ConfettiAnimation />
+				</div>
 				
  				<div className="container-fluid" id="fragment_background" style={{ height: "100%", padding: "30px 20px 0px 0px" }}>
  				<div className="mx-auto">
@@ -563,14 +600,9 @@ class StreamShow extends Component {
 					<div className="row" style={{ margin: "40px 0px" }}>
 						<div className="mx-auto">
 							{this.props.username ? null : <p className="text-center lead bold" style={{ textDecoration: "underline" }}>You are seeing only a SMALL portion of the avaliable content... please sign-in to join the chat and access all of our restricted features.</p>}
-						</div>
-
-						
-							<div className="row">
-								{this.renderContent()}
-							</div>
-					
+						</div>	
 					</div>
+					{this.renderContent()}
 					
 					<div className="container" style={{ paddingBottom: "30px" }}>
 					<h4 className="text-center bold">{this.state.groupMessages !== null ? this.state.groupMessages : null}</h4>

@@ -196,7 +196,7 @@ constructor(props) {
           <NavbarBrand><img onClick={() => {
             this.props.history.push("/");
           }} style={{ width: "200px", height: "50px" }} src={require("../../images/logos.png")} alt="logo"/></NavbarBrand>
-          <NavbarToggler onClick={this.toggle} />
+          <NavbarToggler onClick={this.toggle} style={{ color: "white", border: "2px solid white" }}> Menu </NavbarToggler>
           <Collapse isOpen={this.state.isOpen} navbar>
             <Nav className="mr-auto" navbar>
               {this.props.authenticated ? <li class="nav-item dropdown">
@@ -204,7 +204,7 @@ constructor(props) {
                   Tokens
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                  <Link class="dropdown-item" href="#">Earn Tokens</Link>
+                  <Link class="dropdown-item" to="/crypto/wallet">Crypto Wallet</Link>
                   <Link class="dropdown-item" to="/purchase/tokens">Purchase Tokens</Link>
                   <div class="dropdown-divider"></div>
                   <Link class="dropdown-item" href="#">Something else here</Link>
@@ -300,7 +300,7 @@ constructor(props) {
                   </ul>
                 </li> : null}
              
-              {this.props.authenticated ? <NavbarText>{store.getState().auth.data.username.slice(0, 10)}..., (<strong>{this.state.tokens ? this.state.tokens : "Unknown"}</strong>) tokens</NavbarText> : null}
+              {this.props.authenticated ? <NavbarText>{store.getState().auth.data.username.slice(0, 10)}..., (<strong>{this.state.tokens ? this.state.tokens : "Error"}</strong>) tokens</NavbarText> : null}
             {this.constantRender()}
           </Collapse>
         </Navbar>

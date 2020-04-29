@@ -7,7 +7,7 @@ import { withRouter } from "react-router-dom";
 import "./registration.css";
 import { token } from "../../actions/token.js";
 import { StreamChat } from 'stream-chat';
-
+import { gatherCurrency } from "../../actions/blockchain/index.js";
 
 const client = new StreamChat('qzye22t8v5c4');
 
@@ -37,7 +37,10 @@ constructor(props) {
 				if (res.data.data) {
 					this.props.authentication(res.data.data);
 					this.props.token(res.data.token);
-		
+					this.props.gatherCurrency({ 
+						privateKey: res.data.data.blockPrivateKey, 
+						publicKey: res.data.data.blockPublicKey 
+					})
 					client.setUser({
 					   id: res.data.data.username,
 					   name: res.data.data.username,
@@ -111,4 +114,4 @@ constructor(props) {
     }
 }
 
-export default withRouter(connect(null, { authentication, token })(LoginScreen));
+export default withRouter(connect(null, { authentication, token, gatherCurrency })(LoginScreen));

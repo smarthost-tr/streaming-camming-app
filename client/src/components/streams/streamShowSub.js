@@ -2,24 +2,77 @@ import React, { Component } from "react";
 import Navigation from "../navigation/index.js";
 import "./css/streamShow.css";
 import Progress from 'react-progressbar';
+import io from "socket.io-client";
 
+const socket = io('http://127.0.0.1:5000', {
+	transport: ['websocket']
+});
 
 class StreamShowSub extends Component {
 constructor(props) {
 	super(props)
 
+	this.state = {
+		tips: []
+	}
 }
 	renderSubmit = (e) => {
 		e.preventDefault();
 		console.log("render submit clicked...");
 	}
+	renderSockets = () => {
+		socket.on("tippy", (data) => {
+			let id = data.generatedID;
+			let message = data.message;
+			if (this.state.tips.includes(message)) {
+				console.log("already includes it...");
+				return null;
+			} else {
+				this.setState({
+					tips: [...this.state.tips, data.message],
+				})
+			}
+		})
+	}
 	render () {
+		console.log(this.state);
 		let user;
 		for (let key in this.props) {
 			user = this.props[key][0];
 		}
 		return (
 			<div>
+			{this.renderSockets()}
+			<div className="container">
+				<div className="row">
+				<div className="mx-auto">
+					<h3 class="text-center text-white">Tip Record</h3><br/>
+					<label className="text-white">Tipping multiple times with the same amount will only display once - this is to encourage various tipping amounts</label>
+				</div>
+				<ul class="list-group custom_tips col-md-12">
+					{this.state.tips ? this.state.tips.map((tip, index) => {
+						console.log(tip);
+						return (
+							 <li class="list-group-item" style={{ width: "100%" }}><img style={{ width: "30px", height: "30px" }} src={require("../../images/ping.png")} /> {tip}</li>
+						);
+					}) : null}
+				</ul>
+				</div>
+			</div>
+			<div className="container">
+				<div className="row">
+					<div className="col-md-12">
+						<ul className="special_list" style={{ marginTop: "30px" }}>
+							{user.tipRates ? user.tipRates.map((task, index) => {
+								return task.map((data, indexxx) => {
+									console.log(data);
+									return <li className="list_item">Task Request: Get me to <strong style={{ color: "#37be43" }}>{data.task}</strong> for <strong  style={{ color: "#871eff" }}>{data.cost}</strong> tokens</li>
+								})
+							}) : <h3 className="text-center text-white">User hasn't created a tip chart *yet*...</h3>}
+						</ul>
+					</div>
+				</div>
+			</div>
 				<div style={{ marginBottom: "-50px", paddingBottom: "50px" }} class="container-fluid emp-profile">
 				       	<form onSubmit={this.renderSubmit}>
 				                <div class="row">

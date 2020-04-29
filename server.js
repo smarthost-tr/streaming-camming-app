@@ -2,6 +2,7 @@
 /*** CONFIG ***/
 /**************/
 const PORT = process.env.PORT || 5000;
+const port = process.argv[2];
 
 /*************/
 /*** SETUP ***/
@@ -31,15 +32,20 @@ const flash = require('connect-flash');
 const session = require('express-session');
 const mongo = require("mongodb");
 const moment = require("moment");
-
 const { Video } =  new Mux("f899a074-f11e-490f-b35d-b6c478a5b12a", "4vLdjx6uBafGdFiSbmWt5akv4DaD4PkDuCCYdFYXzudywyQSR3Uh27GqlfedlhZ17fbnXbf9Rh/");
-
+const EC = require("elliptic").ec;
+const ec = new EC("secp256k1");
+const gemshire = require("./main.js"); 
+const rp = require("request-promise"); 
+const uuid = require("uuid/v4");
+const nodeAddress = uuid().split("-").join("");
 let STREAM;
 
 {/*var httpsServer = https.createServer(credentials, app).listen(<port>);*/}
 
 
 mongoDB();
+
 
 paypal.configure({
   'mode': 'sandbox', //sandbox or live
@@ -107,7 +113,6 @@ if (process.env.NODE_ENV === "production") {
 	  })
 	})
 }; 
-
 app.use("/post/reply/comment/profile", require("./routes/comments/postReplyComment.js"));
 app.use("/gather/profile/comments/individual", require("./routes/comments/gather/gatherComments.js"));
 app.use("/stream", require("./routes/streaming/stream.js"));
@@ -120,7 +125,6 @@ app.use("/streaming/get/individual/broadcast", require("./routes/streaming/getBr
 app.use("/register/new/user", require("./routes/auth/register.js"));
 app.use("/mux/create/stream", require("./routes/mux/index.js"));
 app.use("/mux/get/streams", require("./routes/mux/gatherStream.js"));
-// app.use("/get/stream", require("./routes/mux/"));
 app.use("/authentication/login", require("./routes/auth/login.js"));
 app.use("/post/new/stream", require("./routes/streaming/mongodb/saveStreamData.js"));
 app.use("/complete/form/page/one", require("./routes/forms/cammerRegistration/agreement.js"));
@@ -149,11 +153,6 @@ app.use("/gather/image/profile", require("./routes/gatherUserImage.js"));
 app.use("/post/channel/db", require("./routes/chat/saveToDatabase/saveChannel.js"));
 app.use("/post/channel/db/other/user", require("./routes/chat/saveToDatabase/saveReceivingChannel.js"));
 app.use("/gather/personal/channels", require("./routes/chat/gatherCredentials/gatherChannels.js"));
-// app.use("/post/initial/private/conversation/reciever", require("./routes/chat/initial/reciever.js"));
-// app.use("/post/initial/private/conversation", require("./routes/chat/initial/sender.js"));
-// app.use("/gather/messages/all", require("./routes/chat/gatherMessages/index.js"));
-// app.use("/reply/private/message/sender", require("./routes/chat/reply/sender.js"));
-// app.use("/reply/private/message/reciever", require("./routes/chat/reply/reciever.js"));
 app.use("/gather/user/info/from/stream", require("./routes/streaming/getByStreamId.js"));
 app.use("/take/away/tokens/tip", require("./routes/tokens/takeAwayTokensTip.js"));
 app.use("/send/tokens/to/user", require("./routes/tokens/sendTokensToUser.js"));
@@ -176,12 +175,186 @@ app.use("/complete/stream/mongodb", require("./routes/streaming/mongodb/findBySt
 app.use("/gather/each/every/stream/mongodb", require("./routes/streaming/mongodb/gatherEachStream.js"));
 // saving stream data db stuff ^^^^^^^^^
 app.use("/search/user", require("./routes/friendsList/searchUser.js"));
+app.use("/complete/tip/list", require("./routes/forms/cammerRegistration/postTipRates.js"));
+app.use("/get/user", require("./routes/getUser.js"));
+app.use("/make/blockchain/payment", require("./routes/blockchain/currency/purchase.js"));
+app.use("/gather/blockchain/blocks", require("./routes/blockchain/getChain.js"));
+app.use("/mine/crypto", require("./routes/blockchain/currency/mine.js"));
+
+app.post("/receive-new-block", (req, res) => {
+  const { newBlock } = req.body;
+  const lastBlock = gemshire.getLastBlock();
+  
+  const correctHash = lastBlock.hash === newBlock.previousBlockHash;
+  const correctIndex = lastBlock["index"] + 1 === newBlock["index"];
+
+  if (correctHash && correctIndex) {
+    gemshire.chain.push(newBlock);
+    gemshire.pendingTransactions = [];
+    res.json({
+      note: "New block received and accepted.",
+      newBlock
+    })
+  } else {
+    res.json({
+      note: "New block rejected.",
+      newBlock
+    })
+  }
+
+})
+
+app.get("/mine", (req, res) => {
+
+      const lastBlock = gemshire.getLastBlock();
+
+      const previousBlockHash = lastBlock["hash"];
+
+      const currentBlockData = {
+        transactions: gemshire.pendingTransactions,
+        index: lastBlock["index"] + 1
+      }
+
+      const nounce = gemshire.proofOfWork(previousBlockHash, currentBlockData);
+    
+      const blockHash = gemshire.hashBlock(previousBlockHash, currentBlockData, nounce);
+
+      const newBlock = gemshire.createNewBlock(nounce, previousBlockHash, blockHash);
+
+      const requestPromises = [];
+
+      gemshire.networkNodes.forEach((networkNodeUrl) => {
+        const requestOptions = {
+          uri: networkNodeUrl + "/receive-new-block",
+          method: "POST",
+          body: { newBlock },
+          json: true
+        };
+
+        requestPromises.push(rp(requestOptions));
+      })
+
+      Promise.all(requestPromises).then((data) => {
+        const requestOptions = {
+          uri: gemshire.currentNodeUrl + "/transaction/broadcast",
+          method: "POST",
+          body: {
+            amount: 12.5,
+            sender: "00",
+            recipient: nodeAddress
+          },
+          json: true
+        }
+
+        return rp(requestOptions);
+      }).then((data) => {
+        res.json({
+          note: "New block mined successfully",
+          block: newBlock
+        })
+      })
+  });
+
+// register a node and broadcast to network
+app.post("/register-and-broadcast-node", (req, res) => {
+  const newNodeUrl = req.body.newNodeUrl;
+  
+  if (gemshire.networkNodes.indexOf(newNodeUrl) == -1) {
+      gemshire.networkNodes.push(newNodeUrl);
+  }
+  const regNodesPromises = [];
+  gemshire.networkNodes.forEach((networkNodeUrl) => {
+    const requestOptions = {
+      uri: networkNodeUrl + "/register-node",
+      method: "POST",
+      body: { newNodeUrl: newNodeUrl },
+      json: true
+    }
+    regNodesPromises.push(rp(requestOptions));
+  });
+ 
+  Promise.all(regNodesPromises).then((data) => {
+    // do operations
+    const bulkRegisterOptions = {
+      uri: newNodeUrl + "/register-nodes-bulk",
+      method: "POST",
+      body: { allNetworkNodes: [...gemshire.networkNodes, gemshire.currentNodeUrl] },
+      json: true
+    };
+
+    return rp(bulkRegisterOptions);
+  }).then((data) => {
+    res.json({ note: "New node reigstered with network successfully!" })
+  })
+});
+// register node with the network
+app.post("/register-node", (req, res) => {
+  const newNodeUrl = req.body.newNodeUrl;
+  const nodeNotAlreadyPresent = gemshire.networkNodes.indexOf(newNodeUrl) == -1;
+  const notCurrentNode = gemshire.currentNodeUrl !== newNodeUrl;
+  if (nodeNotAlreadyPresent && notCurrentNode) {
+    gemshire.networkNodes.push(newNodeUrl);
+  }
+  res.json({
+    note: "New node registered successfully."
+  })
+});
+app.post("/transaction", (req, res) => {
+  const newTransaction = req.body;
+
+  const blockIndex = gemshire.addTransactionToPendingTransactions(newTransaction);
+
+  res.json({
+    note: `Transaction will be added in block ${blockIndex}`
+  })
+})
+app.post('/transaction/broadcast', (req, res) => {
+  const { amount, sender, recipient } = req.body;
+
+  const newTransaction = gemshire.createNewTransaction(amount, sender, recipient);
+
+  gemshire.addTransactionToPendingTransactions(newTransaction);
+
+  const requestPromises = [];
+
+  gemshire.networkNodes.forEach((networkNodeUrl) => {
+    const requestOptions = {
+      uri: networkNodeUrl + "/transaction",
+      method: "POST",
+      body: newTransaction,
+      json: true
+    };
+
+    requestPromises.push(rp(requestOptions));
+  });
+
+  Promise.all(requestPromises).then((data) => {
+    res.json({
+      note: "Transaction created and broadcasted successfully."
+    })
+  })
+});
+// register multiple nodes at once
+app.post("/register-nodes-bulk", (req, res) => {
+  const allNetworkNodes = req.body.allNetworkNodes;
+
+  allNetworkNodes.forEach((networkNodeUrl) => {
+    const nodeNotAlreadyPresent = gemshire.networkNodes.indexOf(networkNodeUrl) == -1;
+    const notCurrentNode = gemshire.currentNodeUrl !== networkNodeUrl;
+    if (nodeNotAlreadyPresent && notCurrentNode) {
+      gemshire.networkNodes.push(networkNodeUrl);
+    }
+  });
+  res.json({
+    note: "Bulk registration successful."
+  }) 
+});
 
 io.on("connection", socket => {
   console.log("New client connected");
   socket.on("tipped", (data) => {
     console.log(data);
-    // io.sockets.emit("tip", data);
+    io.sockets.emit("tip", data);
   })
 
   socket.on("sound", (data) => {
@@ -194,12 +367,15 @@ io.on("connection", socket => {
     console.log(data);
     io.sockets.emit("poof", data);
   })
+  
+  socket.on("tip-record", (tips) => {
+    console.log(tips);
+    io.sockets.emit("tippy", tips);
+  })
 
   socket.on("disconnect", () => console.log("Client disconnected"));
 });
 
-
-
-server.listen(PORT, () => {
-	console.log(`Server listening on port ${PORT}!`);
+server.listen(port, () => {
+	console.log(`Server listening on port ${port}!`);
 });

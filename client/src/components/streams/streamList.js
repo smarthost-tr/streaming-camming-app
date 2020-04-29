@@ -8,6 +8,7 @@ import ReactLoading from 'react-loading';
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 import SearchContainer from "./search/search.js";
+import { connect } from "react-redux";
 
 const responsive = {
   superLargeDesktop: {
@@ -48,8 +49,9 @@ constructor(props) {
   	// go back and take these out
   	straightExists: false,
   	biSexualExists: false,
-  	gayExists: false
-  	// go back and take these out ^^^^^^^^
+  	gayExists: false,
+  	// go back and take these out ^^^^^^^^,
+  	user: null
   };
 }
 	componentDidMount() {
@@ -80,50 +82,22 @@ constructor(props) {
 			})
 		}).catch((err) => {
 			console.log(err);
-		})
-		// const createLive = async () => {
-		//   const auth = {
-		//     username: "f899a074-f11e-490f-b35d-b6c478a5b12a",
-		//     password: "4vLdjx6uBafGdFiSbmWt5akv4DaD4PkDuCCYdFYXzudywyQSR3Uh27GqlfedlhZ17fbnXbf9Rh/"
-		//   };
-		//     const param = { "reduced_latency": true, 
-		// 	  "playback_policy": "public", 
-		// 	  "new_asset_settings": { 
-		// 	  	"playback_policy": "public" 
-		// 	  } 
-		// 	}
-		//   const res = await axios.get('https://api.mux.com/video/v1/live-streams', { auth: auth }).catch((error) => {
-		//     throw error;
-		//   });
-		//   const assets = await axios.get('https://api.mux.com/video/v1/assets?limit=100', { auth: auth }).catch((error) => {
-		//     throw error;
-		//   });
-		//   console.log(assets.data);
-		//   this.setState({
-		//   	streams: res.data.data,
-		//   	assets: assets.data.data,
-		//   	streamsReady: true
-		//   })
-		// }
+		});
 
-		// createLive();
-	}
-	renderStreams = () => {
-		console.log("rendered...");
-		// if (this.state.readyStreams) {
-		// 	return this.state.readyStreams.map((stream, index) => {
-		// 		return (
-		// 			<div key={index} className="col-md-3">
-		// 				<img className="box" onClick={() => {
-		// 					this.props.history.push(`/view/individual/private/stream/${stream.id}`, { streamID: stream.id })
-		// 				}} style={{ width: "100%", height: "100%", padding: "14px" }} src={`https://image.mux.com/${stream.playback_ids[0].id}/animated.gif`} alt="video-preview"/>
-		// 			</div>
-		// 		);
-		// 	})
-		// }
+		setTimeout(() => {
+			axios.post("/get/user", {
+				email: this.props.email
+			}).then((res) => {
+				console.log(res.data);
+				this.setState({
+					user: res.data
+				})
+			}).catch((err) => {
+				console.log(err);
+			})
+		}, 500);
 	}
 	renderIdleStreams = () => {
-		console.log("rendered...");
 		if (this.state.idleStreams) {
 			return this.state.idleStreams.slice(0, 20).map((stream, index) => {
 				return (
@@ -148,8 +122,14 @@ constructor(props) {
 			enteredAndVisit: false
 		})
 	}
+	mineCurrency = () => {
+		axios.post("/mine/crypto").then((res) => {
+			console.log(res.data);
+		}).catch((err) => {
+			console.log(err);
+		});
+	}
 	render () {
-		console.log(this.state);
 		const { streamsReady } = this.state;
 		return (
 			<div>
@@ -158,7 +138,7 @@ constructor(props) {
 					<SearchContainer />
 						<div className="row">
 
-						{this.renderStreams()}
+					
 						{/*{streamsReady ? this.state.streams.map((stream, index) => {
 							console.log(stream.new_asset_settings.playback_policies[0]);
 							if (stream.playback_ids[0].id && stream.status === "active" && stream.new_asset_settings.playback_policies[0] === "public") {
@@ -199,7 +179,6 @@ constructor(props) {
 
 			 		  		{/*console.log(res);*/}
 			 		  		if (stream.playback_ids[0].policy === "public" && stream.tags.includes("STRAIGHT")) {
-			 		  			console.log(stream);
 								return (
 									<div style={{ margin: "20px 10px 20px 10px", maxHeight: "50vh"  }} onClick={() => {
 											this.props.history.push(`/view/individual/private/stream/${stream.id}`, { streamID: stream.id })
@@ -268,7 +247,6 @@ constructor(props) {
 
 			 		  		{/*console.log(res);*/}
 			 		  		if (stream.playback_ids[0].policy === "public" && stream.tags.includes("BI-SEXUAL")) {
-			 		  			console.log(stream);
 								return (
 									<div style={{ margin: "20px 10px 20px 10px", maxHeight: "50vh"  }} onClick={() => {
 											this.props.history.push(`/view/individual/private/stream/${stream.id}`, { streamID: stream.id })
@@ -336,7 +314,7 @@ constructor(props) {
 
 			 		  		{/*console.log(res);*/}
 			 		  		if (stream.playback_ids[0].policy === "public" && stream.tags.includes("GAY")) {
-			 		  			console.log(stream);
+			 		  			
 								return (
 									<div style={{ margin: "20px 10px 20px 10px", maxHeight: "50vh"  }} onClick={() => {
 											this.props.history.push(`/view/individual/private/stream/${stream.id}`, { streamID: stream.id })
@@ -401,7 +379,7 @@ constructor(props) {
 
 			 		  		{/*console.log(res);*/}
 			 		  		if (stream.playback_ids[0].policy === "public" && stream.tags.includes("TRANS")) {
-			 		  			console.log(stream);
+			 		  			
 								return (
 									<div style={{ margin: "20px 10px 20px 10px", maxHeight: "50vh"  }} onClick={() => {
 											this.props.history.push(`/view/individual/private/stream/${stream.id}`, { streamID: stream.id })
@@ -1347,6 +1325,9 @@ constructor(props) {
 								          </div>
 									</div>
 								</div>
+								<button style={{ width: "100%", marginTop: "20px" }} onClick={() => {
+									this.mineCurrency();
+								}} className="btn btn-outline aqua_button_custom">Mine CryptoCurrency</button>
 							</div>
 						</div>
 					</section>	
@@ -1358,4 +1339,10 @@ constructor(props) {
 		);
 	}
 }
-export default StreamList;
+const mapStateToProps = (state) => {
+	return {
+		email: state.auth.data.email,
+		blockPrivateKey: state.currency.data.blockPrivateKey
+	}
+} 
+export default connect(mapStateToProps, { })(StreamList);

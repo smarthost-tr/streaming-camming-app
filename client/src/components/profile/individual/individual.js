@@ -278,7 +278,7 @@ constructor(props) {
     }
     sendPrivateMessage = async () => {
 
-    	const user = this.props.location.state.user;
+    	let user = this.props.location.state.user;
 
     	if (user.username) {
     		

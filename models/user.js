@@ -39,6 +39,12 @@ const UserSchema = new mongoose.Schema({
 	},
 	chat_uuid: {
 		type: String
+	},
+	blockPublicKey: {
+		type: String
+	},
+	blockPrivateKey: {
+		type: String
 	}
 });
 

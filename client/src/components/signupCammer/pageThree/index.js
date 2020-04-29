@@ -30,7 +30,10 @@ constructor(props) {
 		meetup: "NO-MEETUP",
 		showLocationInput: false,
 		address: "",
-		addresslatLng: null
+		addresslatLng: null,
+		skills: [],
+		performance: "",
+		task: ""
 	}
 }
 	onDrop = (picture) => {
@@ -118,6 +121,50 @@ constructor(props) {
 			alert("Please fill out every field.")
 		}
 	}
+	handleTipRates = () => {
+		console.log("clicked...");
+
+		const { performance, task, skills } = this.state;
+
+		const complete = { task, cost: performance };
+
+		if (performance.length > 0 && task.length > 0) {
+			this.setState({
+				skills: [...skills, complete],
+				performance: "",
+				task: ""
+			})
+		} else {
+			alert("Please enter a valid tip request.")
+		}
+	}
+	renderSubmissionButton = () => {
+		if (this.state.skills.length > 0) {
+			return (
+				<div className="mx-auto col-md-12 col-lg-12" style={{ marginTop: "20px" }}>
+					<button onClick={this.handleProfileSubmissionTwo} style={{ width: "100%" }} className="btn btn-outline green_button_custom">Submit ALL Tip Rates And Attached Tasks/Demands</button>
+				</div>
+			);
+		}
+	}
+	handleProfileSubmissionTwo = () => {
+		console.log("submitted...");
+		axios.post("/complete/tip/list", {
+			email: this.props.email,
+			complete: this.state.skills
+		}).then((res) => {
+			console.log(res.data);
+			if (res.data) {
+				this.setState({
+					skills: []
+				})
+				alert("Successfully added your tip rates, these will now show up on your live stream feeds!");
+
+			}
+		}).catch((err) => {
+			console.log(err);
+		})
+	}
     render() {
     	console.log(this.state);
         return (
@@ -129,24 +176,13 @@ constructor(props) {
             	</div>
 					<div className="container">
 						<div className="row">
-							<div className="col-md-3" style={{ marginTop: "50px" }}>
-							     <div className="list-group ">
-					              <a href="#" className="list-group-item list-group-item-action active">Personal/public information while streaming</a>
-					              <a href="#" className="list-group-item list-group-item-action">Search Friends</a>
-					    {/*          <a href="#" className="list-group-item list-group-item-action">Used</a>
-					              <a href="#" className="list-group-item list-group-item-action">Enquiry</a>
-					              <a href="#" className="list-group-item list-group-item-action">Dealer</a>*/}
-					            
-					              
-					              
-					            </div> 
-							</div>
-							<div className="col-md-9" style={{ marginBottom: "100px"}}>
+
+							<div className="col-md-12" style={{ marginBottom: "100px"}}>
 							    <div className="card custom_card_two" style={{ height: "100%" }}>
 							        <div className="card-body">
 							            <div className="row">
 							                <div className="col-md-12">
-							                    <h4>Your Profile</h4>
+							                    <h4 className="text-center">Your Profile</h4>
 							                    <hr />
 							                </div>
 							            </div>
@@ -349,6 +385,71 @@ constructor(props) {
 							                </div>
 							            </div>
 							            
+							        </div>
+							    </div>
+							</div>
+
+						</div>
+					</div>
+					<hr className="my-4"/>
+					<div className="container">
+						<div className="row">
+							<div className="col-md-12" style={{ marginBottom: "100px"}}>
+							    <div className="card custom_card_two" style={{ height: "100%" }}>
+							        <div className="card-body">
+							            <div className="row">
+							                <div className="col-md-12">
+							                    <h4 className="text-center">Tip Rates - Acts performed per each tip amount</h4>
+							                    <hr />
+							                </div>
+							            </div>
+							            <div className="row">
+							                <div className="col-md-12" id="custom_container">
+							                   
+							                    <div className="form-group">
+					                                <label for="username" className="col-4 col-form-label">Age</label> 
+					                                <div className="col-12">
+					                                <div class="input-group-prepend">
+													    <span class="input-group-text" id="basic-addon1"><i class="fas fa-plus-square fa-2x"></i></span>
+													  
+					                                  <input onChange={(e) => {
+					                                  	this.setState({
+					                                  		performance: e.target.value
+					                                  	})
+					                                  }} style={{ width: "60vw", height: "45px" }} value={this.state.performance} id="username" name="username" placeholder="Enter a tip amount - Numerical values only" className="form-control here" type="text"/>
+					                                  <span class="input-group-text" id="basic-addon1"><i class="fas fa-exclamation-triangle fa-2x"></i></span>
+					                                  <input onChange={(e) => {
+					                                  	this.setState({
+					                                  		task: e.target.value
+					                                  	})
+					                                  }} style={{ width: "40wv", height: "45px" }} value={this.state.task} id="username" name="username" placeholder="Enter an act to be performed for the coorelated tip" className="form-control here" type="text"/>
+					                                 </div>
+					                                </div>
+					                              </div>
+					                             
+					                              <div className="form-group row">
+					                                <div className="offset-4 col-8">
+					                                  <button onClick={() => {
+					                                		this.handleTipRates();
+					                                	}} className="btn btn-outline aqua_button_custom">Add Task/Tip Amount To List</button>
+					                                </div>
+					                              </div>
+					                             
+					                            
+							                </div>
+							            </div>
+							            <div className="row">
+							            <ul className="list_custom">
+											{this.state.skills ? this.state.skills.map((act, index) => {
+												return (
+													<li className="text-white">{act.task} is the task that is willing to be done at the cost of {Number(act.cost)} tokens</li>
+												);
+											}) : null}
+											
+										</ul>
+
+							            </div>
+							            {this.renderSubmissionButton()}
 							        </div>
 							    </div>
 							</div>

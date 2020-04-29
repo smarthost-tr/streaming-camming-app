@@ -15,6 +15,11 @@ const multer = require('multer');
 const multerS3 = require('multer-s3');
 const Grid = require("gridfs-stream");
 const GridFsStorage = require('multer-gridfs-storage');
+const EC = require("elliptic").ec;
+const ec = new EC("secp256k1");
+const { Transaction, Blockchain } = require("../../blockchain.js");
+const { gemshire } = require("../../main.js");
+
 Grid.mongo = mongoose.mongo;
 
 AWS.config.update({
@@ -59,6 +64,27 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
 		const { location } = req.file;
 
+		// const key = ec.genKeyPair();
+
+		// const publicKey = key.getPublic("hex");
+		// const privateKey = key.getPrivate("hex");
+
+		// console.log("private key is the ", privateKey);
+
+		// console.log("public key is ", publicKey);
+
+		// const myKey = ec.keyFromPrivate(privateKey);
+
+		// const myWalletAddress = myKey.getPublic("hex");
+		// // goes private wallet address, public, amount
+		// const transaction1 = new Transaction(myWalletAddress, myWalletAddress, 35);
+
+		// transaction1.signTransaction(myKey);
+		// console.log(transaction1);
+		// gemshire.addTransaction(transaction1);
+
+		// console.log(`\n Balance of ${firstName} ${lastName} is finally...`, gemshire.getBalanceOfAddress(myWalletAddress));
+
 		const newUser = new User({
 			security, 
 			securityAnswer, 
@@ -71,8 +97,10 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 			password, 
 			birthdate, 
 			image: location,
-			tokens: 35,
+			tokens: gemshire.getBalanceOfAddress(myWalletAddress),
 			chat_uuid
+			// blockPublicKey: publicKey,
+			// blockPrivateKey: privateKey
 		});
 
 		db.collection("users", (err, collection) => {
