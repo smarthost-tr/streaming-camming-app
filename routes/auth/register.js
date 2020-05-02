@@ -17,8 +17,8 @@ const Grid = require("gridfs-stream");
 const GridFsStorage = require('multer-gridfs-storage');
 const EC = require("elliptic").ec;
 const ec = new EC("secp256k1");
-const { Transaction, Blockchain } = require("../../blockchain.js");
-const { gemshire } = require("../../main.js");
+const gemshire = require("../../main.js");
+const axios = require("axios");
 
 Grid.mongo = mongoose.mongo;
 
@@ -64,26 +64,14 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
 		const { location } = req.file;
 
-		// const key = ec.genKeyPair();
+		const key = ec.genKeyPair();
 
-		// const publicKey = key.getPublic("hex");
-		// const privateKey = key.getPrivate("hex");
+		const publicKey = key.getPublic("hex");
+		const privateKey = key.getPrivate("hex");
 
-		// console.log("private key is the ", privateKey);
+		console.log("private key is the ", privateKey);
 
-		// console.log("public key is ", publicKey);
-
-		// const myKey = ec.keyFromPrivate(privateKey);
-
-		// const myWalletAddress = myKey.getPublic("hex");
-		// // goes private wallet address, public, amount
-		// const transaction1 = new Transaction(myWalletAddress, myWalletAddress, 35);
-
-		// transaction1.signTransaction(myKey);
-		// console.log(transaction1);
-		// gemshire.addTransaction(transaction1);
-
-		// console.log(`\n Balance of ${firstName} ${lastName} is finally...`, gemshire.getBalanceOfAddress(myWalletAddress));
+		console.log("public key is ", publicKey);
 
 		const newUser = new User({
 			security, 
@@ -97,11 +85,13 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 			password, 
 			birthdate, 
 			image: location,
-			tokens: gemshire.getBalanceOfAddress(myWalletAddress),
-			chat_uuid
-			// blockPublicKey: publicKey,
-			// blockPrivateKey: privateKey
+			tokens: 0,
+			chat_uuid,
+			blockPublicKey: publicKey,
+			blockPrivateKey: privateKey
 		});
+
+		const port = req.app.get("PORT");
 
 		db.collection("users", (err, collection) => {
 			collection.find({ email: email }).toArray((err, result) => {
@@ -115,6 +105,25 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 						if (err) {
 							console.log(err);
 						} 
+						console.log("port :", port);
+						axios.post(`http://localhost:${port}/transaction/broadcast`, {
+							amount: 35, 
+							sender: "00", 
+							recipient: publicKey
+						}).then((response) => {
+							console.log(response);
+							if (response) {
+								axios.get(`http://localhost:${port}/mine`).then((feedback) => {
+									if (feedback) {
+										console.log(feedback.data);
+									}
+								}).catch((err) => {
+									console.log(err);
+								});
+							}
+						}).catch((err) => {
+							console.log(err);
+						})
 						console.log(data);
 						res.send({ message: "SUCCESSFULLY REGISTERED USER", user: data });
 					})

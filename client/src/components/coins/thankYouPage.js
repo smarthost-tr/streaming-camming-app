@@ -11,7 +11,9 @@ constructor(props) {
 
 
 }
+    componentDidMount() {
 
+    }
     render() {
         return (
             <div>

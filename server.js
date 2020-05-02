@@ -43,6 +43,7 @@ let STREAM;
 
 {/*var httpsServer = https.createServer(credentials, app).listen(<port>);*/}
 
+app.set("PORT", PORT);
 
 mongoDB();
 
@@ -180,6 +181,13 @@ app.use("/get/user", require("./routes/getUser.js"));
 app.use("/make/blockchain/payment", require("./routes/blockchain/currency/purchase.js"));
 app.use("/gather/blockchain/blocks", require("./routes/blockchain/getChain.js"));
 app.use("/mine/crypto", require("./routes/blockchain/currency/mine.js"));
+app.use("/gather/port/number", require("./routes/getPort.js"));
+
+
+
+app.get("/blockchain", (req, res) => {
+  res.send(gemshire);
+});
 
 app.post("/receive-new-block", (req, res) => {
   const { newBlock } = req.body;
@@ -253,13 +261,55 @@ app.get("/mine", (req, res) => {
           block: newBlock
         })
       })
+});
+
+app.get("/consensus", (req, res) => {
+  const requestPromises = [];
+
+  gemshire.networkNodes.forEach((networkNodeUrl) => {
+    const requestOptions = { 
+      uri: networkNodeUrl + "/blockchain",
+      method: "GET",
+      json: true
+    };
+    requestPromises.push(rp(requestOptions));
   });
+  Promise.all(requestPromises).then((blockchains) => {
+    const currentChainLength = gemshire.chain.length;
+    let maxChainLength = currentChainLength;
+    let newLongestChain = null;
+    let newPendingTransactions = null;
+      
+    blockchains.forEach((blockchain) => {
+      if (blockchain.chain.length > maxChainLength) {
+        maxChainLength = blockchain.chain.length;
+        newLongestChain = blockchain.chain;
+        newPendingTransactions = blockchain.pendingTransactions;
+      }
+    });
+
+    if (!newLongestChain || (newLongestChain && !gemshire.chainIsValid(newLongestChain))) {
+      res.json({
+        note: "Current chain has not been replaced.",
+        chain: gemshire.chain
+      })
+    } else if (newLongestChain && gemshire.chainIsValid(newLongestChain)) {
+      gemshire.chain = newLongestChain;
+      gemshire.pendingTransactions = newPendingTransactions;
+      res.json({
+        note: "This chain has been replaced",
+        chain: gemshire.chain
+      })
+    }
+  })
+})
 
 // register a node and broadcast to network
 app.post("/register-and-broadcast-node", (req, res) => {
-  const newNodeUrl = req.body.newNodeUrl;
-  
-  if (gemshire.networkNodes.indexOf(newNodeUrl) == -1) {
+  const { newNodeUrl } = req.body;
+
+  if (gemshire.networkNodes.indexOf(newNodeUrl) == -1 && gemshire.currentNodeUrl !== newNodeUrl) {
+      console.log("ran 3");
       gemshire.networkNodes.push(newNodeUrl);
   }
   const regNodesPromises = [];
@@ -284,15 +334,19 @@ app.post("/register-and-broadcast-node", (req, res) => {
 
     return rp(bulkRegisterOptions);
   }).then((data) => {
-    res.json({ note: "New node reigstered with network successfully!" })
-  })
+    console.log("DATA :", data);
+    res.json({ note: data.note })
+  });
 });
 // register node with the network
 app.post("/register-node", (req, res) => {
+  console.log("req.body.newNodeUrl", req.body.newNodeUrl, gemshire.currentNodeUrl);
   const newNodeUrl = req.body.newNodeUrl;
-  const nodeNotAlreadyPresent = gemshire.networkNodes.indexOf(newNodeUrl) == -1;
-  const notCurrentNode = gemshire.currentNodeUrl !== newNodeUrl;
-  if (nodeNotAlreadyPresent && notCurrentNode) {
+  const nodeNotAlreadyPresent = gemshire.networkNodes.indexOf(newNodeUrl) === -1;
+  const notCurrentNode = gemshire.currentNodeUrl === newNodeUrl;
+
+  if (nodeNotAlreadyPresent && !notCurrentNode) {
+    console.log("ran 1");
     gemshire.networkNodes.push(newNodeUrl);
   }
   res.json({
@@ -339,15 +393,45 @@ app.post("/register-nodes-bulk", (req, res) => {
   const allNetworkNodes = req.body.allNetworkNodes;
 
   allNetworkNodes.forEach((networkNodeUrl) => {
+    console.log("allNetworkNodes", allNetworkNodes);
     const nodeNotAlreadyPresent = gemshire.networkNodes.indexOf(networkNodeUrl) == -1;
     const notCurrentNode = gemshire.currentNodeUrl !== networkNodeUrl;
     if (nodeNotAlreadyPresent && notCurrentNode) {
+      console.log("Ran 2");
       gemshire.networkNodes.push(networkNodeUrl);
     }
   });
   res.json({
     note: "Bulk registration successful."
   }) 
+});
+
+app.get("/block/:blockHash", (req, res) => {
+  const blockHash = req.params.blockHash;
+  const correctBlock = gemshire.getBlock(blockHash);
+  res.json({
+    block: correctBlock
+  })
+});
+
+app.get("/transaction/:transactionId", (req, res) => {
+  const transactionId = req.params.transactionId;
+
+  const transactionData = gemshire.getTransaction(transactionId);
+
+  res.json({
+    transaction: transactionData.transaction,
+    block: transactionData.block
+  })
+});
+
+app.get("/address/:address", (req, res) => {
+  const address = req.params.address;
+  const addressData = gemshire.getAddressData(address);
+
+  res.json({
+    addressData
+  })
 });
 
 io.on("connection", socket => {

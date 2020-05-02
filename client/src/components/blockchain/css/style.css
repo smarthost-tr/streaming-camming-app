@@ -25,7 +25,7 @@ nav > div a.nav-item.nav-link.active:after
   border: 15px solid transparent;
   border-top-color: #e74c3c;
 }
-.tab-content{
+.tab-content-custom{
     background: #871eff;
     line-height: 25px;
     border: 1px solid #ddd;

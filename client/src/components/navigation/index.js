@@ -127,38 +127,68 @@ constructor(props) {
     console.log("prevState :", prevState);
     console.log("prevProps :", prevProps);
     if (prevProps.tokens !== store.getState().auth.data.tokens) {
-        axios.post("/tokens/gather", {
-          email: this.props.authenticated
-        }).then((res) => {
-          console.log(res.data);
-          for (let key in res.data) {
-            let tokens = res.data[key].tokens;
-            console.log(tokens);
-            this.setState({
-              tokens
-            })
-          }
-        }).catch((err) => {
-          console.log(err);
-        })  
+        // axios.post("/get/user", {
+        //   email: this.props.authenticated
+        // }).then((res) => {
+        //   const publicKey = res.data.blockPublicKey;
+        //   axios.get(`/address/${publicKey}`).then((res) => {
+        //     console.log(res.data);
+        //     this.setState({
+        //       tokens: res.data.addressData.addressBalance
+        //     })
+        //   }).catch((err) => {
+        //     console.log(err);
+        //   })
+        // }).catch((err) => {
+        //   console.log(err);
+        // })
+        // axios.post("/tokens/gather", {
+        //   email: this.props.authenticated
+        // }).then((res) => {
+        //   console.log(res.data);
+        //   for (let key in res.data) {
+        //     let tokens = res.data[key].tokens;
+        //     console.log(tokens);
+        //     this.setState({
+        //       tokens
+        //     })
+        //   }
+        // }).catch((err) => {
+        //   console.log(err);
+        // })  
     }
   }
   componentDidMount() {
     setTimeout(() => {
-       axios.post("/tokens/gather", {
+      axios.post("/get/user", {
         email: this.props.authenticated
       }).then((res) => {
-        console.log(res.data);
-        for (let key in res.data) {
-          let tokens = res.data[key].tokens;
-          console.log(tokens);
+        const publicKey = res.data.blockPublicKey;
+        axios.get(`/address/${publicKey}`).then((res) => {
+          console.log(res.data);
           this.setState({
-            tokens
+            tokens: res.data.addressData.addressBalance
           })
-        }
+        }).catch((err) => {
+          console.log(err);
+        })
       }).catch((err) => {
         console.log(err);
       })
+      // axios.post("/tokens/gather", {
+      //   email: this.props.authenticated
+      // }).then((res) => {
+      //   console.log(res.data);
+      //   for (let key in res.data) {
+      //     let tokens = res.data[key].tokens;
+      //     console.log(tokens);
+      //     this.setState({
+      //       tokens
+      //     })
+      //   }
+      // }).catch((err) => {
+      //   console.log(err);
+      // })
       axios.post("/check/if/cammer/true", {
         email: this.props.authenticated
       }).then((res) => {
@@ -201,7 +231,7 @@ constructor(props) {
             <Nav className="mr-auto" navbar>
               {this.props.authenticated ? <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  Tokens
+                  Crypto Tokens
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                   <Link class="dropdown-item" to="/crypto/wallet">Crypto Wallet</Link>
@@ -300,7 +330,7 @@ constructor(props) {
                   </ul>
                 </li> : null}
              
-              {this.props.authenticated ? <NavbarText>{store.getState().auth.data.username.slice(0, 10)}..., (<strong>{this.state.tokens ? this.state.tokens : "Error"}</strong>) tokens</NavbarText> : null}
+              {this.props.authenticated ? <NavbarText>{store.getState().auth.data.username.slice(0, 10)}..., (<strong>{this.state.tokens === 0 ? "0" : this.state.tokens}</strong>) tokens</NavbarText> : null}
             {this.constantRender()}
           </Collapse>
         </Navbar>

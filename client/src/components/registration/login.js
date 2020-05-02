@@ -47,11 +47,31 @@ constructor(props) {
 					   image: 'https://getstream.io/random_svg/?id=spring-silence-0&name=Spring+silence'
 					}, res.data.token);
 
-					this.props.history.push("/");
+					axios.get("/gather/port/number").then((res) => {
+	                const port = "http://localhost:" + res.data.port.toString();
+	                console.log(port);
+	               		axios.post("/register-and-broadcast-node", {
+		                    newNodeUrl: port
+		                }).then((res) => {
+		                    console.log('res.data', res.data);
+		                    axios.get("/consensus").then((responseee) => {
+		                    	console.log(responseee);
+		                    	if (responseee) {
+		                    		this.props.history.push("/");
+		                    	}
+		                    }).catch((error) => {
+		                    	console.log(error);
+		                    })
+		                    
+		                }).catch((err) => {
+		                    console.log(err);
+		                })
+		            }).catch((err) => {
+		                console.log(err);
+		            })
 				} else {
 					alert(res.data.message);
 				}
-
 			}).catch((err) => {
 				console.log(err);
 			})

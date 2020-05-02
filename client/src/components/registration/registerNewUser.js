@@ -15,7 +15,7 @@ constructor(props) {
   	this.state = {
 		security: "",
 		securityAnswer: "",
-		gender: null,
+		gender: "",
 		firstName: "",
 		lastName: "",
 		email: "",
@@ -26,7 +26,8 @@ constructor(props) {
         image: null,
         captcha: null,
         visable: true,
-        referral: ""
+        referral: "",
+        newNode: null
 	}
 }
 	onChange = (date) => {
@@ -88,7 +89,7 @@ constructor(props) {
         })
     }
 	render() {
-		console.log(this.state);
+        console.log(this.state);
 		return (
 			<div>
 			<Navigation />

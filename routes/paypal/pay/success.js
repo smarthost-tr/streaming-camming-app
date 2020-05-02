@@ -7,6 +7,7 @@ const config = require("config");
 const mongo = require("mongodb");
 const paypal = require('paypal-rest-sdk');
 const flash = require('connect-flash');
+const axios = require("axios");
 
 paypal.configure({
   'mode': 'sandbox', //sandbox or live
@@ -52,17 +53,52 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
 				const splitted = total.split(".");
 
+				const amount = Number(splitted[0]);
+
 				if (payment.state === "approved") {
+
+					const port = req.app.get("PORT");
+					console.log(port);
+
+					console.log(amount, savedEmail[0]);
+					
+					collection.findOne({ email: savedEmail[0] }).then((user) => {
+
+						console.log("USSEERR :", user);
+
+						axios.post(`http://localhost:${port}/transaction/broadcast`, {
+							amount: amount, 
+							sender: "00", 
+							recipient: user.blockPublicKey
+						}).then((response) => {
+							console.log(response.data);
+							axios.get(`http://localhost:${port}/mine`).then((feedback) => {
+								console.log(feedback.data);
+								if (feedback.data) {
+									if (response.data.note === 'Transaction created and broadcasted successfully.') {
+										res.redirect("http://localhost:3000/thank/you/for/your/payment");
+									}
+								}
+							}).catch((err) => {
+								console.log(err);
+							});
+						}).catch((err) => {
+							console.log(err);
+						})
+						// collection.findOneAndUpdate({ email: savedEmail[0] }, { $inc: { "tokens": Number(splitted[0]) }}, (err, doc) => {
+						//     if (err) {
+						//         console.log("Something wrong when updating data!");
+						//         console.log(err);
+						//     }
+						// 	console.log(doc);
+
+						// });
+					}).catch((err) => {
+						console.log('err', err);
+					})
 					console.log("approved...");
-					collection.findOneAndUpdate({ email: savedEmail[0] }, { $inc: { "tokens": Number(splitted[0]) }}, (err, doc) => {
-					    if (err) {
-					        console.log("Something wrong when updating data!");
-					        console.log(err);
-					    }
-						console.log(doc);
-					});
+					
 				}
-				res.redirect("http://localhost:3000/thank/you/for/your/payment");
 			}
 		});
 	});

@@ -13,26 +13,26 @@ constructor(props) {
     handlePayment = () => {
         const tokens = this.props.location.state.tokens;
         console.log("handle payment clicked...");
-        // axios.post("/paypal/pay", {
-        //     tokens: tokens.toString(),
-        //     email: this.props.email
-        // }).then((res) => {
-        //     console.log(res.data);
-        //     if (res.data) {
-        //         window.location = res.data;
-        //     } 
-        // }).catch((err) => {
-        //     console.log(err);
-        // })
-        axios.post("/make/blockchain/payment", {
-            tokens: tokens,
-            publicAddress: this.props.publicKey,
-            privateKey: this.props.privateKey
+        axios.post("/paypal/pay", {
+            tokens: tokens.toString(),
+            email: this.props.email
         }).then((res) => {
             console.log(res.data);
+            if (res.data) {
+                window.location = res.data;
+            } 
         }).catch((err) => {
             console.log(err);
         })
+        // axios.post("/make/blockchain/payment", {
+        //     tokens: tokens,
+        //     publicAddress: this.props.publicKey,
+        //     privateKey: this.props.privateKey
+        // }).then((res) => {
+        //     console.log(res.data);
+        // }).catch((err) => {
+        //     console.log(err);
+        // })
     }
     render() {
     	const tokens = this.props.location.state.tokens;

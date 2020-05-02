@@ -75,148 +75,97 @@ Blockchain.prototype.proofOfWork = function (previousBlockHash, currentBlockData
 	return nounce;
 }
 
+Blockchain.prototype.chainIsValid = function (blockchain) {
+	let validChain = true;
 
+	for (var i = 1; i < blockchain.length; i++) {
+		const currentBlock = blockchain[i];
+		const prevBlock = blockchain[i - 1];  
+
+		const blockHash = this.hashBlock(prevBlock["hash"], { transactions: currentBlock["transactions"], index: currentBlock["index"] }, currentBlock["nounce"]);
+		if (blockHash.substring(0, 4) !== "0000") {
+			validChain = false;
+		}
+		if (currentBlock["previousBlockHash"] !== prevBlock["hash"]) {
+			validChain = false;
+		}
+	}
+	const genisisBlock = blockchain[0];
+	const correctNounce = genisisBlock["nounce"] === 100;
+	const correctPreviousBlockHash = genisisBlock["previousBlockHash"] === "0";
+	const correctHash = genisisBlock["hash"] === "0";
+	const correctTransactions = genisisBlock.hasOwnProperty("transactions");
+
+	if (!correctNounce || !correctPreviousBlockHash || !correctHash || correctTransactions) {
+		validChain = false;
+	}
+	return validChain;
+}
+
+Blockchain.prototype.getBlock = function (blockHash) {
+	let correctBlock = null;
+
+	this.chain.forEach((block) => {
+		if (block.hash === blockHash) {
+			correctBlock = block;
+		}
+	});
+
+	return correctBlock;
+}
+
+Blockchain.prototype.getTransaction = function (transactionId) {
+	let correctTransaction = null;
+	let correctBlock = null;
+
+	console.log(this.chain);
+
+	this.chain.slice(1).forEach((block) => {
+		console.log(block);
+		block.transactions.forEach((transaction) => {
+			if (transaction.transactionId === transactionId) {
+				correctTransaction = transaction;
+				correctBlock = block;
+			};
+		});
+	});
+
+	return {
+		transaction: correctTransaction,
+		block: correctBlock
+	}
+}
+
+Blockchain.prototype.getAddressData = function (address) {
+	const addressTransactions = [];
+	this.chain.slice(1).forEach((block) => {
+		block.transactions.forEach((transaction) => {
+			if (transaction.sender === address || transaction.recipient === address) {
+				addressTransactions.push(transaction);
+			}
+		})
+	});
+
+	let balance = 0;
+
+	addressTransactions.forEach((transaction) => {
+		if (transaction.recipient === address) {
+			balance += transaction.amount;
+		} else if (transaction.sender === address) {
+			balance -= transaction.amount;
+		}
+	});
+
+	return {
+		addressTransactions: addressTransactions,
+		addressBalance: balance
+	}
+}
 
 module.exports = Blockchain;
-// class Transaction {
-// 	constructor (fromAddress, toAddress, amount) {
-// 		this.fromAddress = fromAddress;
-// 		this.toAddress = toAddress;
-// 		this.amount = amount;
-// 	}
 
-// 	calculateHash() {
-// 		return SHA256(this.fromAddress + this.toAddress + this.amount).toString();
-// 	}
-// 	signTransaction (signingKey) {
-		
-// 		if (signingKey.getPublic("hex") !== this.fromAddress) {
-// 			throw new Error("You cannot sign transactions for other wallets!");
-// 		}
 
-// 		const hashTx = this.calculateHash();
-// 		const sig = signingKey.sign(hashTx, "base64");
 
-// 		this.signature = sig.toDER("hex");
-// 	}
-// 	isValid () {
-// 		if (this.fromAddress === null) {
-// 			return true;
-// 		}
-// 		if (!this.signature || this.signature.length === 0) {
-// 			throw new Error("No signature is in this transaction.");
-// 		}
 
-// 		const publicKey = ec.keyFromPublic(this.fromAddress, "hex");
 
-// 		return publicKey.verify(this.calculateHash(), this.signature)
-// 	}
-// }
-
-// class Block {
-// 	constructor(timestamp, transactions, previousHash) { 
-// 	  	this.timestamp = timestamp;
-// 	  	this.transactions = transactions;
-// 	  	this.previousHash = previousHash;
-// 	  	this.hash = this.calculateHash();
-// 	  	this.nounce = 0;
-// 	}
-// 	calculateHash () {
-// 		return SHA256(this.index + this.previousHash + this.timestamp + JSON.stringify(this.data) + this.nounce).toString();
-// 	}
-// 	mineBlock (difficulty) {
-// 		while (this.hash.substring(0, difficulty) !== Array(difficulty + 1).join("0")) {
-// 			this.nounce++;
-// 				this.hash = this.calculateHash();
-// 		}	
-// 		console.log("block mined...", this.hash);
-// 	}
-// 	hasValidTransactions () {
-// 		for (const tx of this.transactions) {
-// 			if (!tx.isValid()) {
-// 				return false;
-// 			}
-// 		}
-// 		return true;
-// 	}
-// }
-
-// class Blockchain {
-// 	constructor () {
-// 		this.chain = [this.createGenisisBlock()];
-// 		this.difficulty = 4;
-// 		this.pendingTransactions = [];
-// 		this.miningReward = 100;
-// 	}
-
-// 	createGenisisBlock() {
-// 		return new Block("01/01/2020", "genisis block", "0");
-// 	}
-
-// 	getLastestBlock () {
-// 		return this.chain[this.chain.length - 1];
-// 	}
-
-// 	getAllBlocks () {
-// 		return this.chain;
-// 	}
-
-// 	minePendingTransactions (miningRewardAddress) {
-// 		let block = new Block(Date.now(), this.pendingTransactions);
-// 		block.mineBlock(this.difficulty);
-
-// 		console.log("block successfully mined...");
-// 		this.chain.push(block);
-
-// 		this.pendingTransactions = [
-// 			new Transaction(null, miningRewardAddress, this.miningReward)
-// 		];
-// 	}
-
-// 	addTransaction (transaction) {
-// 		if (!transaction.fromAddress || !transaction.toAddress) {
-// 			throw new Error("Transaction must include from and to address.")
-// 		}
-
-// 		if (!transaction.isValid()) {
-// 			throw new Error("Cannot add invalid transaction to the chain.");
-// 		}
-// 		this.pendingTransactions.push(transaction);
-// 	}
-
-// 	getBalanceOfAddress (address) {
-// 		let balance = 0;
-
-// 		for (const block of this.chain) {
-// 			for (const trans of block.transactions) {
-// 				if (trans.fromAddress === address) {
-// 					balance -= trans.amount;
-// 				}
-
-// 				if (trans.toAddress === address) {
-// 					balance += trans.amount;
-// 				}
-// 			}
-// 		}
-// 		return balance;	
-// 	}
-
-// 	isChainValid () {
-// 		for (var i = 1; i < this.chain.length; i++) {
-// 			const currentBlock = this.chain[i];
-// 			const previousBlock = this.chain[i - 1];
-
-// 			if (!currentBlock.hasValidTransactions()) {
-// 				return false;
-// 			}
-
-// 			if (currentBlock.hash !== currentBlock.calculateHash()) {
-// 				return false;
-// 			} 
-// 		}
-// 		return true;
-// 	}
-// }
-// module.exports.Blockchain = Blockchain;
-// module.exports.Transaction = Transaction;
-
+//

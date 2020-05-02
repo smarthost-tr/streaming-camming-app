@@ -125,18 +125,21 @@ class StreamShow extends Component {
 				})
 			}
 
-		    axios.post("/tokens/gather", {
-	          email: this.props.email
-	        }).then((res) => {
-	          for (let key in res.data) {
-	            let tokens = res.data[key].tokens;
-	            this.setState({
-	              tokens
-	            })
-	          }
-	        }).catch((err) => {
-	          console.log(err);
-	        })  
+		    axios.post("/get/user", {
+		        email: this.props.email
+		    }).then((res) => {
+		        const publicKey = res.data.blockPublicKey;
+		        axios.get(`/address/${publicKey}`).then((res) => {
+		          console.log(res.data);
+		          this.setState({
+		            tokens: res.data.addressData.addressBalance
+		          })
+		        }).catch((err) => {
+		          console.log(err);
+		        })
+		      }).catch((err) => {
+		        console.log(err);
+		    })
 
 			this.setState({
 				ready: true
@@ -256,73 +259,134 @@ class StreamShow extends Component {
 			id: this.props.location.state.streamID
 		}).then((res) => {
 			for (let key in res.data) {
+				console.log(res.data);
 				const recieverEmail = res.data[key].email;
 				const recieverUsername = res.data[key].username;
 				const streamer = res.data[key].username;
-				
-				axios.post("/take/away/tokens/tip", {
-					email: this.props.email,
-					tokens: Math.round(this.state.tip)
+				const publicKey = res.data[key].blockPublicKey;
+
+				console.log(publicKey, this.state.tip, this.props.publicKey);
+
+				const { tip } = this.state;
+
+				axios.post("/transaction/broadcast", {
+					amount: Math.round(tip), 
+					sender: this.props.publicKey, 
+					recipient: publicKey
 				}).then((res) => {
+					console.log(res);
+					if (res) {
+						console.log(res.data);
 
-					console.log(res.data);
-					if (res.data.error) {
-						alert(res.data.error);
-					} else {
-						axios.post("/send/tokens/to/user", {
-							email: recieverEmail,
-							tokens: Math.round(this.state.tip)
-						}).then((res) => {
-							console.log(res.data);
+						const { endpoint, tip } = this.state;
+
+					    socket.emit("tipped", {
+					    	tip,
+					    	user: this.props.username
+					    });
+
+					    socket.emit("tip-record", {
+					    	message: `${this.props.username} just tipped ${this.state.tip} tokens!`,
+					    	generatedID: uuid()
+					    })
+        
+    					socket.emit("sound", {
+    						sound: true,
+    						tip
+    					});
+
+    					if (tip >= 2000) {
+    						console.log("tip is over 8 tokens!!!!");
+    						socket.emit("confetti", {
+    							confetti: true
+    						})
 							
-							const { endpoint, tip } = this.state;
 
-						    socket.emit("tipped", {
-						    	tip,
-						    	user: this.props.username
-						    });
-
-						    socket.emit("tip-record", {
-						    	message: `${this.props.username} just tipped ${this.state.tip} tokens!`,
-						    	generatedID: uuid()
-						    })
-	        
-	    					socket.emit("sound", {
-	    						sound: true,
-	    						tip
-	    					});
-
-	    					if (tip >= 2000) {
-	    						console.log("tip is over 8 tokens!!!!");
-	    						socket.emit("confetti", {
-	    							confetti: true
+							setTimeout(() => {
+								socket.emit("confetti", {
+	    							confetti: false
 	    						})
-								
-
-								setTimeout(() => {
-									socket.emit("confetti", {
-		    							confetti: false
-		    						})
-								}, 13000);
+							}, 13000);
 
 
-	    					}
+    					}
 
-							alert(`You tipped ${this.state.tip} tokens!`);
+						alert(`You tipped ${this.state.tip} tokens!`);
 
-							this.setState({
-								tip: "",
-								tokens: this.state.tokens - tip
-							})
-						}).catch((err) => {
-							console.log(err);
-							alert("Uh oh - There was an error.")
+						this.setState({
+							tip: "",
+							tokens: this.state.tokens - tip
 						})
 					}
 				}).catch((err) => {
 					console.log(err);
-					alert("Uh oh - There was an error.")
 				})
+
+
+				
+				// axios.post("/take/away/tokens/tip", {
+				// 	email: this.props.email,
+				// 	tokens: Math.round(this.state.tip)
+				// }).then((res) => {
+
+				// 	console.log(res.data);
+				// 	if (res.data.error) {
+				// 		alert(res.data.error);
+				// 	} else {
+				// 		axios.post("/send/tokens/to/user", {
+				// 			email: recieverEmail,
+				// 			tokens: Math.round(this.state.tip)
+				// 		}).then((res) => {
+				// 			console.log(res.data);
+							
+							// const { endpoint, tip } = this.state;
+
+						 //    socket.emit("tipped", {
+						 //    	tip,
+						 //    	user: this.props.username
+						 //    });
+
+						 //    socket.emit("tip-record", {
+						 //    	message: `${this.props.username} just tipped ${this.state.tip} tokens!`,
+						 //    	generatedID: uuid()
+						 //    })
+	        
+	    		// 			socket.emit("sound", {
+	    		// 				sound: true,
+	    		// 				tip
+	    		// 			});
+
+	    		// 			if (tip >= 2000) {
+	    		// 				console.log("tip is over 8 tokens!!!!");
+	    		// 				socket.emit("confetti", {
+	    		// 					confetti: true
+	    		// 				})
+								
+
+							// 	setTimeout(() => {
+							// 		socket.emit("confetti", {
+		    	// 						confetti: false
+		    	// 					})
+							// 	}, 13000);
+
+
+	    		// 			}
+
+							// alert(`You tipped ${this.state.tip} tokens!`);
+
+							// this.setState({
+							// 	tip: "",
+							// 	tokens: this.state.tokens - tip
+							// })
+				// 		}).catch((err) => {
+				// 			console.log(err);
+				// 			alert("Uh oh - There was an error.")
+				// 		})
+				// 	}
+				// }).catch((err) => {
+				// 	console.log(err);
+				// 	alert("Uh oh - There was an error.")
+				// })
 			}
 		}).catch((err) => {
 			console.log(err);
@@ -645,7 +709,8 @@ const mapStateToProps = (state) => {
 		email: state.auth.data.email,
 		token: state.token.token,
 		username: state.auth.data.username,
-		checkUser: state.getStream.userSet
+		checkUser: state.getStream.userSet,
+		publicKey: state.currency.data.publicKey
 	}
 }
 

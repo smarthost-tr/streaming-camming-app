@@ -34,7 +34,7 @@ import ReferAFriendPage from "./components/refer/referAFriend.js";
 import HomeMap from "./components/mapbox/homeMap.js";
 import StreamListAll from "./components/streams/streamListAll.js";
 import CryptoWallet from "./components/blockchain/wallet.js";
-
+import CryptoBlockIndividual from "./components/blockchain/block/view.js";
 
 
 class App extends Component {
@@ -82,6 +82,7 @@ constructor(props) {
         <Route path="/find/fuck/buddies/map" component={HomeMap} />
         <Route path="/all/streams/public" exact component={StreamListAll} />
         <Route path="/crypto/wallet" exact component={CryptoWallet} />
+        <Route path="/view/block/individual" exact component={CryptoBlockIndividual} />
       </div>
     </BrowserRouter>
     );
