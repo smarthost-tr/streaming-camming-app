@@ -13,6 +13,13 @@
     width: 70%;
     height: 100%;
 }
+@media only screen and (max-width: 750px) {
+  .profile-img img{
+    width: 70%;
+    height: 100%;
+    margin-top: 0px;
+  }
+}
 .profile-img .file {
     position: relative;
     overflow: hidden;
@@ -301,6 +308,7 @@ span.tags
   text-decoration: none;
 }
 .fb-profile-block-menu {
+  color: white !important;
   border: 1px solid #d3d6db;
   border-radius: 0 0 3px 3px;
 }
@@ -324,10 +332,26 @@ span.tags
   padding: 5px;
   width:158px;
 }
-.profile-name {
+.profile-name-one {
   bottom: 60px;
   left: 200px;
   position: absolute;
+}
+@media only screen and (max-width: 750px) {
+  .profile-name-two {
+    bottom: 60px;
+    top: 40px;
+    left: 15px;
+    position: absolute;
+  }
+  .profile-name-one {
+    display: none;
+  }
+}
+@media only screen and (min-width: 751px) {
+  .profile-name-two {
+    display: none;
+  }
 }
 .profile-name h2 {
   color: #fff;
@@ -342,8 +366,7 @@ span.tags
   height: 44px;
   position: relative;
   width:100%;
-  overflow:hidden;
- }
+}
 .block-menu {
   clear: right;
   padding-left: 205px;

@@ -7,3 +7,6 @@
 .custom_col #label_custom {
 	color: #87e1ff !important;
 }
+.custom_col {
+	margin-right: 25px;
+}

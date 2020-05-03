@@ -211,11 +211,11 @@ constructor(props) {
 						</div>
 						<div className="row">
 							<div className="col-md-12">
-								<label style={{ paddingRight: "30px" }}>Select Your Birthdate  </label>
-								<DatePicker 
+								<label style={{ paddingRight: "30px", color: "white" }}>Select Your Birthdate  </label>
+								<div style={{ backgroundColor: "white", width: "150px" }}><DatePicker
 						          onChange={this.onChange}
 						          value={this.state.birthdate}
-						        />
+						        /></div>
 							</div>
 						</div>
 						<div className="row" style={{ marginTop: "30px" }}>

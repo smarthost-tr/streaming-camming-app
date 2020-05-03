@@ -145,3 +145,13 @@ input:focus{
   border-color:#777;
   transition:0.5s;
 }
+.vid-vid {
+  width: 600px; 
+  height: 400px;
+}
+@media only screen and (max-width: 750px) {
+  .vid-vid {
+    height: 350px;
+    width: 100%;
+  }
+}

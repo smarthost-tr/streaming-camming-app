@@ -32,6 +32,11 @@
 .user-tabs .tab {
 	background: black !important;
 }
+@media only screen and (max-width: 750px) {
+	.user-tabs .tab {
+		width: 100% !important;
+	}
+}
 .user-tabs .tab:active {
 	background: black !important;
 }

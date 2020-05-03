@@ -7,6 +7,7 @@ import { authentication } from "../../actions/index.js";
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
 import ReCAPTCHA from "react-google-recaptcha";
+import Footer from "../common/footer/footer.js";
 
 class RegisterNewUser extends Component {
 constructor(props) {
@@ -260,6 +261,7 @@ constructor(props) {
                 </div>
 
             </div>	
+            <Footer />
           </div>	
         );
 	}

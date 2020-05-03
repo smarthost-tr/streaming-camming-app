@@ -123,8 +123,11 @@ constructor(props) {
 		})
 	}
 	mineCurrency = () => {
-		axios.post("/mine/crypto").then((res) => {
+		axios.get("/mine").then((res) => {
 			console.log(res.data);
+			if (res.data.note) {
+				alert(res.data.note);
+			}
 		}).catch((err) => {
 			console.log(err);
 		});
@@ -180,7 +183,7 @@ constructor(props) {
 			 		  		{/*console.log(res);*/}
 			 		  		if (stream.playback_ids[0].policy === "public" && stream.tags.includes("STRAIGHT")) {
 								return (
-									<div style={{ margin: "20px 10px 20px 10px", maxHeight: "50vh"  }} onClick={() => {
+									<div key={index} style={{ margin: "20px 10px 20px 10px", maxHeight: "50vh"  }} onClick={() => {
 											this.props.history.push(`/view/individual/private/stream/${stream.id}`, { streamID: stream.id })
 										}} class="card">
 							            <div class="thumbnail">

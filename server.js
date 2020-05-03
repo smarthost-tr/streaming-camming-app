@@ -182,7 +182,8 @@ app.use("/make/blockchain/payment", require("./routes/blockchain/currency/purcha
 app.use("/gather/blockchain/blocks", require("./routes/blockchain/getChain.js"));
 app.use("/mine/crypto", require("./routes/blockchain/currency/mine.js"));
 app.use("/gather/port/number", require("./routes/getPort.js"));
-
+app.use("/post/lovense/id", require("./routes/lovense/postID.js"));
+app.use("/gather/lovense/toyID", require("./routes/lovense/gatherID.js"));
 
 
 app.get("/blockchain", (req, res) => {
@@ -301,8 +302,8 @@ app.get("/consensus", (req, res) => {
         chain: gemshire.chain
       })
     }
-  })
-})
+  });
+});
 
 // register a node and broadcast to network
 app.post("/register-and-broadcast-node", (req, res) => {

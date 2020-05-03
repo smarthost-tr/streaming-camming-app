@@ -31,16 +31,17 @@
   background: white;
   border: 3px solid pink !important;
 }
+
 .notify-drop {
 	width: 50vw !important;
 	min-width: 50vw !important;
 	background-color: white !important;
 	padding: 20px;
 	margin: auto;
-	-webkit-transform: translateX(-350px); /* 10px to left */
-	-moz-transform: translateX(-350px); /* 10px to left */
-	-ms-transform: translateX(-350px); /* 10px to left */
-	 transform: translateX(-350px); 
+	-webkit-transform: translateX(-400px); /* 10px to left */
+	-moz-transform: translateX(-400px); /* 10px to left */
+	-ms-transform: translateX(-400px); /* 10px to left */
+	 transform: translateX(-400px); 
 	margin-top: 30px !important;
 	max-height: 500px;
 	overflow-y: scroll;
@@ -139,6 +140,15 @@
 	.sign-out {
 		margin-bottom: 10px;
 	}
+  .peek-a-boo {
+    display: none;
+  }
+}
+
+@media only screen and (max-width: 750px) {
+  .dropdown-menu {
+    margin-left: 0px !important;
+  }
 }
 @media only screen and (min-width: 410px) and (max-width: 750px) {
 	.notify-drop {

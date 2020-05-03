@@ -34,6 +34,9 @@ constructor(props) {
         //     console.log(err);
         // })
     }
+    componentDidMount() {
+        window.scrollTo(0, 0);
+    }
     render() {
     	const tokens = this.props.location.state.tokens;
     	console.log(this.props.location.state.tokens);

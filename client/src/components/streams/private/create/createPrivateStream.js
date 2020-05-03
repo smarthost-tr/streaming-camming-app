@@ -287,7 +287,7 @@ constructor(props) {
 
 									
 									
-										<iframe style={{ boxShadow: "10px 10px 10px grey" }} width="600px" height="400px" src="https://www.youtube.com/embed/BgpDb1XDDfY" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+										<iframe style={{ boxShadow: "10px 10px 10px grey" }} className="vid-vid" src="https://www.youtube.com/embed/BgpDb1XDDfY" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 									
 								
 									</div>

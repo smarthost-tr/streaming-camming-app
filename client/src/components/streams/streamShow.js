@@ -34,7 +34,8 @@ const customStyles = {
     right                 : 'auto',
     bottom                : 'auto',
     marginRight           : '-50%',
-    transform             : 'translate(-50%, -50%)'
+    transform             : 'translate(-50%, -50%)',
+    backgroundColor       : "black"
   }
 };
 
@@ -77,31 +78,62 @@ class StreamShow extends Component {
 		sound: false,
 		confetti: false,
 		corner: false,
-		confettiHide: false
+		confettiHide: false,
+		lovenseID: "",
+		url: "",
+		httpPort: 0
     }	
 }
 
 	componentDidMount() {
 		window.addEventListener('scroll', this.listenScrollEvent);
 
+		window.scrollTo(0, 0);
+
 		document.getElementById("fun-poof").style.display = "none";
+		document.getElementById("lovense").style.display = "none";
 		
+		let username;
+
 		setTimeout(() => {
 			axios.post("/gather/user/info/from/stream", {
 				id: this.props.location.state.streamID
 			}).then((res) => {
 				for (let key in res.data) {
-					let username = res.data[key].username;
+					username = res.data[key].username;
 					this.setState({
 						username,
 						exists: true,
 						userData: res.data
 					})
 				}
+				if (res.data) {
+					axios.post("/gather/lovense/toyID", {
+						username
+					}).then((res) => {
+						console.log(res.data);
+						this.setState({
+							lovenseID: res.data.profile.lovenseDeviceID
+						})
+					}).catch((err) => {
+						console.log(err);
+					})
+
+					axios.get("https://api.lovense.com/api/lan/getToys").then((res) => {
+						const keys = Object.keys(res.data)[0];
+						const target = res.data["127-0-0-1.lovense.club"];
+						this.setState({
+							url: keys,
+							httpPort: target.httpPort
+						})
+					}).catch((err) => {
+						console.log(err);
+					})
+				}
 			}).catch((err) => {
 				console.log(err);
 			})
-
+			
 			
 			if (this.props.username) {
 				console.log("user is logged in.")
@@ -278,7 +310,7 @@ class StreamShow extends Component {
 					if (res) {
 						console.log(res.data);
 
-						const { endpoint, tip } = this.state;
+						const { endpoint, tip, url, httpPort, lovenseID } = this.state;
 
 					    socket.emit("tipped", {
 					    	tip,
@@ -499,7 +531,8 @@ class StreamShow extends Component {
 
 
 			setTimeout(() => {
-				this.props.history.push(`/chat/homepage`);
+				// this.props.history.push(`/chat/homepage`);
+				alert("You just sent the streamer a private stream request, please let them know you sent the request! You can also directly chat with the streamer through the channel created.")
 			}, 1500);
 
 
@@ -559,7 +592,7 @@ class StreamShow extends Component {
 						        <div class="modal-content" id="modal_content">
 						            <div class="modal-body">
 										<div class="top-strip"></div>
-						                <a class="h2" href="https://www.fiverr.com/sunlimetech/design-and-fix-your-bootstrap-4-issues" target="_blank">Jerk N' Squirtn</a>
+						                <a class="h2" style={{ color: "#37be43" }} href="/" target="_blank">Jerk N' Squirtn</a>
 						                <h3 class="pt-5 mb-0 text-white">Are you sure you'd like to start a live stream?</h3>
 						                <p class="pb-1 text-white"><small>This will cost you roughly 20 tokens per minute</small></p>
 						                <form>
@@ -568,7 +601,7 @@ class StreamShow extends Component {
 						    				  <div class="input-group-append">
 						    					<button onClick={() => {
 						    						this.createPrivateStream();
-						    					}} style={{ width: "100%", color: "white" }} class="btn btn-outline pink_button" type="button" id="button-addon2"><i class="fa fa-paper-plane"></i>START LIVE 1 ON 1 STREAM</button>
+						    					}} style={{ width: "100%", color: "white" }} class="btn btn-outline green_button_custom" type="button" id="button-addon2"><i class="fa fa-paper-plane"></i>START LIVE 1 ON 1 STREAM</button>
 						    				  </div>
 						    				</div>
 						    			</form>
@@ -579,7 +612,7 @@ class StreamShow extends Component {
 												ready: true,
 												col: 7
 						                	})
-						                }} className="btn btn-outline-danger">Cancel</button>
+						                }} className="btn btn-outline aqua_button_custom">Cancel</button>
 										<div class="bottom-strip"></div>
 						            </div>
 						        </div>
@@ -589,21 +622,86 @@ class StreamShow extends Component {
 				</div>
 			);
 		}
-	}
+	}					
 	webSock = () => {
+		const { url, httpPort, tip, lovenseID } = this.state;
 		let finished = false;
 		socket.on("boom", (data) => {
 			console.log('data', data);
 			if (data.tip <= 50) {
 				document.getElementById("audio").play();
 			} else if (data.tip <= 100) {
+				document.getElementById("lovense").style.display = "block";
 				document.getElementById("casino-file").play();
+				axios.get(`http://${url}:${httpPort}/Vibrate?v=20&t=${lovenseID}`).then((res) => {
+					console.log(res.data);
+					if (res.data) {
+						setTimeout(() => {
+							document.getElementById("lovense").style.display = "none";
+							axios.get(`http://${url}:${httpPort}/Vibrate?v=0&t=${lovenseID}`).then((res) => {
+								console.log(res.data);
+							}).catch((err) => {
+								console.log(err);
+							})
+						}, 3500);
+					}
+				}).catch((err) => {
+					console.log(err);
+				})
 			} else if (data.tip <= 300) {
+				document.getElementById("lovense").style.display = "block";
 				document.getElementById("game-file").play();
+				axios.get(`http://${url}:${httpPort}/Vibrate?v=20&t=${lovenseID}`).then((res) => {
+					console.log(res.data);
+					if (res.data) {
+						setTimeout(() => {
+							document.getElementById("lovense").style.display = "none";
+							axios.get(`http://${url}:${httpPort}/Vibrate?v=0&t=${lovenseID}`).then((res) => {
+								console.log(res.data);
+							}).catch((err) => {
+								console.log(err);
+							})
+						}, 7500);
+					}
+				}).catch((err) => {
+					console.log(err);
+				})
 			} else if (data.tip <= 500) {
+				document.getElementById("lovense").style.display = "block";
 				document.getElementById("reward-two-file").play();
+				axios.get(`http://${url}:${httpPort}/Vibrate?v=20&t=${lovenseID}`).then((res) => {
+					console.log(res.data);
+					if (res.data) {
+						setTimeout(() => {
+							document.getElementById("lovense").style.display = "none";
+							axios.get(`http://${url}:${httpPort}/Vibrate?v=0&t=${lovenseID}`).then((res) => {
+								console.log(res.data);
+							}).catch((err) => {
+								console.log(err);
+							})
+						}, 12500);
+					}
+				}).catch((err) => {
+					console.log(err);
+				})
 			} else if (data.tip <= 1000) {
+				document.getElementById("lovense").style.display = "block";
 				document.getElementById("win-money").play();
+				axios.get(`http://${url}:${httpPort}/Vibrate?v=20&t=${lovenseID}`).then((res) => {
+					console.log(res.data);
+					if (res.data) {
+						setTimeout(() => {
+							document.getElementById("lovense").style.display = "none";
+							axios.get(`http://${url}:${httpPort}/Vibrate?v=0&t=${lovenseID}`).then((res) => {
+								console.log(res.data);
+							}).catch((err) => {
+								console.log(err);
+							})
+						}, 15000);
+					}
+				}).catch((err) => {
+					console.log(err);
+				})
 			} else if (data.tip <= 1500) {
 				document.getElementById("yay-file").play();
 			}		
@@ -654,6 +752,9 @@ class StreamShow extends Component {
 				<audio id="yay-file"><source src={Yay} type="audio/mpeg"></source></audio>
  				</div>
  				{this.renderCustomModal()}
+
+				
+
  				{this.props.username ? <div onClick={() => {
  					this.renderModal();
  				}} className="container-fluid">{this.props.username === this.state.username ? null : <button className="btn btn-outline purple_neon_btn" style={{ width: "100%" }}>Start a 1 on 1 PRIVATE stream</button>}</div> : null}
@@ -672,6 +773,9 @@ class StreamShow extends Component {
 					<h4 className="text-center bold">{this.state.groupMessages !== null ? this.state.groupMessages : null}</h4>
 					
 					{this.props.username ? null : <p className="text-center lead bold" style={{ textDecoration: "underline", paddingBottom: "23px" }}>You are seeing only a SMALL portion of the avaliable content... please sign-in to join the chat and access all of our restricted features.</p>}
+					<div id="lovense">
+						<h4 className="text-center text-white">Lovense Vibrator Is NOW ACTIVE!</h4>
+					</div>
 						{(this.state.exists && this.state.username === this.props.username) ? null : <div className="row">
 						<label id="label">Enter a tip amount to send to this streamer</label>
 							<div class="input-group mb-3">

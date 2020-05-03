@@ -2,5 +2,6 @@
 // 	"mongoURI": "mongodb://jeremyablong:Jab-1994@cluster0-shard-00-00-xqaab.mongodb.net:27017,cluster0-shard-00-01-xqaab.mongodb.net:27017,cluster0-shard-00-02-xqaab.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true&w=majority"
 // }
 {
-	"mongoURI": "mongodb://jeremyablong:Jab-1994@livestreaming-shard-00-00-tgz0j.mongodb.net:27017,livestreaming-shard-00-01-tgz0j.mongodb.net:27017,livestreaming-shard-00-02-tgz0j.mongodb.net:27017/test?ssl=true&replicaSet=LiveStreaming-shard-0&authSource=admin&retryWrites=true&w=majority"
+	"mongoURI": "mongodb://jeremyablong:Jab-1994@livestreaming-shard-00-00-tgz0j.mongodb.net:27017,livestreaming-shard-00-01-tgz0j.mongodb.net:27017,livestreaming-shard-00-02-tgz0j.mongodb.net:27017/test?ssl=true&replicaSet=LiveStreaming-shard-0&authSource=admin&retryWrites=true&w=majority",
+	"lovense": "2kkOFF/hovXYumOHykdSkG8Hcvz3jPZsIcQLLHEON+mkR886DyPSbIfX2lHIkM4T"
 }

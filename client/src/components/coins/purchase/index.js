@@ -25,7 +25,7 @@ constructor(props) {
             	<Navigation />
 				<section id="team" class="pb-5">
 				    <div class="container-fluid">
-				    	<button onClick={this.renderRedirect} style={{ width: "100%", marginBottom: "20px" }} className="btn btn-outline pink_button">Subscribe to our discounted monthly plan to see ALL of our restricted content!</button>
+				    	<button onClick={this.renderRedirect} style={{ width: "100%", marginBottom: "20px" }} className="btn btn-outline green_button_custom">Subscribe to our discounted monthly plan to see ALL of our restricted content!</button>
 				    	<ParallaxOne />
 				        <p class="section-title lead" style={{ fontSize: "1.7rem", textDecoration: "underline" }}>Ready to purchase some coins and get some action?! We offer discounted rates for bulk coin purchases, buy bulk and save.</p>
 				        <div class="row">

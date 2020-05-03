@@ -33,7 +33,9 @@ constructor(props) {
 		addresslatLng: null,
 		skills: [],
 		performance: "",
-		task: ""
+		task: "",
+		vibratorID: "",
+		toyID: "Lovense not detected."
 	}
 }
 	onDrop = (picture) => {
@@ -46,7 +48,19 @@ constructor(props) {
     		address 
     	});
     };
- 
+    componentDidMount() {
+        axios.get("https://api.lovense.com/api/lan/getToys").then((res) => {
+            console.log(res.data);
+            const target = res.data["127-0-0-1.lovense.club"];
+            const toyID = target.toys[Object.keys(target.toys)[0]].id;
+            console.log(toyID);
+            this.setState({
+                toyID
+            })
+        }).catch((err) => {
+            console.log(err);
+        })
+    }
     handleSelect = address => {
 	    geocodeByAddress(address)
 	      .then(results => getLatLng(results[0]))
@@ -64,7 +78,7 @@ constructor(props) {
 
 		const formData = new FormData();
 
-		const { pictures, age, interestedIn, hairColor, eyeColor, languages, bodyType, breastSize, smokeOrDrink, nickName, bio, addresslatLng, meetup } = this.state;
+		const { pictures, age, interestedIn, hairColor, eyeColor, languages, bodyType, breastSize, smokeOrDrink, nickName, bio, addresslatLng, meetup, toyID } = this.state;
 
         const config = {
             headers: {
@@ -90,10 +104,12 @@ constructor(props) {
 	        formData.append("email", this.props.email);
 	        formData.append("meetupCoords", addresslatLng);
 	        formData.append("meetup", meetup);
+	        formData.append("lovenseDeviceID", toyID);
 	        if (addresslatLng) {
 	        	formData.append("lat", addresslatLng.lat);
 	        	formData.append("lng", addresslatLng.lng);
 	        }
+	        
 
 
 			axios.post("/profile/append/data/one", formData, config).then((res) => {
@@ -337,11 +353,26 @@ constructor(props) {
 													  </div>
 													</div>
 					                              </div>
+					                            
 					                              <div className="form-group row">
 					                                <div className="offset-4 col-8">
 					                                  <button name="submit" type="submit" className="btn btn-outline aqua_button_custom">Update My Profile</button>
 					                                </div>
 					                              </div>
+					                              <hr className="my-4"/>
+					                              {this.state.toyID ? <div className="form-group row">
+ 													
+													<div class="input-group">
+													  <div class="input-group-prepend">
+													    <span class="input-group-text" id="inputGroupFileAddon01">Lovense DEVICE ID</span>
+													  </div>
+													  <div class="custom-file">
+													    <input value={this.state.toyID} placeholder="Enter your lovense device ID" name="lovense" type="text" class="form-control"
+													      aria-describedby="inputGroupFileAddon01" />
+													    {/*<label class="custom-file-label" for="inputGroupFile01">Enter Your LOVENSE DEVICE ID</label>*/}
+													  </div>
+													</div>
+					                             </div> : <p className="text-center lead">Your lovense could not be detected. You will need to set it up later on the "Connect LOVENSE Vibrator" page under "Streams/Broadcasting" at a later time if you wish to accept tips to activte the vibrator</p>}
 					                             {this.state.meetup === "YES-MEETUP" ? <div className="form-group row"><div className="mx-auto" style={{ float: "right" }}><label style={{ margin: "10px 15px" }}> Select Your Address - This will ONLY show a 10-15 mile radius - not your exact location. We believe HIGHLY in protecting our clients and your safety is a top priority. </label><PlacesAutocomplete 
 												        value={this.state.address}
 												        onChange={this.handleChange}
@@ -447,7 +478,7 @@ constructor(props) {
 											}) : null}
 											
 										</ul>
-
+										
 							            </div>
 							            {this.renderSubmissionButton()}
 							        </div>

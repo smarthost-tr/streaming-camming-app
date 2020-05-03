@@ -249,6 +249,7 @@ constructor(props) {
                   <Link class="dropdown-item" to="/profiles">Cammers/Buy-Content</Link>
                   
                   {this.props.authenticated && this.state.cammer ? <React.Fragment><div class="dropdown-divider"></div><Link class="dropdown-item" to="/streams/create/private">Start PRIVATE Stream</Link></React.Fragment> : null}
+                  {this.props.authenticated && this.state.cammer ? <React.Fragment><div class="dropdown-divider"></div><Link class="dropdown-item" to="/lovense/connect">Connect LOVENSE Vibrator</Link></React.Fragment> : null}
                   <Link class="dropdown-item" to="/all/streams/public">View All Public Streams</Link>
                 </div>
               </li>
@@ -282,7 +283,7 @@ constructor(props) {
                 <Link className="btn btn-outline pink_button" to="/signup/camming/one">Become A Cammer!</Link>
               </NavItem> : null}
               {this.props.authenticated ? <li style={{ listStyleType: "none" }} class="dropdown">
-                  <a style={{ margin: "20px", color: "black" }} onClick={this.gatherFriendRequests} class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i style={{ color: "black" }} class="fas fa-user-friends fa-2x"></i>
+                  <a style={{ margin: "20px", color: "black" }} onClick={this.gatherFriendRequests} class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i style={{ color: "black" }} class="fas fa-user-friends fa-2x peek-a-boo"></i>
                   {/*{this.state.friends ? (<b>{this.state.friends ? this.state.friends.length : null}</b>) : null}*/}
                   </a>
                   <ul class="dropdown-menu notify-drop">

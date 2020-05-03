@@ -8,6 +8,7 @@ import "./registration.css";
 import { token } from "../../actions/token.js";
 import { StreamChat } from 'stream-chat';
 import { gatherCurrency } from "../../actions/blockchain/index.js";
+import Footer from "../common/footer/footer.js";
 
 const client = new StreamChat('qzye22t8v5c4');
 
@@ -128,6 +129,7 @@ constructor(props) {
  					</div>
 		            </div>	
 		          </div>
+		          <Footer />
 	            </div>
 
         );

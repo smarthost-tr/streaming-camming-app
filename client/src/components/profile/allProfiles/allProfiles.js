@@ -113,9 +113,9 @@ constructor(props) {
 	                                		);
 										})
 									} else {
-										return <h3 className="text-center text-dark">No skills have been listed...</h3>
+										return <h3 className="text-center text-white">No skills have been listed...</h3>
 									}
-	                        	}) : <h3 className="text-center text-dark">No skills have been listed...</h3>}
+	                        	}) : <h3 className="text-center text-white">No skills have been listed...</h3>}
 			                    </div>
 		                    </div>
 		                    <hr className="my-4" />

@@ -11,7 +11,7 @@ import Popover from "react-awesome-popover";
 import socketIOClient from "socket.io-client";
 import uuid from "react-uuid";
 import { StreamChat } from 'stream-chat';
-
+import Footer from "../../common/footer/footer.js";
 
 const client = new StreamChat('qzye22t8v5c4');
 
@@ -350,7 +350,10 @@ constructor(props) {
 				                        <img src={user.profile ? user.profile.profilePic : user.image} alt="profile-picture" />        
 				                    </a>
 				                </div>
-				                <div class="profile-name">
+				                <div class="profile-name-one">
+				                    <h2>{user.username}</h2>
+				                </div>
+				                <div class="profile-name-two">
 				                    <h2>{user.username}</h2>
 				                </div>
 				                
@@ -364,7 +367,7 @@ constructor(props) {
 				                            <li><a href="#">More...</a></li>
 				                        </ul>
 				                    </div>
-				                    <div class="block-menu">
+				                    {/*<div class="block-menu">
 				                        <ul>
 				                            <li><a href="#">Timeline</a></li>
 				                            <li><a href="#">about</a></li>
@@ -372,7 +375,7 @@ constructor(props) {
 				                            <li><a href="#">Photos</a></li>
 				                            <li><a href="#">More...</a></li>
 				                        </ul>
-				                    </div>
+				                    </div>*/}
 				                </div>
 				            </div>
 				        </div>
@@ -835,6 +838,7 @@ constructor(props) {
 				    </div>
 				</div>
 				<DropAComment user={user} picture={user.profile ? user.profile.profilePic : user} />
+				<Footer />
             </div>
         );
     }

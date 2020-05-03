@@ -27,7 +27,14 @@
 	margin: 60px auto 15px;
 	width: 768px;
 }
-
+@media only screen and (max-width: 750px) {
+	.comment-wrapper .panel-body {
+	    display: none;
+	}
+	.panel-heading {
+		display: none;
+	}
+}
 .comments-container h1 {
 	font-size: 36px;
 	color: #283035;
