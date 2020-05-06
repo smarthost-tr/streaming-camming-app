@@ -11,7 +11,7 @@ constructor(props) {
 
     render() {
         return (
-            <div className="parallax-one" style={{ width: "100%", borderTop: "10px solid black", borderBottom: "10px solid black" }}>
+            <div className="parallax-one" style={{ borderTop: "10px solid black", borderBottom: "10px solid black" }}>
 				<Parallax
 		            blur={0}
 		            bgImage={require('../../images/art.jpg')}

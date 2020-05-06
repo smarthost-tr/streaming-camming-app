@@ -255,13 +255,13 @@ constructor(props) {
               </li>
               {this.props.authenticated ? <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  Communication
+                  Social Links
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                   <Link class="dropdown-item" to="/chat/homepage">Messaging</Link>
                   <Link class="dropdown-item" to="/find/fuck/buddies/map">Find Locals To Fuck</Link>
                   <div class="dropdown-divider"></div>
-                  <Link class="dropdown-item" href="#">Something else here</Link>
+                  <Link class="dropdown-item" to="/upload/photo/feed">Upload Photo To Profile Feed</Link>
                 </div>
               </li>  : null}
 

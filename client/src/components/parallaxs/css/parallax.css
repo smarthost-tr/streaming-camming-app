@@ -14,4 +14,8 @@
 	.custom_display {
 		max-width: 100vw !important;
 	}
+	.parallax-two {
+		margin-left: 0px;
+		width: 1000px !important;
+	}
 }

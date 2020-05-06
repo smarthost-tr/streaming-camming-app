@@ -45,3 +45,6 @@
   bottom: 0; 
   width: 100%; 
 }
+.red {
+  color: red !important;
+}

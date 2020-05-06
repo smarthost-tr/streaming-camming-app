@@ -45,6 +45,9 @@ const UserSchema = new mongoose.Schema({
 	},
 	blockPrivateKey: {
 		type: String
+	},
+	feed: {
+		type: Array
 	}
 });
 

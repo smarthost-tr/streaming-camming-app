@@ -114,6 +114,7 @@ if (process.env.NODE_ENV === "production") {
 	  })
 	})
 }; 
+app.use("/login/check/creds", require("./routes/auth/checkCreds.js"));
 app.use("/post/reply/comment/profile", require("./routes/comments/postReplyComment.js"));
 app.use("/gather/profile/comments/individual", require("./routes/comments/gather/gatherComments.js"));
 app.use("/stream", require("./routes/streaming/stream.js"));
@@ -150,6 +151,7 @@ app.use("/success", require("./routes/paypal/pay/success.js"));
 app.use("/cancel", require("./routes/paypal/pay/cancel.js"));
 app.use("/tokens/gather", require("./routes/tokens/gatherTokens.js"));
 app.use("/generate/user/token", require("./routes/getStreamChat/tokens/createToken.js"));
+app.use("/stream/feed/token", require("./routes/getStreamChat/tokens/feed.js"));
 app.use("/gather/image/profile", require("./routes/gatherUserImage.js"));
 app.use("/post/channel/db", require("./routes/chat/saveToDatabase/saveChannel.js"));
 app.use("/post/channel/db/other/user", require("./routes/chat/saveToDatabase/saveReceivingChannel.js"));
@@ -184,6 +186,13 @@ app.use("/mine/crypto", require("./routes/blockchain/currency/mine.js"));
 app.use("/gather/port/number", require("./routes/getPort.js"));
 app.use("/post/lovense/id", require("./routes/lovense/postID.js"));
 app.use("/gather/lovense/toyID", require("./routes/lovense/gatherID.js"));
+app.use("/verification", require("./routes/auth/verification.js"));
+app.use("/post/photo/feed/individual", require("./routes/profile/photo/upload.js"));
+app.use("/gather/photos/onlyfans/page", require("./routes/profile/photo/gatherPhotos.js"));
+app.use("/gather/username/individual/user", require("./routes/getUserByUsername.js"));
+app.use("/upload/cover/photo", require("./routes/profile/uploadCoverPhoto.js"));
+
+
 
 
 app.get("/blockchain", (req, res) => {

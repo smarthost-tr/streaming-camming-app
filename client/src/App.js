@@ -36,7 +36,7 @@ import StreamListAll from "./components/streams/streamListAll.js";
 import CryptoWallet from "./components/blockchain/wallet.js";
 import CryptoBlockIndividual from "./components/blockchain/block/view.js";
 import WireUpLovenseVibrator from "./components/lovense/wireup/index.js";
-
+import UploadPhotoToFeed from "./components/feed/uploadPhoto.js";
 
 class App extends Component {
 constructor(props) {
@@ -85,7 +85,7 @@ constructor(props) {
         <Route path="/crypto/wallet" exact component={CryptoWallet} />
         <Route path="/view/block/individual" exact component={CryptoBlockIndividual} />
         {this.props.auth ? <Route path="/lovense/connect" exact component={WireUpLovenseVibrator} /> : <Route path="/lovense/connect" exact component={ErrorUnauthorized} />}
-
+        {this.props.auth ? <Route path="/upload/photo/feed" exact component={UploadPhotoToFeed} /> : <Route path="/upload/photo/feed" exact component={ErrorUnauthorized} />}
       </div>
     </BrowserRouter>
     );

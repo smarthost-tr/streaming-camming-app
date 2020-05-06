@@ -11,7 +11,8 @@ constructor(props) {
   super(props);
 
   this.state = {
-  	tokens: 0
+  	tokens: 0,
+  	custom: 0
   };
 }
 	renderRedirect = () => {
@@ -24,10 +25,25 @@ constructor(props) {
             <div>
             	<Navigation />
 				<section id="team" class="pb-5">
+					
 				    <div class="container-fluid">
 				    	<button onClick={this.renderRedirect} style={{ width: "100%", marginBottom: "20px" }} className="btn btn-outline green_button_custom">Subscribe to our discounted monthly plan to see ALL of our restricted content!</button>
 				    	<ParallaxOne />
 				        <p class="section-title lead" style={{ fontSize: "1.7rem", textDecoration: "underline" }}>Ready to purchase some coins and get some action?! We offer discounted rates for bulk coin purchases, buy bulk and save.</p>
+				        <div style={{ marginBottom: "25px" }} className="col-md-12 col-lg-12">
+		 					<div class="input-group">
+		 					  <div class="input-group-prepend">
+							    <button onClick={() => {
+							    	this.props.history.push("/purchase/tokens/payment", { tokens: this.state.custom });
+							    }} class="btn btn-outline aqua_button_custom" type="button">Submit Token Selection</button>
+							  </div>
+			                    <input placeholder="Enter a custom token amount..." style={{ width: "100%" }} type="text" onChange={(e) => {
+			                    	this.setState({
+			                    		custom: Number(e.target.value)
+			                    	})
+			                    }} class="form-control" value={this.state.custom} />
+			                </div>
+					    </div>
 				        <div class="row">
 				         	
 				            <div class="col-xs-12 col-sm-6 col-md-4">
@@ -267,6 +283,20 @@ constructor(props) {
 							
 				        </div>
 				    </div>
+				   <div className="col-md-12 col-lg-12">
+	 					<div class="input-group">
+	 					<div class="input-group-prepend">
+						    <button onClick={() => {
+						    	this.props.history.push("/purchase/tokens/payment", { tokens: this.state.custom });
+						    }} class="btn btn-outline aqua_button_custom" type="button">Submit Token Selection</button>
+						</div>
+		                    <input placeholder="Enter a custom token amount..." style={{ width: "100%" }} type="text" onChange={(e) => {
+		                    	this.setState({
+		                    		custom: Number(e.target.value)
+		                    	})
+		                    }} class="form-control" value={this.state.custom} />
+		                </div>
+				   </div>
 				</section>
 				<ParallaxOne />
 				<FooterPage />

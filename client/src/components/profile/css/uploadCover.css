@@ -1,0 +1,17 @@
+.header_modal {
+	background-color: #871eff !important;
+}
+.footer_modal {
+	background-color: #871eff !important;
+}
+.modal-content {
+	z-index: 99999999 !important;
+}
+@media only screen and (max-width: 750px) {
+	.special_icon {
+		display: none;
+	}
+}
+.close {
+	color: white !important;
+}

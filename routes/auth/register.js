@@ -88,7 +88,8 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 			tokens: 0,
 			chat_uuid,
 			blockPublicKey: publicKey,
-			blockPrivateKey: privateKey
+			blockPrivateKey: privateKey,
+			feed: []
 		});
 
 		const port = req.app.get("PORT");

@@ -32,9 +32,19 @@
 .user-tabs .tab {
 	background: black !important;
 }
+#text_text_text {
+	width: 550px;
+}
 @media only screen and (max-width: 750px) {
 	.user-tabs .tab {
 		width: 100% !important;
+	}
+	#pop_pop {
+		width: 100vw !important;
+		margin-left: 0 !important;
+	}
+	#text_text_text {
+		width: 90vw;
 	}
 }
 .user-tabs .tab:active {
@@ -45,4 +55,18 @@
 }
 .tabs {
 	background: black;
+}
+.special_icon {
+	float: right !important;
+	right: 0 !important;
+	padding: 20px 20px 0px 0px;
+	z-index: 999999999 !important;
+	position: absolute !important;
+}
+#cover_cover_photo {
+	object-fit: contain;
+	height: auto;
+	max-height: 100%;
+	max-width: calc(100% + 13.5px);
+	margin-top: -250px;
 }

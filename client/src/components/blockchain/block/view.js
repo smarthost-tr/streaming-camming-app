@@ -161,7 +161,7 @@ constructor(props) {
 							                    	console.log(transaction);
 							                    	return (
 														<tr>
-									                        <td className="text-white">{transaction.amount}</td>
+									                        <td className="text-white">{transaction.amount === "00" ? "This is a mined block" : transaction.amount}</td>
 									                        <td className="text-white">{transaction.recipient}</td>
 									                        <td className="text-white">{transaction.sender}</td>
 									                        <td className="text-white">{transaction.transactionId}</td>

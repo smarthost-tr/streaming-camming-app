@@ -56,16 +56,18 @@ constructor(props) {
 				this.setState({
 					users: res.data
 				})
-				
-				
-
-
 			}).catch((err) => {
 				console.log(err);
 			})
 		})
 	}
-
+	mouseEnter = (user) => {
+		console.log("entered.", user);
+		
+	}
+	mouseLeave = (user) => {
+		console.log("exited.")
+	}
     render() {
     	console.log(this.state);
         return (
@@ -83,7 +85,11 @@ constructor(props) {
 								if (user.profile.meetup === true) {
 									console.log(user);
 									return (
-										<div className="col-lg-6 col-md-6">
+										<div onMouseEnter={() => {
+											this.mouseEnter(user);
+										}} onMouseLeave={() => {
+											this.mouseLeave(user);
+										}} className="col-lg-6 col-md-6">
 											<div class="card" style={{ width: "100%", height: "80%" }}>
 											  <img src={user.image} class="card-img-top top_image" alt="no-image" />
 											  <div class="card-body">

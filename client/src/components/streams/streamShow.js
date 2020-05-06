@@ -92,6 +92,7 @@ class StreamShow extends Component {
 
 		document.getElementById("fun-poof").style.display = "none";
 		document.getElementById("lovense").style.display = "none";
+		document.getElementById("not-connected").style.display = "none";
 		
 		let username;
 
@@ -624,60 +625,137 @@ class StreamShow extends Component {
 		}
 	}					
 	webSock = () => {
+
 		const { url, httpPort, tip, lovenseID } = this.state;
+
 		let finished = false;
+
 		socket.on("boom", (data) => {
 			console.log('data', data);
-			if (data.tip <= 50) {
+			if (data.tip <= 20) {
 				document.getElementById("audio").play();
-			} else if (data.tip <= 100) {
-				document.getElementById("lovense").style.display = "block";
-				document.getElementById("casino-file").play();
 				axios.get(`http://${url}:${httpPort}/Vibrate?v=20&t=${lovenseID}`).then((res) => {
 					console.log(res.data);
-					if (res.data) {
+					if (res.data.data === "Toy Not Connect") {
+						document.getElementById("not-connected").style.display = "block";
+						setTimeout(() => {
+							document.getElementById("not-connected").style.display = "none";
+						}, 3000);
+					} else if (res.data.code === 200) {
+						document.getElementById("lovense").style.display = "block";
 						setTimeout(() => {
 							document.getElementById("lovense").style.display = "none";
 							axios.get(`http://${url}:${httpPort}/Vibrate?v=0&t=${lovenseID}`).then((res) => {
 								console.log(res.data);
 							}).catch((err) => {
 								console.log(err);
+								if (err) {
+									alert("An unknown error occurred... Please try again.");
+								}
 							})
-						}, 3500);
+						}, 2500);
+					}
+				}).catch((err) => {
+					console.log(err);
+				})
+			} else if (data.tip <= 50) {
+				document.getElementById("audio").play();
+				axios.get(`http://${url}:${httpPort}/Vibrate?v=20&t=${lovenseID}`).then((res) => {
+					console.log(res.data);
+					if (res.data.data === "Toy Not Connect") {
+						document.getElementById("not-connected").style.display = "block";
+						setTimeout(() => {
+							document.getElementById("not-connected").style.display = "none";
+						}, 3000);
+					} else if (res.data.code === 200) {
+						document.getElementById("lovense").style.display = "block";
+						setTimeout(() => {
+							document.getElementById("lovense").style.display = "none";
+							axios.get(`http://${url}:${httpPort}/Vibrate?v=0&t=${lovenseID}`).then((res) => {
+								console.log(res.data);
+							}).catch((err) => {
+								console.log(err);
+								if (err) {
+									alert("An unknown error occurred... Please try again.");
+								}
+							})
+						}, 4000);
+					}
+				}).catch((err) => {
+					console.log(err);
+				})
+			} else if (data.tip <= 100) {
+				document.getElementById("casino-file").play();
+				axios.get(`http://${url}:${httpPort}/Vibrate?v=20&t=${lovenseID}`).then((res) => {
+					console.log(res.data);
+					if (res.data.data === "Toy Not Connect") {
+						document.getElementById("not-connected").style.display = "block";
+						setTimeout(() => {
+							document.getElementById("not-connected").style.display = "none";
+						}, 3000);
+					} else {
+						document.getElementById("lovense").style.display = "block";
+						setTimeout(() => {
+							document.getElementById("lovense").style.display = "none";
+							axios.get(`http://${url}:${httpPort}/Vibrate?v=0&t=${lovenseID}`).then((res) => {
+								console.log(res.data);
+							}).catch((err) => {
+								console.log(err);
+								if (err) {
+									alert("An unknown error occurred... Please try again.");
+								}
+							})
+						}, 5500);
 					}
 				}).catch((err) => {
 					console.log(err);
 				})
 			} else if (data.tip <= 300) {
-				document.getElementById("lovense").style.display = "block";
 				document.getElementById("game-file").play();
 				axios.get(`http://${url}:${httpPort}/Vibrate?v=20&t=${lovenseID}`).then((res) => {
 					console.log(res.data);
-					if (res.data) {
+					if (res.data.data === "Toy Not Connect") {
+						document.getElementById("not-connected").style.display = "block";
+						setTimeout(() => {
+							document.getElementById("not-connected").style.display = "none";
+						}, 3000);
+					} else {
+						document.getElementById("lovense").style.display = "block";
 						setTimeout(() => {
 							document.getElementById("lovense").style.display = "none";
 							axios.get(`http://${url}:${httpPort}/Vibrate?v=0&t=${lovenseID}`).then((res) => {
 								console.log(res.data);
 							}).catch((err) => {
 								console.log(err);
+								if (err) {
+									alert("An unknown error occurred... Please try again.");
+								}
 							})
-						}, 7500);
+						}, 8500);
 					}
 				}).catch((err) => {
 					console.log(err);
 				})
 			} else if (data.tip <= 500) {
-				document.getElementById("lovense").style.display = "block";
 				document.getElementById("reward-two-file").play();
 				axios.get(`http://${url}:${httpPort}/Vibrate?v=20&t=${lovenseID}`).then((res) => {
 					console.log(res.data);
-					if (res.data) {
+					if (res.data.data === "Toy Not Connect") {
+						document.getElementById("not-connected").style.display = "block";
+						setTimeout(() => {
+							document.getElementById("not-connected").style.display = "none";
+						}, 3000);
+					} else {
+						document.getElementById("lovense").style.display = "block";
 						setTimeout(() => {
 							document.getElementById("lovense").style.display = "none";
 							axios.get(`http://${url}:${httpPort}/Vibrate?v=0&t=${lovenseID}`).then((res) => {
 								console.log(res.data);
 							}).catch((err) => {
 								console.log(err);
+								if (err) {
+									alert("An unknown error occurred... Please try again.");
+								}
 							})
 						}, 12500);
 					}
@@ -685,17 +763,25 @@ class StreamShow extends Component {
 					console.log(err);
 				})
 			} else if (data.tip <= 1000) {
-				document.getElementById("lovense").style.display = "block";
 				document.getElementById("win-money").play();
 				axios.get(`http://${url}:${httpPort}/Vibrate?v=20&t=${lovenseID}`).then((res) => {
 					console.log(res.data);
-					if (res.data) {
+					if (res.data.data === "Toy Not Connect") {
+						document.getElementById("not-connected").style.display = "block";
+						setTimeout(() => {
+							document.getElementById("not-connected").style.display = "none";
+						}, 3000);
+					} else {
+						document.getElementById("lovense").style.display = "block";
 						setTimeout(() => {
 							document.getElementById("lovense").style.display = "none";
 							axios.get(`http://${url}:${httpPort}/Vibrate?v=0&t=${lovenseID}`).then((res) => {
 								console.log(res.data);
 							}).catch((err) => {
 								console.log(err);
+								if (err) {
+									alert("An unknown error occurred... Please try again.");
+								}
 							})
 						}, 15000);
 					}
@@ -704,6 +790,30 @@ class StreamShow extends Component {
 				})
 			} else if (data.tip <= 1500) {
 				document.getElementById("yay-file").play();
+				axios.get(`http://${url}:${httpPort}/Vibrate?v=20&t=${lovenseID}`).then((res) => {
+					console.log(res.data);
+					if (res.data.data === "Toy Not Connect") {
+						document.getElementById("not-connected").style.display = "block";
+						setTimeout(() => {
+							document.getElementById("not-connected").style.display = "none";
+						}, 3000);
+					} else {
+						document.getElementById("lovense").style.display = "block";
+						setTimeout(() => {
+							document.getElementById("lovense").style.display = "none";
+							axios.get(`http://${url}:${httpPort}/Vibrate?v=0&t=${lovenseID}`).then((res) => {
+								console.log(res.data);
+							}).catch((err) => {
+								console.log(err);
+								if (err) {
+									alert("An unknown error occurred... Please try again.");
+								}
+							})
+						}, 30000);
+					}
+				}).catch((err) => {
+					console.log(err);
+				})
 			}		
 		});
 		socket.on("poof", (data) => {
@@ -711,6 +821,30 @@ class StreamShow extends Component {
 			if (data.confetti === true) {
 				document.getElementById("fun-poof").style.display = "block";
 				document.getElementById("yay-file").play();
+				axios.get(`http://${url}:${httpPort}/Vibrate?v=20&t=${lovenseID}`).then((res) => {
+					console.log(res.data);
+					if (res.data.data === "Toy Not Connect") {
+						document.getElementById("not-connected").style.display = "block";
+						setTimeout(() => {
+							document.getElementById("not-connected").style.display = "none";
+						}, 3000);
+					} else {
+						document.getElementById("lovense").style.display = "block";
+						setTimeout(() => {
+							document.getElementById("lovense").style.display = "none";
+							axios.get(`http://${url}:${httpPort}/Vibrate?v=0&t=${lovenseID}`).then((res) => {
+								console.log(res.data);
+							}).catch((err) => {
+								console.log(err);
+								if (err) {
+									alert("An unknown error occurred... Please try again.");
+								}
+							})
+						}, 45000);
+					}
+				}).catch((err) => {
+					console.log(err);
+				})
 			} else {
 				document.getElementById("fun-poof").style.display = "none";
 			}
@@ -775,6 +909,9 @@ class StreamShow extends Component {
 					{this.props.username ? null : <p className="text-center lead bold" style={{ textDecoration: "underline", paddingBottom: "23px" }}>You are seeing only a SMALL portion of the avaliable content... please sign-in to join the chat and access all of our restricted features.</p>}
 					<div id="lovense">
 						<h4 className="text-center text-white">Lovense Vibrator Is NOW ACTIVE!</h4>
+					</div>
+					<div id="not-connected">
+						<h4 className="text-center red" style={{ color: "red" }}>Lovense Vibrator is NOT connected - Please connect lovense!</h4>
 					</div>
 						{(this.state.exists && this.state.username === this.props.username) ? null : <div className="row">
 						<label id="label">Enter a tip amount to send to this streamer</label>
