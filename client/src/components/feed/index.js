@@ -10,9 +10,11 @@ class FeedOnlyfansStyle extends Component {
 constructor(props) {
   super(props);
 
-}
+} 
   render() {
     console.log(this.props);
+    const username = this.props.match.params.id;
+    const email = this.props.user.email;
     return(
       <div>
         <div id="contain" className="container-fluid">
@@ -21,8 +23,8 @@ constructor(props) {
             console.log('post', post);
               return (
                 <div onClick={() => {
-                  this.props.history.push("/", { post });
-                }} id="ig_photo" class="case-study study1 col-md-4 col-lg-4 col-sm-6 col-xs-6">
+                  this.props.history.push(`/feed/posting/individual/${post.uniqueID}`, { post, username, email, id: post.uniqueID });
+                }} id="ig_photo" class="case-study study1 col-md-4 col-lg-4 col-sm-12 col-xs-12">
                   <figure>
                     <img class="case-study__img" src={post.link} alt="posted-image" />
                   </figure>

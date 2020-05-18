@@ -39,6 +39,10 @@ const gemshire = require("./main.js");
 const rp = require("request-promise"); 
 const uuid = require("uuid/v4");
 const nodeAddress = uuid().split("-").join("");
+const node_media_server = require('./rtmpserver/media_server.js');
+// import thumbnail generator
+const thumbnail_generator = require('./rtmpserver/thumbnail.js');
+
 let STREAM;
 
 {/*var httpsServer = https.createServer(credentials, app).listen(<port>);*/}
@@ -47,16 +51,14 @@ app.set("PORT", PORT);
 
 mongoDB();
 
-
 paypal.configure({
   'mode': 'sandbox', //sandbox or live
   'client_id': 'AatWS7bPUsaanCxASstt_DROXJgWESP5-qDnlAwM_J0JFp596UlChQvchiHwH6AU6oIEDVbJKunHu5pX',
   'client_secret': 'EGNFNDTQg9SNZcnYLQG10A73TQaH9DLVaYwMuLyev8o0r8nC4zKGEeE_WFGTZnRb5jwPQPxP2DursFDz'
 });
-
+  
 app.use(cors());
 app.use('*', cors());
-
 app.use(express.json());
 app.use(express.urlencoded({
 	extended: true
@@ -118,7 +120,6 @@ app.use("/login/check/creds", require("./routes/auth/checkCreds.js"));
 app.use("/post/reply/comment/profile", require("./routes/comments/postReplyComment.js"));
 app.use("/gather/profile/comments/individual", require("./routes/comments/gather/gatherComments.js"));
 app.use("/stream", require("./routes/streaming/stream.js"));
-app.use("/streaming/create", require("./routes/streaming/streamingTokBox.js"));
 app.use("/streaming/gather", require("./routes/streaming/gatherStreams.js"));
 app.use("/streaming/start/broadcast", require("./routes/streaming/startBroadcast.js"));
 app.use("/streams/gather/broadcasts", require("./routes/streaming/gatherBroadcasts.js"));
@@ -191,8 +192,20 @@ app.use("/post/photo/feed/individual", require("./routes/profile/photo/upload.js
 app.use("/gather/photos/onlyfans/page", require("./routes/profile/photo/gatherPhotos.js"));
 app.use("/gather/username/individual/user", require("./routes/getUserByUsername.js"));
 app.use("/upload/cover/photo", require("./routes/profile/uploadCoverPhoto.js"));
+app.use("/submit/feed/comment/individual", require("./routes/profile/addNewData/addCommentFeed.js"));
+app.use("/gather/instagram/feed/comments", require("./routes/profile/gatherData/gatherInstagramComments.js"));
+app.use("/delete/comment/instagram/feed/individual", require("./routes/profile/removeData/removeComment.js"));
+app.use("/sendgrid/send/email", require("./routes/sendgrid/sendgridEmailSend.js"));
+app.use("/follow/user", require("./routes/following/followUser.js"));
+app.use("/gather/followers", require("./routes/following/gatherFollowers.js"));
 
-
+// RTMP BEGIN
+app.use("/streams/info", require("./routes/streaming/rtmp/info.js"));
+app.use("/stream_key/create", require("./routes/streaming/rtmp/stream_key.js"));
+app.use("/stream_key/gather", require("./routes/streaming/rtmp/gatherStreamKey.js"));
+app.use("/get/stream/last", require("./routes/streaming/findByStreamKey.js"));
+app.use("/complete/stream/rtmp", require("./routes/streaming/rtmp/completeStream.js"));
+// RTMP END
 
 
 app.get("/blockchain", (req, res) => {
@@ -444,11 +457,20 @@ app.get("/address/:address", (req, res) => {
   })
 });
 
+
+node_media_server.run();
+
+thumbnail_generator.start();
+
 io.on("connection", socket => {
   console.log("New client connected");
   socket.on("tipped", (data) => {
     console.log(data);
     io.sockets.emit("tip", data);
+  })
+  socket.on("endStream", (data) => {
+    console.log("The magic - end:", data);
+    io.sockets.emit("end", data);
   })
 
   socket.on("sound", (data) => {

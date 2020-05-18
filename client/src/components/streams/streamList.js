@@ -10,6 +10,38 @@ import "react-multi-carousel/lib/styles.css";
 import SearchContainer from "./search/search.js";
 import { connect } from "react-redux";
 
+const config = {
+    server: {
+        secret: 'kjVkuti2xAyF3JGCzSZTk0YWM5JhI9mgQW4rytXc'
+    },
+    rtmp_server: {
+        rtmp: {
+            port: 1935,
+            chunk_size: 60000,
+            gop_cache: true,
+            ping: 60,
+            ping_timeout: 30
+        },
+        http: {
+            port: 8888,
+            mediaroot: './server/media',
+            allow_origin: '*'
+        },
+        trans: {
+            ffmpeg: '/usr/local/bin/ffmpeg',
+            tasks: [
+                {
+                    app: 'live',
+                    hls: true,
+                    hlsFlags: '[hls_time=2:hls_list_size=3:hls_flags=delete_segments]',
+                    dash: true,
+                    dashFlags: '[f=dash:window_size=3:extra_window_size=5]'
+                }
+            ]
+        }
+    }
+};
+
 const responsive = {
   superLargeDesktop: {
     // the naming can be any, depends on you.
@@ -54,23 +86,47 @@ constructor(props) {
   	user: null
   };
 }
+	getStreamsInfo = (live_streams) => {
+		axios.get('/streams/info', {
+            params: {
+                streams: live_streams
+            }
+        }).then(res => {
+        	console.log(res.data);
+            // this.setState({
+            //     streamsReady: res.data
+            // }, () => {
+            //     console.log(this.state);
+            // });
+        }).catch((err) => {
+        	console.log(err);
+        });
+	}
 	componentDidMount() {
+    //    	setTimeout(() => {
+	 		// axios.get('/create/thumbnail')
+	   //          .then(res => {
+	   //            	console.log(res.data);
+	   //      }).catch((err) => {
+	   //          	console.log(err);
+	   //      });
 
+    //    	}, 1000);
 		axios.get("/gather/each/every/stream/mongodb").then((res) => {
 			console.log(res);
 			for (var i = 0; i < res.data.length; i++) {
 				let stream = res.data[i];
-				if (stream.status === "finished") {
-					this.setState({
-						finishedStreams: [...this.state.finishedStreams, stream]
-					})
-				}
-				if (stream.status === "idle") {
-					this.setState({
-						idleStreams: [...this.state.idleStreams, stream]
-					})
-				}
-				if (stream.status === "ready") {
+				// if (stream.status === "finished") {
+				// 	this.setState({
+				// 		finishedStreams: [...this.state.finishedStreams, stream]
+				// 	})
+				// }
+				// if (stream.status === "idle") {
+				// 	this.setState({
+				// 		idleStreams: [...this.state.idleStreams, stream]
+				// 	})
+				// }
+				if (stream) {
 					this.setState({
 						readyStreams: [...this.state.readyStreams, stream]
 					})					
@@ -171,6 +227,7 @@ constructor(props) {
 					<Carousel responsive={responsive}>
 			 		  {/*{this.renderIdleStreams()}*/}
 			 		  	{this.state.readyStreams ? this.state.readyStreams.slice(0, 20).map((stream, index) => {
+			 		  		console.log(stream);
 			 		  	{/*	const auth = {
 							    username: "f899a074-f11e-490f-b35d-b6c478a5b12a",
 							    password: "4vLdjx6uBafGdFiSbmWt5akv4DaD4PkDuCCYdFYXzudywyQSR3Uh27GqlfedlhZ17fbnXbf9Rh/"
@@ -181,20 +238,20 @@ constructor(props) {
 			 		  		})*/}
 
 			 		  		{/*console.log(res);*/}
-			 		  		if (stream.playback_ids[0].policy === "public" && stream.tags.includes("STRAIGHT")) {
+			 		  		if (stream.tags.includes("STRAIGHT") && stream.active === true) {
 								return (
 									<div key={index} style={{ margin: "20px 10px 20px 10px", maxHeight: "50vh"  }} onClick={() => {
-											this.props.history.push(`/view/individual/private/stream/${stream.id}`, { streamID: stream.id })
+											this.props.history.push(`/view/individual/private/stream/${stream.id}`, { streamID: stream.id, stream_key: stream.stream_key });
 										}} class="card">
 							            <div class="thumbnail">
-							                <img width="360" height="270" src={`https://image.mux.com/${stream.playback_ids[0].id}/animated.gif`} alt="thumbnail"/>
+							                <img width="360" height="270" src={require(`../../assets/${stream.stream_key}.png`)} alt="thumbnail"/>
 							                <a class="thumb-cover"></a>
 							                <div class="details">
 							                    <div class="authors-container">
 							                        <div class="author">
 							                            <a class="card-user account-photo  account-product-owner">
 							                            <div class="mask">
-							                                <img class="photo" src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="Thumb"/>
+							                                <img class="photo" src={stream.profilePic} alt="Thumb"/>
 							                            </div>
 							                            </a>
 							                        </div>
@@ -233,207 +290,7 @@ constructor(props) {
 			 		  		}
 			 		  	}) : <ReactLoading type="cylon" color="pink" height={500} width={500} />}
 				  
-			 		  
-					</Carousel>
-					{/*{this.state.ready ? <h1 className="text-white text-center">Bi-Sexual Streams</h1> : null}*/}
-					<Carousel responsive={responsive}>
-			 		  {/*{this.renderIdleStreams()}*/}
-			 		  	{this.state.readyStreams ? this.state.readyStreams.slice(0, 20).map((stream, index) => {
-			 		  	{/*	const auth = {
-							    username: "f899a074-f11e-490f-b35d-b6c478a5b12a",
-							    password: "4vLdjx6uBafGdFiSbmWt5akv4DaD4PkDuCCYdFYXzudywyQSR3Uh27GqlfedlhZ17fbnXbf9Rh/"
-							};
-
-			 		  		const res = axios.get(`https://api.mux.com/video/v1/assets/${stream.id}`, {}, { auth: auth }).catch((err) => {
-			 		  			throw err;
-			 		  		})*/}
-
-			 		  		{/*console.log(res);*/}
-			 		  		if (stream.playback_ids[0].policy === "public" && stream.tags.includes("BI-SEXUAL")) {
-								return (
-									<div style={{ margin: "20px 10px 20px 10px", maxHeight: "50vh"  }} onClick={() => {
-											this.props.history.push(`/view/individual/private/stream/${stream.id}`, { streamID: stream.id })
-										}} class="card">
-							            <div class="thumbnail">
-							                <img width="360" height="270" src={`https://image.mux.com/${stream.playback_ids[0].id}/animated.gif`} alt="thumbnail"/>
-							                <a class="thumb-cover"></a>
-							                <div class="details">
-							                    <div class="authors-container">
-							                        <div class="author">
-							                            <a class="card-user account-photo  account-product-owner">
-							                            <div class="mask">
-							                                <img class="photo" src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="Thumb"/>
-							                            </div>
-							                            </a>
-							                        </div>
-							                    </div>
-							                    <div class="numbers">
-							                       {stream.tags ? stream.tags.map((tag, indexxxx) => {
-							                       		return  (
-							                       			<b key={indexxxx} class="downloads"><i class="fa fa-arrow-circle-o-down"></i>{tag + ", "}</b>
-							                       		);
-							                       }) : null}
-							                        <b class="comments-icon"><i class="fa fa-comment"></i></b>
-							                    </div>
-							                   
-							                    <div class="clearfix"></div>
-							                </div>
-							                {/*<b class="actions">
-							                    <a class="btn btn-neutral btn-round btn-fill" href="#">More Details</a>
-							                    <a onClick={() => {
-												this.props.history.push(`/view/individual/private/stream/${stream.id}`, { streamID: stream.id })
-												}} class="btn btn-info btn-round" href="#">Live Preview</a>
-							                </b>*/}
-							            </div>
-							            <div class="card-info">
-							                <a href="#">
-							                    <h3>{stream.title}
-							                        <div class="time pull-right">{stream.subTitle}</div>
-							                    
-							                    
-							                    </h3>
-							                    <div class="circle-red"><i class="fa fa-circle-o"></i></div>
-							                    <p>{stream.desc}</p>
-							                </a>
-							        </div>
-					        	</div>
-				 		  		);
-			 		  		}
-			 		  	}) : <ReactLoading type="cylon" color="pink" height={500} width={500} />}
-				  
-			 		  
-					</Carousel>
-					{/*{this.state.ready ? <h1 className="text-white text-center">Gay Streams</h1> : null}*/}
-					<Carousel responsive={responsive}>
-					{this.state.readyStreams ? this.state.readyStreams.slice(0, 20).map((stream, index) => {
-			 		  	{/*	const auth = {
-							    username: "f899a074-f11e-490f-b35d-b6c478a5b12a",
-							    password: "4vLdjx6uBafGdFiSbmWt5akv4DaD4PkDuCCYdFYXzudywyQSR3Uh27GqlfedlhZ17fbnXbf9Rh/"
-							};
-
-			 		  		const res = axios.get(`https://api.mux.com/video/v1/assets/${stream.id}`, {}, { auth: auth }).catch((err) => {
-			 		  			throw err;
-			 		  		})*/}
-
-			 		  		{/*console.log(res);*/}
-			 		  		if (stream.playback_ids[0].policy === "public" && stream.tags.includes("GAY")) {
-			 		  			
-								return (
-									<div style={{ margin: "20px 10px 20px 10px", maxHeight: "50vh"  }} onClick={() => {
-											this.props.history.push(`/view/individual/private/stream/${stream.id}`, { streamID: stream.id })
-										}} class="card">
-							            <div class="thumbnail">
-							                <img width="360" height="270" src={`https://image.mux.com/${stream.playback_ids[0].id}/animated.gif`} alt="thumbnail"/>
-							                <a class="thumb-cover"></a>
-							                <div class="details">
-							                    <div class="authors-container">
-							                        <div class="author">
-							                            <a class="card-user account-photo  account-product-owner">
-							                            <div class="mask">
-							                                <img class="photo" src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="Thumb"/>
-							                            </div>
-							                            </a>
-							                        </div>
-							                    </div>
-							                    <div class="numbers">
-							                       {stream.tags ? stream.tags.map((tag, indexxxx) => {
-							                       		return  (
-							                       			<b key={indexxxx} class="downloads"><i class="fa fa-arrow-circle-o-down"></i>{tag + ", "}</b>
-							                       		);
-							                       }) : null}
-							                        <b class="comments-icon"><i class="fa fa-comment"></i></b>
-							                    </div>
-							                   
-							                    <div class="clearfix"></div>
-							                </div>
-							                {/*<b class="actions">
-							                    <a class="btn btn-neutral btn-round btn-fill" href="#">More Details</a>
-							                    <a onClick={() => {
-												this.props.history.push(`/view/individual/private/stream/${stream.id}`, { streamID: stream.id })
-												}} class="btn btn-info btn-round" href="#">Live Preview</a>
-							                </b>*/}
-							            </div>
-							            <div class="card-info">
-							                <a href="#">
-							                    <h3>{stream.title}
-							                        <div class="time pull-right">{stream.subTitle}</div>
-							                    
-							                    
-							                    </h3>
-							                    <div class="circle-red"><i class="fa fa-circle-o"></i></div>
-							                    <p>{stream.desc}</p>
-							                </a>
-							        </div>
-					        	</div>
-				 		  		);
-			 		  		}
-			 		  	}) : <ReactLoading type="cylon" color="pink" height={500} width={500} />}
-					</Carousel>
-					<Carousel responsive={responsive}>
-					{this.state.readyStreams ? this.state.readyStreams.slice(0, 20).map((stream, index) => {
-			 		  	{/*	const auth = {
-							    username: "f899a074-f11e-490f-b35d-b6c478a5b12a",
-							    password: "4vLdjx6uBafGdFiSbmWt5akv4DaD4PkDuCCYdFYXzudywyQSR3Uh27GqlfedlhZ17fbnXbf9Rh/"
-							};
-
-			 		  		const res = axios.get(`https://api.mux.com/video/v1/assets/${stream.id}`, {}, { auth: auth }).catch((err) => {
-			 		  			throw err;
-			 		  		})*/}
-
-			 		  		{/*console.log(res);*/}
-			 		  		if (stream.playback_ids[0].policy === "public" && stream.tags.includes("TRANS")) {
-			 		  			
-								return (
-									<div style={{ margin: "20px 10px 20px 10px", maxHeight: "50vh"  }} onClick={() => {
-											this.props.history.push(`/view/individual/private/stream/${stream.id}`, { streamID: stream.id })
-										}} class="card">
-							            <div class="thumbnail">
-							                <img width="360" height="270" src={`https://image.mux.com/${stream.playback_ids[0].id}/animated.gif`} alt="thumbnail"/>
-							                <a class="thumb-cover"></a>
-							                <div class="details">
-							                    <div class="authors-container">
-							                        <div class="author">
-							                            <a class="card-user account-photo  account-product-owner">
-							                            <div class="mask">
-							                                <img class="photo" src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="Thumb"/>
-							                            </div>
-							                            </a>
-							                        </div>
-							                    </div>
-							                    <div class="numbers">
-							                       {stream.tags ? stream.tags.map((tag, indexxxx) => {
-							                       		return  (
-							                       			<b key={indexxxx} class="downloads"><i class="fa fa-arrow-circle-o-down"></i>{tag + ", "}</b>
-							                       		);
-							                       }) : null}
-							                        <b class="comments-icon"><i class="fa fa-comment"></i></b>
-							                    </div>
-							                   
-							                    <div class="clearfix"></div>
-							                </div>
-							                {/*<b class="actions">
-							                    <a class="btn btn-neutral btn-round btn-fill" href="#">More Details</a>
-							                    <a onClick={() => {
-												this.props.history.push(`/view/individual/private/stream/${stream.id}`, { streamID: stream.id })
-												}} class="btn btn-info btn-round" href="#">Live Preview</a>
-							                </b>*/}
-							            </div>
-							            <div class="card-info">
-							                <a href="#">
-							                    <h3>{stream.title}
-							                        <div class="time pull-right">{stream.subTitle}</div>
-							                    
-							                    
-							                    </h3>
-							                    <div class="circle-red"><i class="fa fa-circle-o"></i></div>
-							                    <p>{stream.desc}</p>
-							                </a>
-							        </div>
-					        	</div>
-				 		  		);
-			 		  		}
-			 		  	}) : <ReactLoading type="cylon" color="pink" height={500} width={500} />}
-					</Carousel>
+			 		</Carousel>
 					<h1 className="text-center text-white">Straight Streams</h1>
 					<Carousel responsive={responsive}>
 			 		  {/*{this.renderIdleStreams()}*/}

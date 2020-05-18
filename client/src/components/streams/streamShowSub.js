@@ -35,9 +35,11 @@ constructor(props) {
 		})
 	}
 	render () {
-		console.log(this.state);
+		console.log(this.props);
 		let user;
 		for (let key in this.props) {
+			let element = this.props[key];
+			console.log(element);
 			user = this.props[key][0];
 		}
 		return (
@@ -65,7 +67,6 @@ constructor(props) {
 						<ul className="special_list" style={{ marginTop: "30px" }}>
 							{user.tipRates ? user.tipRates.map((task, index) => {
 								return task.map((data, indexxx) => {
-									console.log(data);
 									return <li className="list_item">Task Request: Get me to <strong style={{ color: "#37be43" }}>{data.task}</strong> for <strong  style={{ color: "#871eff" }}>{data.cost}</strong> tokens</li>
 								})
 							}) : <h3 className="text-center text-white">User hasn't created a tip chart *yet*...</h3>}

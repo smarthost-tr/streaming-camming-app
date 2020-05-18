@@ -105,3 +105,9 @@
 .register_two {
     height: 100vh;
 }
+.super_card {
+    border: 4px solid #871eff;
+    height: 100%;
+    max-height: 250px !important;
+    box-shadow: 5px 5px 5px #37be43;
+}

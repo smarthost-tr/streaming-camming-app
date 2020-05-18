@@ -3,7 +3,7 @@ import Navigation from "../navigation/index.js";
 import axios from "axios";
 import ReactPlayer from 'react-player';
 import "./css/streams.css";
-
+import Footer from "../common/footer/footer.js";
 
 class AssetShow extends Component {
 constructor(props) {
@@ -53,6 +53,7 @@ constructor(props) {
 			 	<div className="controller-back">
 					{this.state.playbackID ? <div className="controller"><ReactPlayer playing={true} style={{ backgroundColor: "black" }} url={`https://stream.mux.com/${this.state.playbackID}.m3u8`} controls width="100%" height="100%" /></div> : null}
 				</div>
+				<Footer />
 			</div>
 		);
 	}

@@ -381,8 +381,8 @@ constructor(props) {
 					  	})
 					  }} type="text" class="form-control" placeholder="b1fe178-b2ef-cff-4702-f6dbffa5224" aria-label="Username" aria-describedby="basic-addon1" />
 					</div> <hr className="my-4"/>{this.state.id ? <button onClick={() => {
-										this.handleRedirect();
-									}} className="btn btn-outline green_button_custom" style={{ width: "100%", margin: "30px 0px" }}>Redirect page and ACTIVATE live stream</button> : null}<hr className="my-4"/>Your OBS server url is: rtmps://global-live.mux.com/app <hr className="my-4"/>
+						this.handleRedirect();
+					}} className="btn btn-outline green_button_custom" style={{ width: "100%", margin: "30px 0px" }}>Redirect page and ACTIVATE live stream</button> : null}<hr className="my-4"/>Your OBS server url is: rtmps://global-live.mux.com/app <hr className="my-4"/>
 					</h4> : null}
 					<ParallaxOne />
 				<Footer />

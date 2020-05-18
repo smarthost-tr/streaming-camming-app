@@ -11,8 +11,41 @@ import { withRouter } from "react-router-dom";
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import FooterPage from "../common/footer/footer.js";
 import ParallaxTwo from "../parallaxs/parallaxTwo.js";
+import uuid from "react-uuid";
 
 const apiKey = '46621022';
+
+const config = {
+    server: {
+        secret: 'kjVkuti2xAyF3JGCzSZTk0YWM5JhI9mgQW4rytXc'
+    },
+    rtmp_server: {
+        rtmp: {
+            port: 1935,
+            chunk_size: 60000,
+            gop_cache: true,
+            ping: 60,
+            ping_timeout: 30
+        },
+        http: {
+            port: 8888,
+            mediaroot: './server/media',
+            allow_origin: '*'
+        },
+        trans: {
+            ffmpeg: '/usr/local/bin/ffmpeg',
+            tasks: [
+                {
+                    app: 'live',
+                    hls: true,
+                    hlsFlags: '[hls_time=2:hls_list_size=3:hls_flags=delete_segments]',
+                    dash: true,
+                    dashFlags: '[f=dash:window_size=3:extra_window_size=5]'
+                }
+            ]
+        }
+    }
+};
 
 class StreamCreateAPI extends Component {
 constructor(props) {
@@ -20,7 +53,7 @@ constructor(props) {
 
 	this.state = {
 		loaded: false,
-		streams: [],
+		liveStreams: [],
 		error: "",
 		broadcastID: null,
 		updatedAt: null,
@@ -43,45 +76,60 @@ constructor(props) {
 		race: "",
 		preferences: "",
 		orientation: "",
-		tags: []
+		tags: [],
+		stream_key: "",
+		show: false
 	}
 
 	
 }
 	componentDidMount() {
-		// create session
-		axios.post("/streaming/create").then((res) => {
-			console.log(res.data);
-		}).catch((err) => {
-			console.log(err);
-		});
-		
+		this.getStreamKey();
 	}
 	handleClick = () => {
 
 		this.setState({
 			tags: [this.state.race, this.state.preferences, this.state.orientation]
-		})
+		});
 
-		axios.post("/mux/create/stream").then((res) => {
-  			this.setState({
-  				playbackID: res.data.playbackID,
-  				streamKey: res.data.streamKey,
-  				streamID: res.data.data.id,
-  				loaded: true,
-  				startedStream: true,
-  				data: res.data
-  			}, () => {
-  				this.props.streamPlaybackID(this.state.playbackID);
-  			})
-			
-			
-  			console.log(res.data);
-  		}).catch((err) => {
-  			console.log(err);
-  		})
-		
+		axios.post('/stream_key/create', {
+			email: this.props.email
+		}).then(res => {
+            if (res.data) {
+            	console.log(res.data);
+
+            	axios.get('/stream_key/gather', {
+		        	params: {
+		                email: this.props.email
+		            }
+		        }).then(response => {
+		        	console.log(response.data);
+		            this.setState({
+		                stream_key: response.data.stream_key,
+		                show: true
+		            });
+		        }).catch((err) => {
+		        	console.log(err);
+		        })
+            }
+        }).catch((err) => {
+        	console.log(err);
+        })
 	}
+	getStreamKey = () => {
+        axios.get('/stream_key/gather', {
+        	params: {
+                email: this.props.email
+            }
+        }).then(res => {
+        	console.log(res.data);
+            this.setState({
+                stream_key : res.data.stream_key
+            });
+        }).catch((err) => {
+        	console.log(err);
+        })
+    }
     onError = (err) => {
     	this.setState({ 
     		error: `Failed to connect: ${err}` 
@@ -101,55 +149,77 @@ constructor(props) {
 			ready: false
 		})
   	}
-	handleRedirect = (e) => {
-		e.preventDefault();
+  	getStreamsInfo = (live_streams) => {
+  		console.log(live_streams);
+        // axios.get('/streams/info', {
+        //     params: {
+        //         streams: live_streams
+        //     }
+        // }).then(res => {
+        //     this.setState({
+        //         live_streams: res.data
+        //     }, () => {
+        //         console.log(this.state);
+        //     });
+        // }).catch((err) => {
+        // 	console.log(err);
+        // });
+    }
+ 
+	handleRedirect = () => {
 
-		
-		const createLive = async () => {
-		  const auth = {
-		    username: "f899a074-f11e-490f-b35d-b6c478a5b12a",
-		    password: "4vLdjx6uBafGdFiSbmWt5akv4DaD4PkDuCCYdFYXzudywyQSR3Uh27GqlfedlhZ17fbnXbf9Rh/"
-		  };
-		    const param = { "reduced_latency": true, 
-			  "playback_policy": "public", 
-			  "new_asset_settings": { 
-			  	"playback_policy": "public" 
-			  } 
-			}
-		  const res = await axios.get(`https://api.mux.com/video/v1/live-streams/${this.state.streamID}`, { auth: auth }).catch((error) => {
-		    throw error;
-		  });
+		const { streamTitle, streamSubTitle, streamDescription, orientation, preferences, race, stream_key } = this.state;
 
-		  const { streamTitle, streamSubTitle, streamDescription } = this.state;
+		const getLiveStreams = () => {
 
-		  console.log(res.data);
-		  if (res.data.data.status === "active") {
-		  	// put more code here to handle asset logic
+	        axios.get('http://127.0.0.1:' + config.rtmp_server.http.port + '/api/streams')
+	            .then(res => {
+	                let streams = res.data;
+	                console.log(streams);
+	                if (typeof (streams['live'] !== 'undefined')) {
+	                    this.getStreamsInfo(streams['live']); 
 
-		  	axios.post("/post/new/stream", {
-				data: this.state.data.data,
-				email: this.props.email,
-				active_asset_id: res.data.data.active_asset_id,
-				tags: this.state.tags,
-				title: streamTitle,
-				desc: streamDescription,
-				subTitle: streamSubTitle,
-				profilePic: this.props.image
-			}).then((res) => {
-				console.log(res.data);
-				if (res) {
-					this.props.history.push(`/view/individual/private/stream/${this.state.streamID}`, { streamID: this.state.streamID });
-				}
-			}).catch((err) => {
-				console.log(err);
-				alert(err);
-			});
-		  } else {
-		  	alert("Broadcast/stream not detected... Please go to OBS and start your live stream.");
-		  }
-		}
+						if (streamTitle.length > 0 && streamSubTitle.length > 0 && streamDescription.length > 0 && orientation && preferences && race) {
+							axios.post("/post/new/stream", {
+								// data: this.state.data.data,
+								email: this.props.email,
+								stream_key,
+								// active_asset_id: res.data.data.active_asset_id,
+								tags: this.state.tags,
+								title: streamTitle,
+								desc: streamDescription,
+								subTitle: streamSubTitle,
+								profilePic: this.props.image
+							}).then((responseee) => {
+								console.log(responseee.data.data);
+								if (responseee.data) {
+									axios.post("/get/stream/last", { 
+										key: stream_key
+									}).then((kickback) => {
+										console.log(kickback.data);
+										const selected = kickback.data;
+										// const param = responseee.data.data.value.streams[responseee.data.data.value.streams.length - 1].id;
+										
+										this.props.history.push(`/view/individual/private/stream/${selected.id}`, { streamID: selected.id, stream_key: selected.stream_key });
+									}).catch((err) => {
+										console.log(err);
+									})
+								}
+								
+							}).catch((err) => {
+								console.log(err);
+								alert(err);
+							});
+						} else {
+							alert("Please fill out each and every field.");
+						}
+	                }
+	        }).catch((err) => {
+	            	console.log(err);
+	        });
+	    }
 
-		createLive();
+	    getLiveStreams();
 	}	
 	renderCustomFields = () => {
 		return (
@@ -247,18 +317,18 @@ constructor(props) {
 		);
 	}
     render() {
-    	const { loaded, token, sessionId, error, showVideo, startedStream, streamKey } = this.state;
+    	const { loaded, token, sessionId, error, showVideo, startedStream, stream_key, show } = this.state;
     	console.log(this.state);
         return (
             <div>	
             	<Navigation />
             	<ParallaxTwo />
             	{this.renderCustomFields()}
-            	{!startedStream && this.state.orientation.length > 0 && this.state.race.length > 0 && this.state.preferences.length > 0 ? <button className="btn btn-outline green_button_custom" style={{ width: "100%", marginBottom: "40px", marginTop: "30px" }} onClick={this.handleClick}>Start A Stream!</button> : null}
-            	{streamKey ? <hr className="my-4"/> : null}
+            	{!startedStream && this.state.orientation.length > 0 && this.state.race.length > 0 && this.state.preferences.length > 0 && this.state.streamDescription.length > 0 ? <button className="btn btn-outline green_button_custom" style={{ width: "100%", marginBottom: "40px", marginTop: "30px" }} onClick={this.handleClick}>Start A Stream!</button> : null}
+            	{stream_key && show ? <hr className="my-4"/> : null}
 
 
-	            <div className="mx-auto text-center">{streamKey ? "Your UNIQUE stream key is: " + streamKey : null}  <div className="mx-auto">{streamKey ? <CopyToClipboard text={streamKey}
+	            <div className="mx-auto text-center">{stream_key && show ? "Your UNIQUE stream key is: " + stream_key : null}  <div className="mx-auto">{stream_key && show ? <CopyToClipboard text={stream_key}
 			          onCopy={() => this.setState({
 			          	copied: true
 			          })}>
@@ -267,14 +337,14 @@ constructor(props) {
 
 			    <hr className="my-4"/> 
 
-			    {streamKey ? "Your OBS server url is: rtmps://global-live.mux.com/app" : null}
+			    {stream_key && show ? "Your OBS server url is: rtmp://127.0.0.1:1935/live" : null}
 
 			    </div>
 
 	           
 
-            	{this.state.streamKey ? <hr className="my-4"/> : null}
-            	{this.state.loaded && this.state.streamKey ? <button onClick={this.handleRedirect} className="btn btn-outline green_button_custom" style={{ width: "100%", marginBottom: "50px" }}>Once you've started streaming - Use this to publish and go to the Stream</button> : null}
+            	{this.state.stream_key && show ? <hr className="my-4"/> : null}
+            	{stream_key && show ? <button onClick={this.handleRedirect} className="btn btn-outline green_button_custom" style={{ width: "100%", marginBottom: "50px" }}>Once you've started streaming - Use this to publish and go to the Stream</button> : null}
             	{/*<button className="btn btn-outline-success" style={{ width: "100%", marginTop: "30px" }} onClick={this.createNewSession}>Gather Streams Now</button>*/}
 				<div className="container-fluid">
 				   { error ? <h1 style={{ color: "darkred" }} className="text-center">{this.state.error}</h1> : null }

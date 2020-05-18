@@ -63,7 +63,8 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 				title,
 				subtitle,
 				desc,
-				uniqueID: uuid()
+				uniqueID: uuid(),
+				comments: []
 			}}}, (err, doc) => {
 		    if (err) {
 		        console.log("Something wrong when updating data!");

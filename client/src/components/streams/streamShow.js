@@ -24,8 +24,40 @@ import RewardTwo from "../../assets/reward-2.wav";
 import WinMoney from "../../assets/win-money.wav";
 import Yay from "../../assets/yay.mp3";
 import ConfettiAnimation from "./animations/confetti.js";
+import videojs from 'video.js';
+import { withRouter } from "react-router-dom";
 
-
+const config = {
+    server: {
+        secret: 'kjVkuti2xAyF3JGCzSZTk0YWM5JhI9mgQW4rytXc'
+    },
+    rtmp_server: {
+        rtmp: {
+            port: 1935,
+            chunk_size: 60000,
+            gop_cache: true,
+            ping: 60,
+            ping_timeout: 30
+        },
+        http: {
+            port: 8888,
+            mediaroot: './server/media',
+            allow_origin: '*'
+        },
+        trans: {
+            ffmpeg: '/usr/local/bin/ffmpeg',
+            tasks: [
+                {
+                    app: 'live',
+                    hls: true,
+                    hlsFlags: '[hls_time=2:hls_list_size=3:hls_flags=delete_segments]',
+                    dash: true,
+                    dashFlags: '[f=dash:window_size=3:extra_window_size=5]'
+                }
+            ]
+        }
+    }
+};
 
 const customStyles = {
   content : {
@@ -81,7 +113,11 @@ class StreamShow extends Component {
 		confettiHide: false,
 		lovenseID: "",
 		url: "",
-		httpPort: 0
+		httpPort: 0,
+		stream: false,
+        videoJsOptions: null,
+        streamIsActive: true,
+        fireSocket: false
     }	
 }
 
@@ -93,19 +129,56 @@ class StreamShow extends Component {
 		document.getElementById("fun-poof").style.display = "none";
 		document.getElementById("lovense").style.display = "none";
 		document.getElementById("not-connected").style.display = "none";
+
+		console.log(this.props);
+
+		// axios.get('/user', {
+  //           params: {
+  //               username: this.props.username
+  //           }
+  //       }).then(res => {
+  //       	console.log(res);
+  //           this.setState({
+  //               stream: true,
+  //               videoJsOptions: {
+  //                   autoplay: false,
+  //                   controls: true,
+  //                   sources: [{
+  //                       src: 'http://127.0.0.1:' + config.rtmp_server.http.port + '/live/' + res.data.stream_key + '/index.m3u8',
+  //                       type: 'application/x-mpegURL'
+  //                   }],
+  //                   fluid: true,
+  //               }
+  //           }, () => {
+  //               this.player = videojs(this.videoNode, this.state.videoJsOptions, function onPlayerReady() {
+  //                   console.log('onPlayerReady', this)
+  //               });
+  //           });
+  //       }).catch((err) => {
+  //       	console.log(err);
+  //       })
 		
-		let username;
+		let username, passedPropsStreamID;
 
 		setTimeout(() => {
+
+			if (this.props.location.state === undefined) {
+				this.props.history.push("/");
+			} else {
+				passedPropsStreamID = this.props.location.state.streamID
+			}
 			axios.post("/gather/user/info/from/stream", {
-				id: this.props.location.state.streamID
+				id: passedPropsStreamID
 			}).then((res) => {
 				for (let key in res.data) {
+					const last_stream = res.data[key].streams[res.data[key].streams.length - 1].active;
+					console.log(last_stream);
 					username = res.data[key].username;
 					this.setState({
 						username,
 						exists: true,
-						userData: res.data
+						userData: res.data,
+						fireSocket: last_stream
 					})
 				}
 				if (res.data) {
@@ -125,7 +198,8 @@ class StreamShow extends Component {
 						const target = res.data["127-0-0-1.lovense.club"];
 						this.setState({
 							url: keys,
-							httpPort: target.httpPort
+							httpPort: target.httpPort,
+							streamIsReady: true
 						})
 					}).catch((err) => {
 						console.log(err);
@@ -148,9 +222,9 @@ class StreamShow extends Component {
 					setUser: userrr
 				})
 
-				channel = client.channel('livestream', this.props.location.state.streamID, {
+				channel = client.channel('livestream', passedPropsStreamID, {
 				  image: 'https://goo.gl/Zefkbx',
-				  name: `PUBLIC STREAM RECORD: ${this.props.location.state.streamID}`,
+				  name: `PUBLIC STREAM RECORD: ${passedPropsStreamID}`,
 				});
 			} else {
 				this.setState({
@@ -182,73 +256,21 @@ class StreamShow extends Component {
 
 		const unique = uuid();
 
-		live_stream_id = this.props.location.state ? this.props.location.state.streamID : "QfWl200mvXbD4MQKbMe13CvB7ubl52q97";
+		live_stream_id = this.props.location.state ? passedPropsStreamID : "QfWl200mvXbD4MQKbMe13CvB7ubl52q97";
 
-		const createLive = async () => {
-		  const auth = {
-		    username: "f899a074-f11e-490f-b35d-b6c478a5b12a",
-		    password: "4vLdjx6uBafGdFiSbmWt5akv4DaD4PkDuCCYdFYXzudywyQSR3Uh27GqlfedlhZ17fbnXbf9Rh/"
-		  };
-		  const res = await axios.get("https://api.mux.com/video/v1/live-streams/" + live_stream_id, { auth: auth }).catch((error) => {
-		    throw error;
-		  });
-		  const { data } = res.data;
-		  if (data.status === "active") {
-		  	this.setState({
-			  	streams: data,
-			  	playbackID: data.playback_ids[0].id,
-			  	streamIsReady: true
-			});
-		  }
-		}
-
-		createLive();
 	}
 	checkStreamActive = (e) => {
 		e.preventDefault();
-
-		const createLive = async () => {
-		  const auth = {
-		    username: "f899a074-f11e-490f-b35d-b6c478a5b12a",
-		    password: "4vLdjx6uBafGdFiSbmWt5akv4DaD4PkDuCCYdFYXzudywyQSR3Uh27GqlfedlhZ17fbnXbf9Rh/"
-		  };
-		  const res = await axios.get("https://api.mux.com/video/v1/live-streams/" + live_stream_id, { auth: auth }).catch((error) => {
-		    throw error;
-		  });
-		  const { data } = res.data;
-		  if (data.status === "active") {
-		  	this.setState({
-			  	streams: data,
-			  	playbackID: data.playback_ids[0].id,
-			  	streamIsReady: true
-			}, () => {
-				axios.get(`https://stream.mux.com/${this.state.playbackID}.m3u8`).then((res) => {
-					if (res) {
-						this.setState({
-							streamIsReady: true
-						})
-					}
-				}).catch((err) => {
-					this.setState({
-						err: err.message
-					})
-				})
-			});
-		  } else {
-		  	alert("Stream is not yet live, please check again soon...")
-		  }
-		}
-
-		createLive();
+		console.log("clicked...");
 	}
 	renderContent = () => {
-		const { streamIsReady } = this.state;
+		const { streamIsReady, fireSocket } = this.state;
 
-		if (!streamIsReady) {
+		if (fireSocket === false) {
 			return (
 				<div className="container">
 					<div className="col-md-12 col-lg-12">
-						<h1 className="text-center" style={{ textDecoration: "underline", paddingTop: "30px" }}>Stream is unavaliable, please check back again in a few moments...</h1>
+						<h1 className="text-center" style={{ textDecoration: "underline", paddingTop: "30px" }}>Stream is unavaliable...</h1>
 						<button style={{ marginTop: "40px", width: "100%" }} onClick={this.checkStreamActive} className="btn btn-outline-warning">Check if stream is active</button>
 					</div>
 				</div>
@@ -262,7 +284,13 @@ class StreamShow extends Component {
 				        
 				           
 						        <div id="vid_container" style={{ marginLeft: "20px", boxShadow: "5px 5px 5px #871eff" }}>
-									<ReactPlayer id={this.state.corner ? "corner_me" : "no-corner"} playing={true} style={{ backgroundColor: "black" }} url={`https://stream.mux.com/${this.state.playbackID}.m3u8`} controls width="100%" height="100%" />				        		
+									<ReactPlayer id={this.state.corner ? "corner_me" : "no-corner"} playing={true} style={{ backgroundColor: "black" }} url={'http://127.0.0.1:' + config.rtmp_server.http.port + '/live/' + this.props.location.state.stream_key + '/index.m3u8'} controls width="100%" height="100%" />
+
+									{/*{this.state.stream ? (
+				                        <div data-vjs-player>
+				                            <video id={this.state.corner ? "corner_me" : "no-corner"} playing={true} controls width="100%" height="100%" className="video-js vjs-big-play-centered"/>
+				                        </div>
+				                    ) : ' Loading ... '}	*/}		        		
 								</div>
 				           
 				         
@@ -287,9 +315,10 @@ class StreamShow extends Component {
 	    client.disconnect();
 	}
 	sendTip = () => {
+		const passedPropsStreamID = this.props.location.state.streamID;
 
 		axios.post("/gather/user/info/from/stream", {
-			id: this.props.location.state.streamID
+			id: passedPropsStreamID
 		}).then((res) => {
 			for (let key in res.data) {
 				console.log(res.data);
@@ -355,71 +384,6 @@ class StreamShow extends Component {
 					console.log(err);
 				})
 
-
-				
-				// axios.post("/take/away/tokens/tip", {
-				// 	email: this.props.email,
-				// 	tokens: Math.round(this.state.tip)
-				// }).then((res) => {
-
-				// 	console.log(res.data);
-				// 	if (res.data.error) {
-				// 		alert(res.data.error);
-				// 	} else {
-				// 		axios.post("/send/tokens/to/user", {
-				// 			email: recieverEmail,
-				// 			tokens: Math.round(this.state.tip)
-				// 		}).then((res) => {
-				// 			console.log(res.data);
-							
-							// const { endpoint, tip } = this.state;
-
-						 //    socket.emit("tipped", {
-						 //    	tip,
-						 //    	user: this.props.username
-						 //    });
-
-						 //    socket.emit("tip-record", {
-						 //    	message: `${this.props.username} just tipped ${this.state.tip} tokens!`,
-						 //    	generatedID: uuid()
-						 //    })
-	        
-	    		// 			socket.emit("sound", {
-	    		// 				sound: true,
-	    		// 				tip
-	    		// 			});
-
-	    		// 			if (tip >= 2000) {
-	    		// 				console.log("tip is over 8 tokens!!!!");
-	    		// 				socket.emit("confetti", {
-	    		// 					confetti: true
-	    		// 				})
-								
-
-							// 	setTimeout(() => {
-							// 		socket.emit("confetti", {
-		    	// 						confetti: false
-		    	// 					})
-							// 	}, 13000);
-
-
-	    		// 			}
-
-							// alert(`You tipped ${this.state.tip} tokens!`);
-
-							// this.setState({
-							// 	tip: "",
-							// 	tokens: this.state.tokens - tip
-							// })
-				// 		}).catch((err) => {
-				// 			console.log(err);
-				// 			alert("Uh oh - There was an error.")
-				// 		})
-				// 	}
-				// }).catch((err) => {
-				// 	console.log(err);
-				// 	alert("Uh oh - There was an error.")
-				// })
 			}
 		}).catch((err) => {
 			console.log(err);
@@ -427,27 +391,13 @@ class StreamShow extends Component {
 		})
 	}
 	componentDidUpdate(prevProps, prevState) {
-		// if (prevState.tokens !== this.state.tokens) {
-		// 	console.log("updated...");
-		// 	axios.post("/tokens/gather", {
-	 //          email: this.props.email
-	 //        }).then((res) => {
-	 //          for (let key in res.data) {
-	 //            let tokens = res.data[key].tokens;
-	 //            this.setState({
-	 //              tokens
-	 //            })
-	 //          }
-	 //        }).catch((err) => {
-	 //          console.log(err);
-	 //        }) 
-		// }
+
 		window.addEventListener('scroll', this.listenScrollEvent);
 
 		console.log(prevState);
 		if (prevState.sound !== false) {
 			socket.emit("sound", {
-				sound: false
+				sound: true
 			})
 		}
 	}
@@ -460,14 +410,16 @@ class StreamShow extends Component {
 	}
 	createPrivateStream = () => {
 
+		const passedPropsStreamID = this.props.location.state.streamID;
+
 		const generated = uuid();
 
 		const secondID = uuid();
 
-		console.log("creating live stream...!", this.props.location.state.streamID);
+		console.log("creating live stream...!", passedPropsStreamID);
 
 		axios.post("/gather/user/info/from/stream", {
-			id: this.props.location.state.streamID
+			id: passedPropsStreamID
 		}).then((res) => {
 			console.log(res.data[0]);
 
@@ -544,26 +496,28 @@ class StreamShow extends Component {
 
 	}
 	endStream = () => {
-		console.log("end stream clicked.");
-		axios.put("/complete/stream/mongodb", {
-			id: this.props.location.state.streamID,
-		}).then(async (res) => {
+		const passedPropsStreamID = this.props.location.state.streamID;
+
+		let config = {
+		  headers: {
+		      'Content-Type': 'application/json;charset=UTF-8',
+		      "Access-Control-Allow-Origin": "*",
+		  }
+		}
+		console.log("end stream clicked.", passedPropsStreamID);
+		axios.post("/complete/stream/rtmp", {
+			id: passedPropsStreamID,
+		}, config).then((res) => {
 			console.log(res.data);
 			if (res.data) {
-				const auth = {
-				    username: "f899a074-f11e-490f-b35d-b6c478a5b12a",
-				    password: "4vLdjx6uBafGdFiSbmWt5akv4DaD4PkDuCCYdFYXzudywyQSR3Uh27GqlfedlhZ17fbnXbf9Rh/"
-				};
-				const response = await axios.put(`https://api.mux.com/video/v1/live-streams/${this.props.location.state.streamID}/complete`, {}, { auth: auth }).catch((error) => {
-				    throw error;
+				alert("You successfully ended this stream! It will no longer be active or displayed. You may now stop the stream in OBS...");
+				this.setState({
+					streamIsActive: false,
+					fireSocket: false
 				});
-
-				console.log(response);
-
-				if (response) {
-					alert("Successfully ended stream!")
-				}
-			
+				socket.emit("endStream", {
+			    	ended: false
+			    });
 			}
 		}).catch((err) => {
 			console.log(err);
@@ -577,7 +531,19 @@ class StreamShow extends Component {
 	// 		})
 	// 	}
 	// }
+	renderEndOfStream = () => {
 
+		const { fireSocket } = this.state;
+
+		if (fireSocket) {
+			socket.on("end", (data) => {
+				console.log('data', data);
+				this.setState({
+					fireSocket: data.ended
+				})
+			});
+		}
+	}
 	renderCustomModal = () => {
 		if (this.state.modalIsOpen) {
 			return (
@@ -887,7 +853,7 @@ class StreamShow extends Component {
  				</div>
  				{this.renderCustomModal()}
 
-				
+				{this.renderEndOfStream()}
 
  				{this.props.username ? <div onClick={() => {
  					this.renderModal();
@@ -956,4 +922,4 @@ const mapStateToProps = (state) => {
 }
 
 
-export default connect(mapStateToProps, { setUserGetStream })(StreamShow);
+export default withRouter(connect(mapStateToProps, { setUserGetStream })(StreamShow));

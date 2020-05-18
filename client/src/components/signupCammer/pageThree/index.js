@@ -35,7 +35,8 @@ constructor(props) {
 		performance: "",
 		task: "",
 		vibratorID: "",
-		toyID: "Lovense not detected."
+		toyID: "Lovense not detected.",
+		subscribeAmount: "9.99"
 	}
 }
 	onDrop = (picture) => {
@@ -78,7 +79,7 @@ constructor(props) {
 
 		const formData = new FormData();
 
-		const { pictures, age, interestedIn, hairColor, eyeColor, languages, bodyType, breastSize, smokeOrDrink, nickName, bio, addresslatLng, meetup, toyID } = this.state;
+		const { pictures, age, interestedIn, hairColor, eyeColor, languages, bodyType, breastSize, smokeOrDrink, nickName, bio, addresslatLng, meetup, toyID, subscribeAmount } = this.state;
 
         const config = {
             headers: {
@@ -88,7 +89,7 @@ constructor(props) {
 
 		console.log("form submitted...");
 
-		if (age !== null && interestedIn.length > 0 && hairColor.length > 0 && eyeColor.length > 0 && languages.length > 0 && bodyType.length > 0 && breastSize.length > 0 && smokeOrDrink.length > 0 && nickName.length > 0 && bio.length > 0 && meetup.length > 0) {
+		if (age !== null && interestedIn.length > 0 && hairColor.length > 0 && eyeColor.length > 0 && languages.length > 0 && bodyType.length > 0 && breastSize.length > 0 && smokeOrDrink.length > 0 && nickName.length > 0 && bio.length > 0 && meetup.length > 0 && subscribeAmount.length > 0) {
 
 			formData.append('image', pictures);
 	        formData.append("age", age);
@@ -105,6 +106,7 @@ constructor(props) {
 	        formData.append("meetupCoords", addresslatLng);
 	        formData.append("meetup", meetup);
 	        formData.append("lovenseDeviceID", toyID);
+	        formData.append("subscribeAmount", subscribeAmount)
 	        if (addresslatLng) {
 	        	formData.append("lat", addresslatLng.lat);
 	        	formData.append("lng", addresslatLng.lng);
@@ -125,7 +127,8 @@ constructor(props) {
 						breastSize: "",
 						smokeOrDrink: "",
 						nickName: "",
-						bio: ""
+						bio: "",
+						subscribeAmount: ""
 					}, () => {
 						alert("You have successfully updated your profile information and it will now be visible!")
 					})
@@ -323,6 +326,27 @@ constructor(props) {
 					                                </div>
 					                              </div> 
 					                               <div className="form-group row">
+					                                <label for="newpass" className="col-4 col-form-label">Choose the amount you'd like to charge users to be able to view and interact with your profile (profiles are intially restricted until purchased)</label> 
+					                                <div className="col-8">
+					                                   <select value={this.state.subscribeAmount} onChange={(e) => {
+					                                  	this.setState({
+															subscribeAmount: e.target.value
+					                                  	})
+					                                  }} id="select" name="select" className="custom-select">
+														<option selected value="100">100 tokens equivalent to $9.99</option>
+					                                    <option value="150">150 tokens equivalent to $14.99</option>
+					                                    <option value="200">200 tokens equivalent to $19.99</option>
+					                                    <option value="250">250 tokens equivalent to $24.99</option>
+					                                    <option value="300">300 tokens equivalent to $29.99</option>
+					                                    <option value="350">350 tokens equivalent to $34.99</option>
+					                                    <option value="400">400 tokens equivalent to $39.99</option>
+					                                    <option value="500">500 tokens equivalent to $49.99</option>
+					                                    <option value="1000">1000 tokens equivalent to $99.99</option>
+					                                  </select>
+					                                </div>
+					                              </div> 
+
+												   <div className="form-group row">
 					                                <label for="newpass" className="col-4 col-form-label">Do you want to meet up with locals to fuck? Select YES or NO</label> 
 					                                <div className="col-8">
 					                                   <select value={this.state.meetup || "NO-MEETUP"} onChange={(e) => {

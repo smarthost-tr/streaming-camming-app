@@ -50,7 +50,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
 		console.log("req.body ------------- :", req.body);
 
-		const { age, interestedIn, hairColor, eyeColor, languages, bodyType, breastSize, smokeOrDrink, nickName, bio, email, imageBinary, meetupCoords, meetup, lng, lat, lovenseDeviceID } = req.body;
+		const { age, interestedIn, hairColor, eyeColor, subscribeAmount, languages, bodyType, breastSize, smokeOrDrink, nickName, bio, email, imageBinary, meetupCoords, meetup, lng, lat, lovenseDeviceID } = req.body;
 
 		const { location } = req.file;
 
@@ -73,7 +73,8 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 					meetup: true,
 					meetupCoordsLat: lat,
 					meetupCoordsLng: lng,
-					lovenseDeviceID
+					lovenseDeviceID,
+					subscribeAmount: Number(subscribeAmount)
 				}}}, (err, doc) => {
 			    if (err) {
 			        console.log("Something wrong when updating data!");
@@ -98,7 +99,8 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 				cammer: true,
 				profilePic: location,
 				meetup: false,
-				lovenseDeviceID
+				lovenseDeviceID,
+				subscribeAmount: Number(subscribeAmount)
 			}}}, (err, doc) => {
 			    if (err) {
 			        console.log("Something wrong when updating data!");

@@ -10,6 +10,7 @@ import { StreamChat } from 'stream-chat';
 import { gatherCurrency } from "../../actions/blockchain/index.js";
 import Footer from "../common/footer/footer.js";
 import { getStreamFeedToken } from "../../actions/getStream/feed.js";
+import { Link } from "react-router-dom";
 
 const client = new StreamChat('qzye22t8v5c4');
 
@@ -151,9 +152,11 @@ constructor(props) {
 	                                    	})
 	                                    }} class="form-control" placeholder="Password *" value={this.state.password} />
 	                                </div>
+
+	                                <Link style={{ fontSize: "1.3rem", color: "white" }} to="/forgot/password">Forgot your password? Click me to reset it!</Link>
 	                                
 	                                
-	                            	<button onClick={this.renderSubmission} className="btn btn-outline aqua_button_custom" style={{ width: "100%" }}>Continue</button>
+	                            	<button onClick={this.renderSubmission} className="btn btn-outline aqua_button_custom" style={{ width: "100%", marginTop: "10px" }}>Continue</button>
 	                        </div>
 	                    </div>
 	                </div>

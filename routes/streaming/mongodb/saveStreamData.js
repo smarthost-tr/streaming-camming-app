@@ -5,33 +5,28 @@ const cors = require("cors");
 const app = express();
 const config = require("config");
 const mongo = require("mongodb");
-
+const uuid = require("uuid/v4");
 
 mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTopology: true }, cors(), (err, db) => {
 	router.post("/", (req, res) => {
 
 			console.log("This is the req.body: ", req.body);
 
-			const { data, email, active_asset_id, tags, title, desc, subTitle, profilePic } = req.body;
-
-			console.log("Data: ", data);
+			const { email, tags, title, desc, subTitle, profilePic, stream_key } = req.body;
 
 			let collection = db.collection("users");
 
+			const generated = uuid().split("-").join("");
+
 			collection.findOneAndUpdate({ email: email }, {$push:{ streams: {
-				streamKey: data.stream_key,
-				status: "ready",
-				reconnect_window: data.reconnect_window,
-				playback_ids: data.playback_ids,
-				new_asset_settings: data.new_asset_settings,
-				id: data.id,
-				created_at: data.created_at,
-				active_asset_id,
+				stream_key,
 				tags,
 				title,
 				desc,
+				active: true,
 				subTitle, 
-				profilePic
+				profilePic,
+				id: generated
 			}}}, (err, doc) => {
 			    if (err) {
 			        console.log("Something wrong when updating data!");
