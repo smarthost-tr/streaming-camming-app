@@ -117,7 +117,8 @@ class StreamShow extends Component {
 		stream: false,
         videoJsOptions: null,
         streamIsActive: true,
-        fireSocket: false
+        fireSocket: false,
+        warning: ""
     }	
 }
 
@@ -504,13 +505,15 @@ class StreamShow extends Component {
 		      "Access-Control-Allow-Origin": "*",
 		  }
 		}
+		this.setState({
+			warning: "You will need to close the stream in OBS before the stream officially ends - it is then added to your profile videos..."
+		})
 		console.log("end stream clicked.", passedPropsStreamID);
 		axios.post("/complete/stream/rtmp", {
 			id: passedPropsStreamID,
 		}, config).then((res) => {
 			console.log(res.data);
-			if (res.data) {
-				alert("You successfully ended this stream! It will no longer be active or displayed. You may now stop the stream in OBS...");
+			if (res.data.message === "Success") {
 				this.setState({
 					streamIsActive: false,
 					fireSocket: false
@@ -518,6 +521,8 @@ class StreamShow extends Component {
 				socket.emit("endStream", {
 			    	ended: false
 			    });
+
+			    alert("You successfully ended this stream! It will no longer be active or displayed. You may now stop the stream in OBS...");
 			}
 		}).catch((err) => {
 			console.log(err);
@@ -862,6 +867,7 @@ class StreamShow extends Component {
  				{this.props.username === this.state.username ? <div className="mx-auto"><button onClick={() => {
  					this.endStream();
  				}} className="btn btn-outline purple_neon_btn" style={{ width: "100%" }}>END STREAM</button></div> : null}
+ 				<h1 className="text-red text-left">{this.state.warning.length > 0 ? this.state.warning : null}</h1>
 					<div className="row" style={{ margin: "40px 0px" }}>
 						<div className="mx-auto">
 							{this.props.username ? null : <p className="text-center lead bold" style={{ textDecoration: "underline" }}>You are seeing only a SMALL portion of the avaliable content... please sign-in to join the chat and access all of our restricted features.</p>}

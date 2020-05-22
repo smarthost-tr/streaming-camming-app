@@ -197,7 +197,7 @@ constructor(props) {
 					<SearchContainer />
 						<div className="row">
 
-					
+						
 						{/*{streamsReady ? this.state.streams.map((stream, index) => {
 							console.log(stream.new_asset_settings.playback_policies[0]);
 							if (stream.playback_ids[0].id && stream.status === "active" && stream.new_asset_settings.playback_policies[0] === "public") {
@@ -244,7 +244,7 @@ constructor(props) {
 											this.props.history.push(`/view/individual/private/stream/${stream.id}`, { streamID: stream.id, stream_key: stream.stream_key });
 										}} class="card">
 							            <div class="thumbnail">
-							                <img width="360" height="270" src={require(`../../assets/${stream.stream_key}.png`)} alt="thumbnail"/>
+							                <img width="360" height="270" src={require(`../../assets/preview/${stream.stream_key}.png`)} alt="thumbnail"/>
 							                <a class="thumb-cover"></a>
 							                <div class="details">
 							                    <div class="authors-container">

@@ -22,7 +22,7 @@ constructor(props) {
           {this.props.posts.feed ? this.props.posts.feed.map((post, index) => {
             console.log('post', post);
               return (
-                <div onClick={() => {
+                <div key={index} onClick={() => {
                   this.props.history.push(`/feed/posting/individual/${post.uniqueID}`, { post, username, email, id: post.uniqueID });
                 }} id="ig_photo" class="case-study study1 col-md-4 col-lg-4 col-sm-12 col-xs-12">
                   <figure>

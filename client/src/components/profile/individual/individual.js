@@ -14,6 +14,9 @@ import { StreamChat } from 'stream-chat';
 import Footer from "../../common/footer/footer.js";
 import FeedOnlyfansStyle from "../../feed/index.js";
 import UploadCoverPhoto from "./uploadCoverPhoto.js";
+import 'video-react/dist/video-react.css';
+import { Player } from 'video-react';
+ 
 
 const client = new StreamChat('qzye22t8v5c4');
 
@@ -47,7 +50,8 @@ constructor(props) {
     	user: null,
     	loaded: false,
     	posts: [],
-    	coverPhoto: ""
+    	coverPhoto: "",
+    	previouslyStreamed: []
     }
 }
 	addSkillToDB = (e) => {
@@ -76,8 +80,6 @@ constructor(props) {
 
     	const selector = this.props.match.params.id;
 
-    	console.log(selector);
-
 		if (selector) {
 			axios.post("/gather/username/individual/user", {
 				username: selector
@@ -86,7 +88,8 @@ constructor(props) {
 				this.setState({
 					user: res.data,
 					loaded: true,
-					coverPhoto: res.data.coverPhoto
+					coverPhoto: res.data.coverPhoto,
+					previouslyStreamed: res.data.streams
 				}, () => {
 					if (this.state.user) {
 						axios.post("/gather/followers", {
@@ -156,56 +159,6 @@ constructor(props) {
 		const user = this.state.user;
 
 		this.processData();
-	}
-	processData = () => {
-		const user = this.state.user;
-	
-		console.log("booyah");
-		if (user.streams) {
-			return user.streams.map((stream, index) => {
-				if (stream.active_asset_id) {
-					console.log(stream);
-					const asyncReturn = async () => {
-						const auth = {
-					      username: "f899a074-f11e-490f-b35d-b6c478a5b12a",
-					      password: "4vLdjx6uBafGdFiSbmWt5akv4DaD4PkDuCCYdFYXzudywyQSR3Uh27GqlfedlhZ17fbnXbf9Rh/"
-					    };
-					    const param = { 
-					  	    "reduced_latency": true, 
-						    "playback_policy": "public", 
-						    "new_asset_settings": { 
-						    	"playback_policy": "public" 
-						    } 
-					    }
-					    const res = await axios.get(`https://api.mux.com/video/v1/assets/${stream.active_asset_id}`, { auth: auth }).catch((error) => {
-					   		if (error) {
-					   			this.setState({
-					   				error: error
-					   			})
-					   		}
-					    });
-
-					    console.log(res);
-						if (res) {
-							if (res.data.data.playback_ids[0].policy === "public") {
-								let stream_playback_ids = res.data.data.playback_ids[0].id;
-
-								this.setState({
-							    	stream_playback_ids: [...this.state.stream_playback_ids, stream_playback_ids]
-							    });
-
-							    console.log(res.data.data.playback_ids[0].id);
-							}
-						}
-
-					    this.setState({
-					    	complete: true
-					    })
-					}
-					asyncReturn();
-				}
-			})
-		}
 	}
 	redirectToClip = (id) => {
 		console.log("clicked.");
@@ -444,7 +397,7 @@ constructor(props) {
 						                                	this.setState({
 						                                		stream_playback_ids: []
 						                                	}, () => {
-						                                		this.processData();
+						                                		console.log(`${window.location.origin}/public/finishedStreams/293842394j2l3i4j2l3k4j2l3k4j23l.mp4`);
 						                                	})
 						                                }} class="hidden-xs">Videos</span>
 						                            </a>
@@ -651,18 +604,27 @@ constructor(props) {
 						                                <div class="panel-body" style={{ height: "100%" }}>
 						                                    <div class="timeline-2">
 																<div className="row">
-						                                        {this.state.stream_playback_ids.length > 0 && this.state.complete ? this.state.stream_playback_ids.map((id, index) => {
-						                                        	console.log("ID! :", id);
-						                                        	return (
-																		<div style={{ margin: "20px 10px" }} className="col-md-3">
-																		<div className="overlay_parent">
-						                                        			<img className="overlay" style={{ width: "100%", height: "100%" }} src={`https://image.mux.com/${id}/animated.gif`} alt="video-custom"/>
-						                                        			<button onClick={() => {
-																				this.redirectToAsset(id);
-																			}} style={{ width: "100%" }} className="btn btn-outline pink_button">VIEW RECORDING</button>
-																		</div>	
-						                                        		</div>
-						                                        	);
+						                                        {this.state.previouslyStreamed.length > 0 ? this.state.previouslyStreamed.map((stream, index) => {
+						                                        	console.log("STREAM! :", stream);
+						                                        	
+						                                        	if (stream) {
+						                                        		return (
+																			<div style={{ margin: "20px 10px" }} className="col-md-3">
+																			
+																				{/*<video width="300" height="400" controls >
+																			      <source src="https://sex-streaming-jerk-n-squirt.s3.amazonaws.com/5888d41c3f9e4691890d28640c4cc624.mp4" type="video/mp4"/>
+																			     </video>*/}
+																				
+																					<Player onError={(err) => {
+																						console.log(err);
+																					}}>
+																				      <source src={`https://sex-streaming-jerk-n-squirt.s3.amazonaws.com/${stream.stream_key}.mp4`}  />
+																				    </Player>
+																				
+																			</div>	
+							                                        
+							                                        	);
+						                                        	}
 
 						                                        }) : <button onClick={() => {
 						                                        	this.videoApi();

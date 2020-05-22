@@ -16,10 +16,10 @@ const generateStreamThumbnail = (stream_key) => {
         '-vf', 'scale=-2:300',
         'server/thumbnails/'+ stream_key +'.png',
     ];
-// 'http://127.0.0.1:8888/live/873a2f85b39642289e35caa5ed350372/index.m3u8'
+// 'http://127.0.0.1:8888/live/88d97ca9509846799eedf8f0514b098c/index.m3u8'
     const script = `ffmpeg -i http://127.0.0.1:8888/live/${stream_key}/index.m3u8 -ss 00:00:01.000 -vframes 1 ${stream_key}.png`;
 
-    const serverPath = path.resolve(process.cwd() + '/client/src/assets');
+    const serverPath = path.resolve(process.cwd() + '/client/src/assets/preview');
 
     console.log(serverPath);
 

@@ -34,7 +34,10 @@
     background: black;
     box-shadow: 7px 7px 7px #871eff !important;
 }
-
+.text-red {
+    color: #37be43 !important;
+    padding: 20px 100px;
+}
 #profile-tab {
     color: #37be43 !important;
     background: black;
