@@ -116,6 +116,7 @@ constructor(props) {
 			console.log(res);
 			for (var i = 0; i < res.data.length; i++) {
 				let stream = res.data[i];
+
 				// if (stream.status === "finished") {
 				// 	this.setState({
 				// 		finishedStreams: [...this.state.finishedStreams, stream]
@@ -239,6 +240,270 @@ constructor(props) {
 
 			 		  		{/*console.log(res);*/}
 			 		  		if (stream.tags.includes("STRAIGHT") && stream.active === true) {
+								return (
+									<div key={index} style={{ margin: "20px 10px 20px 10px", maxHeight: "50vh"  }} onClick={() => {
+											this.props.history.push(`/view/individual/private/stream/${stream.id}`, { streamID: stream.id, stream_key: stream.stream_key });
+										}} class="card">
+							            <div class="thumbnail">
+							                <img width="360" height="270" src={require(`../../assets/preview/${stream.stream_key}.png`)} alt="thumbnail"/>
+							                <a class="thumb-cover"></a>
+							                <div class="details">
+							                    <div class="authors-container">
+							                        <div class="author">
+							                            <a class="card-user account-photo  account-product-owner">
+							                            <div class="mask">
+							                                <img class="photo" src={stream.profilePic} alt="Thumb"/>
+							                            </div>
+							                            </a>
+							                        </div>
+							                    </div>
+							                    <div class="numbers">
+							                       {stream.tags ? stream.tags.map((tag, indexxxx) => {
+							                       		return  (
+							                       			<b key={indexxxx} class="downloads"><i class="fa fa-arrow-circle-o-down"></i>{tag + ", "}</b>
+							                       		);
+							                       }) : null}
+							                        <b class="comments-icon"><i class="fa fa-comment"></i></b>
+							                    </div>
+							                   
+							                    <div class="clearfix"></div>
+							                </div>
+							                {/*<b class="actions">
+							                    <a class="btn btn-neutral btn-round btn-fill" href="#">More Details</a>
+							                    <a onClick={() => {
+												this.props.history.push(`/view/individual/private/stream/${stream.id}`, { streamID: stream.id })
+												}} class="btn btn-info btn-round" href="#">Live Preview</a>
+							                </b>*/}
+							            </div>
+							            <div class="card-info">
+							                <a href="#">
+							                    <h3>{stream.title}
+							                        <div class="time pull-right">{stream.subTitle}</div>
+							                    
+							                    
+							                    </h3>
+							                    <div class="circle-red"><i class="fa fa-circle-o"></i></div>
+							                    <p>{stream.desc}</p>
+							                </a>
+							        </div>
+					        	</div>
+				 		  		);
+			 		  		}
+			 		  	}) : <ReactLoading type="cylon" color="pink" height={500} width={500} />}
+				  
+			 		</Carousel>
+			 		<Carousel responsive={responsive}>
+			 		  {/*{this.renderIdleStreams()}*/}
+			 		  	{this.state.readyStreams ? this.state.readyStreams.slice(0, 20).map((stream, index) => {
+			 		  	{/*	const auth = {
+							    username: "f899a074-f11e-490f-b35d-b6c478a5b12a",
+							    password: "4vLdjx6uBafGdFiSbmWt5akv4DaD4PkDuCCYdFYXzudywyQSR3Uh27GqlfedlhZ17fbnXbf9Rh/"
+							};
+
+			 		  		const res = axios.get(`https://api.mux.com/video/v1/assets/${stream.id}`, {}, { auth: auth }).catch((err) => {
+			 		  			throw err;
+			 		  		})*/}
+
+			 		  		{/*console.log(res);*/}
+			 		  		if (stream.tags.includes("STRAIGHT") && stream.active === true) {
+								return (
+									<div key={index} style={{ margin: "20px 10px 20px 10px", maxHeight: "50vh"  }} onClick={() => {
+											this.props.history.push(`/view/individual/private/stream/${stream.id}`, { streamID: stream.id, stream_key: stream.stream_key });
+										}} class="card">
+							            <div class="thumbnail">
+							                <img width="360" height="270" src={require(`../../assets/preview/${stream.stream_key}.png`)} alt="thumbnail"/>
+							                <a class="thumb-cover"></a>
+							                <div class="details">
+							                    <div class="authors-container">
+							                        <div class="author">
+							                            <a class="card-user account-photo  account-product-owner">
+							                            <div class="mask">
+							                                <img class="photo" src={stream.profilePic} alt="Thumb"/>
+							                            </div>
+							                            </a>
+							                        </div>
+							                    </div>
+							                    <div class="numbers">
+							                       {stream.tags ? stream.tags.map((tag, indexxxx) => {
+							                       		return  (
+							                       			<b key={indexxxx} class="downloads"><i class="fa fa-arrow-circle-o-down"></i>{tag + ", "}</b>
+							                       		);
+							                       }) : null}
+							                        <b class="comments-icon"><i class="fa fa-comment"></i></b>
+							                    </div>
+							                   
+							                    <div class="clearfix"></div>
+							                </div>
+							                {/*<b class="actions">
+							                    <a class="btn btn-neutral btn-round btn-fill" href="#">More Details</a>
+							                    <a onClick={() => {
+												this.props.history.push(`/view/individual/private/stream/${stream.id}`, { streamID: stream.id })
+												}} class="btn btn-info btn-round" href="#">Live Preview</a>
+							                </b>*/}
+							            </div>
+							            <div class="card-info">
+							                <a href="#">
+							                    <h3>{stream.title}
+							                        <div class="time pull-right">{stream.subTitle}</div>
+							                    
+							                    
+							                    </h3>
+							                    <div class="circle-red"><i class="fa fa-circle-o"></i></div>
+							                    <p>{stream.desc}</p>
+							                </a>
+							        </div>
+					        	</div>
+				 		  		);
+			 		  		}
+			 		  	}) : <ReactLoading type="cylon" color="pink" height={500} width={500} />}
+				  
+			 		</Carousel>
+			 		<Carousel responsive={responsive}>
+			 		  {/*{this.renderIdleStreams()}*/}
+			 		  	{this.state.readyStreams ? this.state.readyStreams.slice(0, 20).map((stream, index) => {
+			 		  	{/*	const auth = {
+							    username: "f899a074-f11e-490f-b35d-b6c478a5b12a",
+							    password: "4vLdjx6uBafGdFiSbmWt5akv4DaD4PkDuCCYdFYXzudywyQSR3Uh27GqlfedlhZ17fbnXbf9Rh/"
+							};
+
+			 		  		const res = axios.get(`https://api.mux.com/video/v1/assets/${stream.id}`, {}, { auth: auth }).catch((err) => {
+			 		  			throw err;
+			 		  		})*/}
+
+			 		  		{/*console.log(res);*/}
+			 		  		if (stream.tags.includes("BI-SEXUAL") && stream.active === true) {
+								return (
+									<div key={index} style={{ margin: "20px 10px 20px 10px", maxHeight: "50vh"  }} onClick={() => {
+											this.props.history.push(`/view/individual/private/stream/${stream.id}`, { streamID: stream.id, stream_key: stream.stream_key });
+										}} class="card">
+							            <div class="thumbnail">
+							                <img width="360" height="270" src={require(`../../assets/preview/${stream.stream_key}.png`)} alt="thumbnail"/>
+							                <a class="thumb-cover"></a>
+							                <div class="details">
+							                    <div class="authors-container">
+							                        <div class="author">
+							                            <a class="card-user account-photo  account-product-owner">
+							                            <div class="mask">
+							                                <img class="photo" src={stream.profilePic} alt="Thumb"/>
+							                            </div>
+							                            </a>
+							                        </div>
+							                    </div>
+							                    <div class="numbers">
+							                       {stream.tags ? stream.tags.map((tag, indexxxx) => {
+							                       		return  (
+							                       			<b key={indexxxx} class="downloads"><i class="fa fa-arrow-circle-o-down"></i>{tag + ", "}</b>
+							                       		);
+							                       }) : null}
+							                        <b class="comments-icon"><i class="fa fa-comment"></i></b>
+							                    </div>
+							                   
+							                    <div class="clearfix"></div>
+							                </div>
+							                {/*<b class="actions">
+							                    <a class="btn btn-neutral btn-round btn-fill" href="#">More Details</a>
+							                    <a onClick={() => {
+												this.props.history.push(`/view/individual/private/stream/${stream.id}`, { streamID: stream.id })
+												}} class="btn btn-info btn-round" href="#">Live Preview</a>
+							                </b>*/}
+							            </div>
+							            <div class="card-info">
+							                <a href="#">
+							                    <h3>{stream.title}
+							                        <div class="time pull-right">{stream.subTitle}</div>
+							                    
+							                    
+							                    </h3>
+							                    <div class="circle-red"><i class="fa fa-circle-o"></i></div>
+							                    <p>{stream.desc}</p>
+							                </a>
+							        </div>
+					        	</div>
+				 		  		);
+			 		  		}
+			 		  	}) : <ReactLoading type="cylon" color="pink" height={500} width={500} />}
+				  
+			 		</Carousel>
+			 		<Carousel responsive={responsive}>
+			 		  {/*{this.renderIdleStreams()}*/}
+			 		  	{this.state.readyStreams ? this.state.readyStreams.slice(0, 20).map((stream, index) => {
+			 		  	{/*	const auth = {
+							    username: "f899a074-f11e-490f-b35d-b6c478a5b12a",
+							    password: "4vLdjx6uBafGdFiSbmWt5akv4DaD4PkDuCCYdFYXzudywyQSR3Uh27GqlfedlhZ17fbnXbf9Rh/"
+							};
+
+			 		  		const res = axios.get(`https://api.mux.com/video/v1/assets/${stream.id}`, {}, { auth: auth }).catch((err) => {
+			 		  			throw err;
+			 		  		})*/}
+
+			 		  		{/*console.log(res);*/}
+			 		  		if (stream.tags.includes("GAY") && stream.active === true) {
+								return (
+									<div key={index} style={{ margin: "20px 10px 20px 10px", maxHeight: "50vh"  }} onClick={() => {
+											this.props.history.push(`/view/individual/private/stream/${stream.id}`, { streamID: stream.id, stream_key: stream.stream_key });
+										}} class="card">
+							            <div class="thumbnail">
+							                <img width="360" height="270" src={require(`../../assets/preview/${stream.stream_key}.png`)} alt="thumbnail"/>
+							                <a class="thumb-cover"></a>
+							                <div class="details">
+							                    <div class="authors-container">
+							                        <div class="author">
+							                            <a class="card-user account-photo  account-product-owner">
+							                            <div class="mask">
+							                                <img class="photo" src={stream.profilePic} alt="Thumb"/>
+							                            </div>
+							                            </a>
+							                        </div>
+							                    </div>
+							                    <div class="numbers">
+							                       {stream.tags ? stream.tags.map((tag, indexxxx) => {
+							                       		return  (
+							                       			<b key={indexxxx} class="downloads"><i class="fa fa-arrow-circle-o-down"></i>{tag + ", "}</b>
+							                       		);
+							                       }) : null}
+							                        <b class="comments-icon"><i class="fa fa-comment"></i></b>
+							                    </div>
+							                   
+							                    <div class="clearfix"></div>
+							                </div>
+							                {/*<b class="actions">
+							                    <a class="btn btn-neutral btn-round btn-fill" href="#">More Details</a>
+							                    <a onClick={() => {
+												this.props.history.push(`/view/individual/private/stream/${stream.id}`, { streamID: stream.id })
+												}} class="btn btn-info btn-round" href="#">Live Preview</a>
+							                </b>*/}
+							            </div>
+							            <div class="card-info">
+							                <a href="#">
+							                    <h3>{stream.title}
+							                        <div class="time pull-right">{stream.subTitle}</div>
+							                    
+							                    
+							                    </h3>
+							                    <div class="circle-red"><i class="fa fa-circle-o"></i></div>
+							                    <p>{stream.desc}</p>
+							                </a>
+							        </div>
+					        	</div>
+				 		  		);
+			 		  		}
+			 		  	}) : <ReactLoading type="cylon" color="pink" height={500} width={500} />}
+				  
+			 		</Carousel>
+			 		<Carousel responsive={responsive}>
+			 		  {/*{this.renderIdleStreams()}*/}
+			 		  	{this.state.readyStreams ? this.state.readyStreams.slice(0, 20).map((stream, index) => {
+			 		  	{/*	const auth = {
+							    username: "f899a074-f11e-490f-b35d-b6c478a5b12a",
+							    password: "4vLdjx6uBafGdFiSbmWt5akv4DaD4PkDuCCYdFYXzudywyQSR3Uh27GqlfedlhZ17fbnXbf9Rh/"
+							};
+
+			 		  		const res = axios.get(`https://api.mux.com/video/v1/assets/${stream.id}`, {}, { auth: auth }).catch((err) => {
+			 		  			throw err;
+			 		  		})*/}
+
+			 		  		{/*console.log(res);*/}
+			 		  		if (stream.tags.includes("TRANS") && stream.active === true) {
 								return (
 									<div key={index} style={{ margin: "20px 10px 20px 10px", maxHeight: "50vh"  }} onClick={() => {
 											this.props.history.push(`/view/individual/private/stream/${stream.id}`, { streamID: stream.id, stream_key: stream.stream_key });

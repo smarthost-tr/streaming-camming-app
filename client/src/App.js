@@ -39,6 +39,7 @@ import WireUpLovenseVibrator from "./components/lovense/wireup/index.js";
 import UploadPhotoToFeed from "./components/feed/uploadPhoto.js";
 import IndividualFeedPage from "./components/feed/individual/individual.js";
 import ForgotPasswordMainComponent from "./components/registration/forgotMain.js";
+import CashoutHomepage from "./components/cashout/cashOutHomepage.js";
 
 class App extends Component {
 constructor(props) {
@@ -90,6 +91,7 @@ constructor(props) {
         {this.props.auth ? <Route path="/upload/photo/feed" exact component={UploadPhotoToFeed} /> : <Route path="/upload/photo/feed" exact component={ErrorUnauthorized} />}
         {this.props.auth ? <Route path="/feed/posting/individual/:id" exact component={IndividualFeedPage} /> : <Route path="/feed/posting/individual/:id" exact component={ErrorUnauthorized} />}
         <Route path="/forgot/password" exact component={ForgotPasswordMainComponent} />
+        {this.props.auth ? <Route path="/cashout/homepage" exact component={CashoutHomepage} /> : <Route path="/cashout/homepage" exact component={ErrorUnauthorized} />}
       </div>
     </BrowserRouter>
     );

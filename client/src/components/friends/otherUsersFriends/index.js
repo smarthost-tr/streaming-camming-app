@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import axios from "axios";
 import Footer from "../../common/footer/footer.js";
 import "../css/home.css";
-import { Link } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
 
 class OthersFriendsList extends Component {
 constructor(props) {
@@ -14,43 +14,11 @@ constructor(props) {
 		friends: []
 	}
 }
-	// redirectUser = (friend) => {
-	// 	console.log("redirected...", friend);
-
-	// 	let user = this.props.location.state.user;
-
- //    	if (user.username) {
- //    		console.log("let user be as it was...");
- //    	} else if (user.profile) {
-	// 		user = user;
- //    	} else {
- //    		user = user[0];
- //    	}
-
-	// 	if (typeof friend !== undefined) {
-	// 		axios.post("/gather/username/profile", {
-	// 	      username: friend.username
-	// 	    }).then((res) => {
-	// 	      console.log(res.data);
-	// 	      if (res.data) {
-	// 	        this.props.history.push(`/profiles/individual/${friend.username}`, { user: res.data });
-	// 	      }
-	// 	    }).catch((err) => {
-	// 	      console.log(err);
-	// 	    })
-	// 	} else {
-	// 		axios.post("/gather/username/profile", {
-	// 	      username: user.username
-	// 	    }).then((res) => {
-	// 	      console.log(res.data);
-	// 	      if (res.data) {
-	// 	        this.props.history.push(`/profiles/individual/${user.username}`, { user: res.data });
-	// 	      }
-	// 	    }).catch((err) => {
-	// 	      console.log(err);
-	// 	    })
-	// 	}
-	// }
+	redirectUser = (friend) => {
+		console.log("redirected...", friend);
+		
+		this.props.history.push(`/profiles/individual/${friend.username}`);
+	}
 	componentDidMount() {
 
 		setTimeout(() => {
@@ -72,7 +40,7 @@ constructor(props) {
 		}, 500);
 	}
     render() {
-    	let user = this.props.location.state.user;
+    	let user = this.props.location.state.user || window.location.refresh();
     	if (user.username) {
     		console.log("let user be as it was...");
     	} else if (user.profile) {
@@ -107,7 +75,7 @@ constructor(props) {
 							if (friend.status === "accepted") {
 								return (
 									<div style={{ margin: "30px 0px" }} onClick={() => {
-										{/*this.redirectUser(friend);*/}
+										this.redirectUser(friend);
 									}} className="col-md-2">
 										<div style={{ height: "100%" }} class="card">
 									    <img src={friend.image ? friend.image : require("../../../images/no-image.png")} class="card-img-top" alt="..." />
@@ -136,4 +104,4 @@ const mapStateToProps = (state) => {
 	}
 }
 
-export default connect(mapStateToProps, {  })(OthersFriendsList);
+export default withRouter(connect(mapStateToProps, {  })(OthersFriendsList));

@@ -571,7 +571,7 @@ constructor(props) {
 						                                            <h3 class="panel-title">Skills</h3>
 						                                        </div>
 						                                        <div class="panel-body">
-						                                        	{this.state.skills.length > 0 ? this.state.skills.map((each, index) => {
+						                                        	{this.state.skills ? this.state.skills.map((each, index) => {
 																		if (each.skills) {
 																			return each.skills.map((skill, indexxx) => {
 								                                        		console.log(skill);
@@ -604,7 +604,7 @@ constructor(props) {
 						                                <div class="panel-body" style={{ height: "100%" }}>
 						                                    <div class="timeline-2">
 																<div className="row">
-						                                        {this.state.previouslyStreamed.length > 0 ? this.state.previouslyStreamed.map((stream, index) => {
+						                                        {this.state.previouslyStreamed ? this.state.previouslyStreamed.map((stream, index) => {
 						                                        	console.log("STREAM! :", stream);
 						                                        	
 						                                        	if (stream) {
@@ -706,7 +706,7 @@ constructor(props) {
 																	  	})
 																	  }} type="text" value={this.state.skill} class="form-control" aria-label="Text input with segmented dropdown button"/> 
 																	  <div class="input-group-append">
-																	    {this.state.percentage !== 0 && this.state.skill.length > 0 ? <button onClick={this.addSkillToDB} type="button" class="btn btn-outline-secondary">Add Skill ({this.state.percentage}%)</button> : <button  onClick={() => {
+																	    {this.state.percentage !== 0 && this.state.skill ? <button onClick={this.addSkillToDB} type="button" class="btn btn-outline-secondary">Add Skill ({this.state.percentage}%)</button> : <button  onClick={() => {
 																	    	if (this.state.percentage === 0 || this.state.skill.length === 0) {
 																				alert("You must complete both fields - Percentage + Skill Name")
 																	    	}

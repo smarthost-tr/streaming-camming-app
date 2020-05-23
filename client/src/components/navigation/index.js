@@ -231,13 +231,13 @@ constructor(props) {
             <Nav className="mr-auto" navbar>
               {this.props.authenticated ? <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  Crypto Tokens
+                  Crypto Tokens 
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                   <Link class="dropdown-item" to="/crypto/wallet">Crypto Wallet</Link>
                   <Link class="dropdown-item" to="/purchase/tokens">Purchase Tokens</Link>
                   <div class="dropdown-divider"></div>
-                  <Link class="dropdown-item" href="#">Something else here</Link>
+                  <Link class="dropdown-item" to="/cashout/homepage">Cash Out Your Tokens</Link>
                 </div>
               </li> : null}
               <li class="nav-item dropdown">
