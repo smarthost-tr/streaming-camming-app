@@ -48,11 +48,9 @@ constructor(props) {
 		})
 	}
 	renderContent = () => {
-		const { tips, ready } = this.state;
+		const { user, tips, ready } = this.state;
 
-		const user = this.props.user[0];
-
-		if (this.props.user[0]) {
+		if (user && ready) {
 			return (
 			<React.Fragment>
 				<div className="container">
@@ -75,7 +73,7 @@ constructor(props) {
 					<div className="row">
 						<div className="col-md-12">
 							<ul className="special_list" style={{ marginTop: "30px" }}>
-								{typeof user !== null && ready ? user.tipRates.map((task, index) => {
+								{ready && user.tipRates ? user.tipRates.map((task, index) => {
 									return task.map((data, indexxx) => {
 										return <li className="list_item">Task Request: Get me to <strong style={{ color: "#37be43" }}>{data.task}</strong> for <strong  style={{ color: "#871eff" }}>{data.cost}</strong> tokens</li>
 									})
@@ -298,8 +296,8 @@ constructor(props) {
 		console.log(this.props);
 		return (
 			<div>
-			{this.renderSockets()}
 			{this.renderContent()}
+			{this.renderSockets()}
 			</div>
 		);
 	}

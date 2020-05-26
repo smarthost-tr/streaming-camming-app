@@ -162,7 +162,9 @@ class StreamShow extends Component {
 		let username, passedPropsStreamID;
 
 		setTimeout(() => {
-			console.log("this.props.location.state", this.props.location.state)
+			
+			console.log("this.props.location.state", this.props.location.state);
+
 			if (this.props.location.state === undefined) {
 				this.props.history.push("/");
 			} else {
@@ -594,7 +596,7 @@ class StreamShow extends Component {
 						    				  <div class="input-group-append">
 						    					<button onClick={() => {
 						    						this.createPrivateStream();
-						    					}} style={{ width: "100%", color: "white" }} class="btn btn-outline green_button_custom" type="button" id="button-addon2"><i class="fa fa-paper-plane"></i>START LIVE 1 ON 1 STREAM</button>
+						    					}} style={{ width: "100%", color: "white" }} class="btn btn-outline aqua_button_custom" type="button" id="button-addon2"><i class="fa fa-paper-plane"></i>START LIVE 1 ON 1 STREAM</button>
 						    				  </div>
 						    				</div>
 						    			</form>

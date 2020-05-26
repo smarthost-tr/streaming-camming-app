@@ -335,7 +335,7 @@ constructor(props) {
 						    <div class="row">
 						        <div class="col-md-12">
 						            <div class="fb-profile-block">
-						                <div class="fb-profile-block-thumb cover-container">{this.props.email === this.state.user.email ? <UploadCoverPhoto /> : null} <div className="mx-auto"><img id="cover_cover_photo" src={this.state.coverPhoto ? this.state.coverPhoto : null} alt="cover-photo"/></div> </div>
+						                <div class="fb-profile-block-thumb cover-container">{this.props.email === this.state.user.email ? <UploadCoverPhoto /> : null} <div className="mx-auto"><img id="cover_cover_photo" src={this.state.coverPhoto ? this.state.coverPhoto : null} alt=""/></div> </div>
 						                <div class="profile-img">
 						                    <a href="#">
 						                        <img src={user.profile ? user.profile.profilePic : user.image} alt="profile-picture" />        

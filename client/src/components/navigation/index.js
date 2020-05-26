@@ -251,6 +251,8 @@ constructor(props) {
                   {this.props.authenticated && this.state.cammer ? <React.Fragment><div class="dropdown-divider"></div><Link class="dropdown-item" to="/streams/create/private">Start PRIVATE Stream</Link></React.Fragment> : null}
                   {this.props.authenticated && this.state.cammer ? <React.Fragment><div class="dropdown-divider"></div><Link class="dropdown-item" to="/lovense/connect">Connect LOVENSE Vibrator</Link></React.Fragment> : null}
                   <Link class="dropdown-item" to="/all/streams/public">View All Public Streams</Link>
+                  <div className="dropdown-divider"></div>
+                  {this.props.authenticated && this.state.cammer ? <React.Fragment><div class="dropdown-divider"></div><Link class="dropdown-item" to="/view/personal/stream">View your live stream</Link></React.Fragment> : null}
                 </div>
               </li>
               {this.props.authenticated ? <li class="nav-item dropdown">

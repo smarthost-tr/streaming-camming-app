@@ -28,171 +28,43 @@ constructor(props) {
 		data: [],
 		uniqueID: null,
 		ready: false,
-		token: null
+		token: null,
+		shown: false
 	}
 }
 	renderSubmission = (e) => {
 		e.preventDefault();
+
+		const { shown } = this.state;
 		
-		axios.post("/get/user/that/matches/id", {
-			id: this.state.id
-		}).then((res) => {
-			console.log(res.data);
-			this.setState({
-				data: res.data
-			})
-		}).catch((err) => {
-			console.log(err);
-		})	
-		client.setUser({
-		    id: this.props.username,
-		    name: this.props.username,
-		    image: this.props.image
-		}, this.props.token);
+		if (!shown) {
+			client.setUser({
+			    id: this.props.username,
+			    name: this.props.username,
+			    image: this.props.image
+			}, this.props.token);
 
-		channel = client.channel('livestream', this.state.id, {
-		  image: 'https://goo.gl/Zefkbx',
-		  name: "Live Stream Private 1 v 1",
-		});
-
-		// axios.post("/mux/get/streams", {
-		// 	streamID: this.state.id
-		// }).then((res) => {
-		// 	console.log(res.data);
-		// }).catch((err) => {
-		// 	console.log(err);
-		// })	
-
-		console.log("submitted...");
-
-		axios.post("/check/stream/live/id", {
-			email: this.props.email,
-			id: this.state.id
-		}).then((res) => {
-			console.log(res.data);
-			if (res.data.length > 0) {
-				if (res.data[0].privateStreamCodes.streamCode === this.state.id) {
-					console.log("MATCH.");
-					this.setState({
-						result: res.data[0]
-					}, async () => {
-						  const auth = {
-						    username: "f899a074-f11e-490f-b35d-b6c478a5b12a",
-						    password: "4vLdjx6uBafGdFiSbmWt5akv4DaD4PkDuCCYdFYXzudywyQSR3Uh27GqlfedlhZ17fbnXbf9Rh/"
-						  };
-						  const param = { "reduced_latency": true, 
-							  "playback_policy": "public", 
-							  "new_asset_settings": { 
-							  	"playback_policy": "public" 
-							  } 
-					      }
-						  const identifier = this.state.result.streams[this.state.result.streams.length - 1].id;
-
-						  const res = await axios.get(`https://api.mux.com/video/v1/live-streams/${identifier}`, { auth: auth }).catch((error) => {
-						    throw error;
-						  });
-
-						  const solution = res.data.data;
-
-						  console.log(solution);
-
-						this.setState({
-							solution
-						})
-					})	
-				}
-			} else {
-				alert("Password doesn't match this streams records...")
-			}
-		}).catch((err) => {
-			console.log(err);
-		})
-	}	
-	runRefresh = async () => {
-		const auth = {
-		    username: "f899a074-f11e-490f-b35d-b6c478a5b12a",
-		    password: "4vLdjx6uBafGdFiSbmWt5akv4DaD4PkDuCCYdFYXzudywyQSR3Uh27GqlfedlhZ17fbnXbf9Rh/"
-		};
-
-		const signing = await axios.post("https://api.mux.com/video/v1/signing-keys", {}, { auth: auth }).catch((error) => {
-		    throw error;
-		});
-
-		console.log(signing.data);
-
-		const signing_key = signing.data.data.id;
-
-		if (this.state.data) {
-			return this.state.data.map((user, index) => {
-				console.log(user.email);
-
-				if (user.email === this.state.result.email) {
-					console.log("jackpot :", user.email);
-					axios.post("/get/stream/mux/id", {
-						email: user.email
-					}).then((res) => {
-						console.log(res.data);
-						this.setState({
-							uniqueID: res.data[0].streams[res.data[0].streams.length - 1].playback_ids[0].id
-						}, () => {
-							const { uniqueID } = this.state;
-
-							axios.post("/create/mux/json/web/token", {
-								private_key: signing.data.data.private_key,
-								playbackID: uniqueID,
-								identifier: signing.data.data.id
-						  	}).then((res) => {
-						  		console.log(res.data);
-						  		if (res.data) {
-						  			axios.post("/create/mux/token/private", {
-									  	id: this.state.solution.playback_ids[0].id,
-									  	signing: signing.data.data.id,
-									  	private_key: signing.data.data.private_key
-									}).then((responseee) => {
-									  	console.log(responseee.data);
-									  	this.setState({
-									  		token: responseee.data
-									  	});
-
-
-									}).catch((err) => {
-									  	console.log(err);
-									})
-
-						  		}
-						  	}).catch((err) => {
-						  		console.log(err);
-						  	})
-						})
-					}).catch((err) => {
-						console.log(err);
-					});
-				} 
-			})
+			channel = client.channel('livestream', this.state.id, {
+			  image: 'https://goo.gl/Zefkbx',
+			  name: "Live Stream Private 1 v 1",
+			});
 		}
 
-		const identifier = this.state.result.streams[this.state.result.streams.length - 1].id;
-
-		const res = await axios.get(`https://api.mux.com/video/v1/live-streams/${identifier}`, { auth: auth }).catch((error) => {
-		    throw error;
-		});
-
-	    const solution = res.data.data;
-
-	  	// put more code here to handle asset logic
-
 		this.setState({
-			solution
-		});
+			shown: true,
+			uniqueID: "23094oijlakdmflak3mr2lm34",
+			result: { value: 100 }
+		})
 
+		console.log("submitted...");
 	}	
 	renderVideoSplit = () => {
-		if (this.state.uniqueID && this.state.token) {
+		if (this.state.uniqueID) {
 			return (
 				<div className="container-fluid">
 					<div className="row">
 						<div className="col-md-6">
-							<ReactPlayer playing={true} style={{ backgroundColor: "black" }} url={`https://stream.mux.com/${this.state.uniqueID}.m3u8?token=${this.state.token}`} controls width="100%" height="100%" />
+							<ReactPlayer playing={true} style={{ backgroundColor: "black" }} url={null} controls width="100%" height="100%" />
 						</div>
 						<div className="col-md-6">
 							<Chat client={client} theme={'livestream dark'}>
@@ -284,7 +156,6 @@ constructor(props) {
 			</div>
 			);
 		} else {
-			console.log(this.state.result.streams[this.state.result.streams.length - 1].playback_ids[0].id);
 			return (
 				<div>
 					<Navigation />

@@ -32,150 +32,86 @@ constructor(props) {
     }
 }
 	handleClick = () => {
-  		axios.post("/post/mux/private/stream").then((res) => {
-  			this.setState({
-  				playbackID: res.data.playbackID,
-  				streamKey: res.data.streamKey,
-  				streamID: res.data.data.id,
-  				loaded: true,
-  				startedStream: true,
-  				data: res.data
-  			})
-			
-			
-  			console.log(res.data);
-  		}).catch((err) => {
-  			console.log(err);
-  		})
+ 		
 	}
 	componentDidUnmount () {
 		client.disconnect();
 	}
 	handleRedirect = () => {
-		 // code - b2c643-8e5d-4e5e-d1e-a58afd3d7e4
 
+		console.log("redirect clicked...")
 
-		const createLive = async () => {
-		  const auth = {
-		    username: "f899a074-f11e-490f-b35d-b6c478a5b12a",
-		    password: "4vLdjx6uBafGdFiSbmWt5akv4DaD4PkDuCCYdFYXzudywyQSR3Uh27GqlfedlhZ17fbnXbf9Rh/"
-		  };
-		    const param = { 
-		      "reduced_latency": true, 
-			  "playback_policy": "signed", 
-			  "new_asset_settings": { 
-			  	"playback_policy": "public" 
-			  } 
-			}
-		  const resolution = await axios.get(`https://api.mux.com/video/v1/live-streams/${this.state.streamID}`, { auth: auth }).catch((error) => {
-		    throw error;
-		  });
+		axios.post("/check/stream/live/id/two", {
+			id: this.state.id
+		}).then(async (res) => {
+			console.log(res.data);
 
-		  console.log(resolution.data);
-		  if (resolution.data.data.status === "active") {
-		  	// put more code here to handle asset logic
+			const users = res.data;
 
+			client.setUser({
+			    id: this.props.username,
+			    name: this.props.username,
+			    image: 'https://getstream.io/random_svg/?id=patient-breeze-7&name=Patient+breeze'},
+			this.props.token);
 
-			axios.post("/check/stream/live/id/two", {
-				id: this.state.id
-			}).then(async (res) => {
-				console.log(res.data);
+			const conversation = client.channel('messaging', `private-1-on-1-stream-info-${res.data[0].privateStreamCodes.streamCode}`, {
+				name: `private-1-on-1-stream-info-${res.data[0].privateStreamCodes.streamCode}`,
+			    members: [users[0].username, users[1].username]
+			})
 
-				const users = res.data;
+			await conversation.sendMessage({
+			    text: `Your private stream is now LIVE! Please visit the url provided in the initial message to access your stream :)`
+			});
 
-				client.setUser({
-				    id: this.props.username,
-				    name: this.props.username,
-				    image: 'https://getstream.io/random_svg/?id=patient-breeze-7&name=Patient+breeze'},
-				this.props.token);
+			axios.post("/gather/user/id/specific", {
+				email: users[0].email
+			}).then(async (response) => {
+				console.log(response.data);
+				for (let key in response.data) {
+					let code = response.data[key].privateStreamCodes.urlID;
 
-				const conversation = client.channel('messaging', `private-1-on-1-stream-info-${res.data[0].privateStreamCodes.streamCode}`, {
-					name: `private-1-on-1-stream-info-${res.data[0].privateStreamCodes.streamCode}`,
-				    members: [users[0].username, users[1].username]
-				})
+					console.log(code);
 
-				await conversation.sendMessage({
-				    text: `Your private stream is now LIVE! Please visit the url provided in the initial message to access your stream :)`
-				});
-
-				axios.post("/gather/user/id/specific", {
-					email: users[0].email
-				}).then(async (response) => {
-					console.log(response.data);
-					for (let key in response.data) {
-						let code = response.data[key].privateStreamCodes.urlID;
-
-						console.log(code);
-
-						axios.post("/set/ready", {
-							email: users[0].email
-						}).then((respsonseee) => {
-							console.log(respsonseee.data);
-						}).catch((error) => {
-							console.log(error);
-						})
-						
-						axios.post("/post/new/stream", {
-							data: this.state.data.data,
-							email: users[0].email,
-							active_asset_id: resolution.data.data.active_asset_id
-						}).then((responseee) => {
-							console.log(responseee.data);
-							if (responseee) {
-								this.props.history.push(`/chat/homepage`, { streamID: this.state.streamID });
-							}
-						}).catch((err) => {
-							console.log(err);
-							alert(err);
-						});
-					}
-				}).catch((err) => {
-					console.log(err);
-				})
-				axios.post("/gather/user/id/specific", {
-					email: users[1].email
-				}).then(async (response) => {
-					console.log(response.data);
-					for (let key in response.data) {
-						let code = response.data[key].privateStreamCodes.urlID;
-
-						console.log(code);
-
-						axios.post("/set/ready", {
-							email: users[1].email
-						}).then((respsonseee) => {
-							console.log(respsonseee.data);
-						}).catch((error) => {
-							console.log(error);
-						})
-						
-						axios.post("/post/new/stream", {
-							data: this.state.data.data,
-							email: users[1].email,
-							active_asset_id: resolution.data.data.active_asset_id
-						}).then((responseee) => {
-							console.log(responseee.data);
-							if (responseee) {
-								// this.props.history.push(`/private/live/stream/${code}`, { streamID: this.state.streamID });
-							}
-						}).catch((err) => {
-							console.log(err);
-							alert(err);
-						});
-					}
-				}).catch((err) => {
-					console.log(err);
-				})
-
+					axios.post("/set/ready", {
+						email: users[0].email
+					}).then((respsonseee) => {
+						console.log(respsonseee.data);
+					}).catch((error) => {
+						console.log(error);
+					})
+				}
 			}).catch((err) => {
 				console.log(err);
 			})
-		  } else {
-		  	alert("Broadcast/stream not detected... Please go to OBS and start your live stream.");
-		  }
-		}
+			axios.post("/gather/user/id/specific", {
+				email: users[1].email
+			}).then(async (response) => {
+				console.log(response.data);
+				for (let key in response.data) {
+					let code = response.data[key].privateStreamCodes.urlID;
 
-		createLive();
+					console.log(code);
+
+					axios.post("/set/ready", {
+						email: users[1].email
+					}).then((respsonseee) => {
+						console.log(respsonseee.data);
+					}).catch((error) => {
+						console.log(error);
+					})
+
+					this.setState({
+						streamKey: "ladkjf2l3m4r2l3m4",
+						loaded: true
+					})
+				}
+			}).catch((err) => {
+				console.log(err);
+			})
+
+		}).catch((err) => {
+			console.log(err);
+		})
 	}	
 	renderConditional = () => {
 		if (this.state.loaded) {

@@ -227,7 +227,7 @@ constructor(props) {
 					{/*{this.state.ready ? <h1 className="text-white text-center">Straight Streams</h1> : null}*/}
 					<Carousel responsive={responsive}>
 			 		  {/*{this.renderIdleStreams()}*/}
-			 		  	{this.state.readyStreams ? this.state.readyStreams.slice(0, 20).map((stream, index) => {
+			 		  	{this.state.readyStreams ? this.state.readyStreams.sort(() => Math.random() - 0.5).map((stream, index) => {
 			 		  		console.log(stream);
 			 		  	{/*	const auth = {
 							    username: "f899a074-f11e-490f-b35d-b6c478a5b12a",
@@ -294,7 +294,7 @@ constructor(props) {
 			 		</Carousel>
 			 		<Carousel responsive={responsive}>
 			 		  {/*{this.renderIdleStreams()}*/}
-			 		  	{this.state.readyStreams ? this.state.readyStreams.slice(0, 20).map((stream, index) => {
+			 		  	{this.state.readyStreams ? this.state.readyStreams.sort(() => Math.random() - 0.5).map((stream, index) => {
 			 		  	{/*	const auth = {
 							    username: "f899a074-f11e-490f-b35d-b6c478a5b12a",
 							    password: "4vLdjx6uBafGdFiSbmWt5akv4DaD4PkDuCCYdFYXzudywyQSR3Uh27GqlfedlhZ17fbnXbf9Rh/"

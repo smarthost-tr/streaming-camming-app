@@ -40,6 +40,7 @@ import UploadPhotoToFeed from "./components/feed/uploadPhoto.js";
 import IndividualFeedPage from "./components/feed/individual/individual.js";
 import ForgotPasswordMainComponent from "./components/registration/forgotMain.js";
 import CashoutHomepage from "./components/cashout/cashOutHomepage.js";
+import ViewStreamLink from "./components/streams/personal/viewStream.js";
 
 class App extends Component {
 constructor(props) {
@@ -92,6 +93,7 @@ constructor(props) {
         {this.props.auth ? <Route path="/feed/posting/individual/:id" exact component={IndividualFeedPage} /> : <Route path="/feed/posting/individual/:id" exact component={ErrorUnauthorized} />}
         <Route path="/forgot/password" exact component={ForgotPasswordMainComponent} />
         {this.props.auth ? <Route path="/cashout/homepage" exact component={CashoutHomepage} /> : <Route path="/cashout/homepage" exact component={ErrorUnauthorized} />}
+        {this.props.auth ? <Route path="/view/personal/stream" exact component={ViewStreamLink} /> : <Route path="/view/personal/stream" exact component={ErrorUnauthorized} />}
       </div>
     </BrowserRouter>
     );

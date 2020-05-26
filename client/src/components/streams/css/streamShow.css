@@ -199,7 +199,8 @@ a.h2{
     cursor:pointer;
 }
 .modal-body {
-    background-color: #0836bf !important;
+    background-color: #871eff !important;
+    padding: 30px !important;
 }
 #modal_content {
 	background: black !important;

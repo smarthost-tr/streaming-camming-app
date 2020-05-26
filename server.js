@@ -198,7 +198,7 @@ app.use("/delete/comment/instagram/feed/individual", require("./routes/profile/r
 app.use("/sendgrid/send/email", require("./routes/sendgrid/sendgridEmailSend.js"));
 app.use("/follow/user", require("./routes/following/followUser.js"));
 app.use("/gather/followers", require("./routes/following/gatherFollowers.js"));
-
+app.use("/gather/individual/stream/display", require("./routes/streaming/mongodb/getStreams.js"));
 // RTMP BEGIN
 app.use("/streams/info", require("./routes/streaming/rtmp/info.js"));
 app.use("/stream_key/create", require("./routes/streaming/rtmp/stream_key.js"));

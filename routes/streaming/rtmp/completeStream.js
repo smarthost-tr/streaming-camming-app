@@ -42,7 +42,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
         collection.findOneAndUpdate({ "streams.id": id }, { $set: { "streams.$.active": false }}).then((user) => {
             // save video to assets with exec
             console.log(user.value.stream_key);
-            const script = `ffmpeg -i http://127.0.0.1:8888/live/${user.value.stream_key}/index.m3u8 -y -f mp4 ${user.value.stream_key}.mp4`;
+            const script = `ffmpeg -i http://127.0.0.1:8888/live/${user.value.stream_key}/index.m3u8 -acodec copy -y -f mp4 ${user.value.stream_key}.mp4`;
 
             const serverPath = path.resolve(process.cwd() + '/client/public/finishedStreams');
 
@@ -54,43 +54,53 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
             const child = exec(script, { cwd: serverPath });
 
-            child.on('exit', function() {
+            const execPromise = (command) => {
+                return new Promise((resolve, reject) => {
+                    exec(command, (error, stdout, stderr) => {
+                        if (error) {
+                            console.log("promise err :", error);
+                            reject(error);
+                            return;
+                        }
 
-                console.log("exit.");
+                        resolve(stdout.trim());
+                    });
+                });
+            }
 
-                const stream_key = user.value.stream_key;
+            execPromise(script, { cwd: serverPath }).then((result) => {
+              console.log("JACKPOT :", result);
+              fs.readFile(fileName, (err, data) => {
+                  if (err) { 
+                      console.log('fs error', err);
+                  } else {
+                    console.log("DATAAAAAAA :", data);
 
-                  const uploadFile = () => {
+                    const body = fs.createReadStream(data);
 
-                      console.log("RUN.... UPLOAD VIDEO...");
+                      const stream_key = user.value.stream_key;
 
-                      fs.readFile(fileName, (err, data) => {
-                          if (err) { 
-                              console.log('fs error', err);
-                          } else {
-                            console.log("DATAAAAAAA :", data);
-                              var params = {
-                                  Bucket: 'sex-streaming-jerk-n-squirt', // pass your bucket name
-                                  Key: `${stream_key}.mp4`,
-                                  Body: data,
-                                  ContentType: 'video/mp4'
-                              };
-                             // save video to aws - s3
-                             s3.upload(params, (err, data) => {
-                                if (err) {
-                                    console.log("err..... :", err);
-                                }
-                                console.log("File uploaded successfully :", data);
-                                response.status(200).send({
-                                    message: "Success"
-                                }); 
-                             });
-                          }
-                      });
-                  };
-
-                uploadFile();
-            })
+                      var params = {
+                          Bucket: 'sex-streaming-jerk-n-squirt', // pass your bucket name
+                          Key: `${stream_key}.mp4`,
+                          Body: body,
+                          ContentType: 'video/mp4'
+                      };
+                     // save video to aws - s3
+                     s3.upload(params, (err, data) => {
+                        if (err) {
+                            console.log("err..... :", err);
+                        }
+                        console.log("File uploaded successfully :", data);
+                        response.status(200).send({
+                            message: "Success"
+                        }); 
+                     });
+                  }
+              });
+          }).catch((e) => {
+              console.error("execPromise error :", e.message);
+          });
 
         }).catch((err) => {
             console.log(err);
