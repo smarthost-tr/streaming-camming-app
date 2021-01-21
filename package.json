@@ -63,7 +63,7 @@
     "sha256": "^0.2.0",
     "simple-peer": "^9.6.2",
     "simple-thumbnail": "^1.6.5",
-    "socket.io": "^2.3.0",
+    "socket.io": "^2.4.0",
     "socket.io-client": "^2.3.0",
     "stream-chat": "^1.7.2",
     "util": "^0.12.3",
