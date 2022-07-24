@@ -11,8 +11,8 @@ const config = require("config");
 const User = require("../../models/user.js");
 const AWS = require('aws-sdk');
 // const uuid = require('uuid/v4');
-const multer = require('multer');
-const multerS3 = require('multer-s3');
+// const multer = require('multer');
+// const multerS3 = require('multer-s3');
 const Grid = require("gridfs-stream");
 // const GridFsStorage = require('multer-gridfs-storage');
 const EC = require("elliptic").ec;
@@ -41,16 +41,16 @@ s3 = new AWS.S3();
 //     }
 //   }
 // });
-var upload = multer({
-    storage: multerS3({
-        s3: s3,
-        bucket: 'sex-streaming-jerk-n-squirt',
-        key: function (req, file, cb) {
-            console.log(file);
-            cb(null, file.originalname); //use Date.now() for unique file keys
-        }
-    })
-});
+// var upload = multer({
+//     storage: multerS3({
+//         s3: s3,
+//         bucket: 'sex-streaming-jerk-n-squirt',
+//         key: function (req, file, cb) {
+//             console.log(file);
+//             cb(null, file.originalname); //use Date.now() for unique file keys
+//         }
+//     })
+// });
 
 
 mongoose.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTopology: true }, cors(), (err, db) => {
