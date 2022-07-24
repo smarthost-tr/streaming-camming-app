@@ -16,7 +16,7 @@ paypal.configure({
 });
 
 
-mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTopology: true }, cors(), (err, db) => {
+mongoose.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTopology: true }, cors(), (err, db) => {
 	router.get('/', (req, res) => {
 	    console.log(req.body);
 		

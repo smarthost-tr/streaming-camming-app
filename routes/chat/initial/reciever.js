@@ -7,7 +7,7 @@ const config = require("config");
 const mongo = require("mongodb");
 const moment = require("moment");
 
-mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTopology: true }, cors(), (err, db) => {
+mongoose.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTopology: true }, cors(), (err, db) => {
 	router.post('/', (req, res) => {
 
 		const { email, message, author, image, reciever, sender, uniqueID } = req.body;

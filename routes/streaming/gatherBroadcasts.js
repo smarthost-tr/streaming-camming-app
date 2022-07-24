@@ -9,7 +9,7 @@ const OpenTok = require('opentok');
 
 let opentok = new OpenTok("46621022", "963397973811378d0298908a4b9f86ac186f0158");
 
-mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTopology: true }, cors(), (err, db) => {
+mongoose.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTopology: true }, cors(), (err, db) => {
 	router.get("/", (req, res) => {
 
 		opentok.listBroadcasts({ offset: 100, count: 50 }, (error, broadcasts, totalCount) => {

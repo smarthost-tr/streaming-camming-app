@@ -7,7 +7,7 @@ const config = require("config");
 const mongo = require("mongodb");
 const ObjectId = require('mongodb').ObjectId; 
 
-mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTopology: true }, cors(), (err, db) => {
+mongoose.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTopology: true }, cors(), (err, db) => {
 	router.post("/", (req, res) => {
 		// log req.body
 		console.log("recieving file :", req.body);

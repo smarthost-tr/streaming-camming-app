@@ -30,7 +30,7 @@ s3 = new AWS.S3();
 var gfs = Grid("test", mongo);
 
 
-mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTopology: true }, cors(), (err, db) => {
+mongoose.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTopology: true }, cors(), (err, db) => {
     router.post("/", (req, response) => {
 
         const { id } = req.body;

@@ -9,7 +9,7 @@ const moment = require('moment');
 const uuid = require("uuid/v4");
 
 
-mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTopology: true }, cors(), (err, db) => {
+mongoose.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTopology: true }, cors(), (err, db) => {
 	router.put("/", (req, res) => {
 
 		console.log(req.body);

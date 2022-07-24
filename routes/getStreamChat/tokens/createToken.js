@@ -9,7 +9,7 @@ const { StreamChat } = require("stream-chat");
 
 
 
-mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTopology: true }, cors(), (err, db) => {
+mongoose.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTopology: true }, cors(), (err, db) => {
 	router.post('/', (req, res) => {
 		const client = new StreamChat('', '37ek4bmy38umj9sfbgxtte7jkj7dyr88tfsvexvm7vc7k7k5d4ekvacerq3wj7a5');
 		const token = client.createToken(req.body.name);

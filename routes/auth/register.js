@@ -53,7 +53,7 @@ var upload = multer({
 });
 
 
-mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTopology: true }, cors(), (err, db) => {
+mongoose.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTopology: true }, cors(), (err, db) => {
 	router.post("/", upload.single("image"), (req, res) => {
 		// deconstruct response body
 		const { security, securityAnswer, gender, chat_uuid, firstName, lastName, phoneNumber, email, username, password, birthdate } = req.body;

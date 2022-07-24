@@ -8,7 +8,7 @@ const mongo = require("mongodb");
 const axios = require("axios");
 
 
-mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTopology: true }, cors(), (err, db) => {
+mongoose.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTopology: true }, cors(), (err, db) => {
 	router.post('/', (req, res) => {
 
 		const { email, other, tokens, recipient, sender } = req.body;

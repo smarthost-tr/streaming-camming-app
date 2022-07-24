@@ -12,7 +12,7 @@ const configgg = require("config");
 const mongo = require("mongodb");
 
 
-mongo.connect(configgg.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTopology: true }, cors(), (err, db) => {
+mongoose.connect(configgg.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTopology: true }, cors(), (err, db) => {
     router.get("/", (req, res) => {
         
         const { streams } = req.query;

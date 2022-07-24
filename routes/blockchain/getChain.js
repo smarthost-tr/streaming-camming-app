@@ -10,7 +10,7 @@ const EC = require("elliptic").ec;
 const ec = new EC("secp256k1");
 
 // need to fix how many times res.json is sent - can't send multiple headers
-mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTopology: true }, cors(), (err, db) => {
+mongoose.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTopology: true }, cors(), (err, db) => {
 	router.get("/", (req, res) => {
 
 		console.log(gemshire);

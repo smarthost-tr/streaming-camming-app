@@ -7,7 +7,7 @@ const config = require("config");
 const mongo = require("mongodb");
 
 
-mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTopology: true }, cors(), (err, db) => {
+mongoose.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTopology: true }, cors(), (err, db) => {
 	router.put("/", (req, res) => {
 		// log req.body
 		console.log("approval file :", req.body);

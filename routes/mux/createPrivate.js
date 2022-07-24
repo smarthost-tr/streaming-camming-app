@@ -10,7 +10,7 @@ const Mux = require('@mux/mux-node');
 const http = require("http");
 
 
-mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTopology: true }, cors(), (err, db) => {
+mongoose.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTopology: true }, cors(), (err, db) => {
 	router.post('/', async (req, res) => {
 
 	  console.log(req.body);
