@@ -9,32 +9,32 @@ const port = process.argv[2] || PORT;
 /*************/
 let express = require('express');
 let http = require('http');
-let bodyParser = require('body-parser')
+// let bodyParser = require('body-parser')
 let app = express()
 const mongoDB = require("./config/db.js");
 const cors = require("cors");
 const path = require("path");
-const config = require("config");
+// const config = require("config");
 const passport = require("passport");
 const server = http.createServer(app);
 const socket = require("socket.io");
 const io = socket(server);
 // Storage Configuration
-const util = require('util');
-const fs = require('fs');
-const stateFilePath = './.data/stream';
-const readFile = util.promisify(fs.readFile);
-const writeFile = util.promisify(fs.writeFile);
+// const util = require('util');
+// const fs = require('fs');
+// const stateFilePath = './.data/stream';
+// const readFile = util.promisify(fs.readFile);
+// const writeFile = util.promisify(fs.writeFile);
 // Setup the Mux SDK
-const Mux = require('@mux/mux-node');
+// const Mux = require('@mux/mux-node');
 const paypal = require('paypal-rest-sdk');
 const flash = require('connect-flash');
 const session = require('express-session');
-const mongo = require("mongodb");
-const moment = require("moment");
-const {Video} = new Mux("f899a074-f11e-490f-b35d-b6c478a5b12a", "4vLdjx6uBafGdFiSbmWt5akv4DaD4PkDuCCYdFYXzudywyQSR3Uh27GqlfedlhZ17fbnXbf9Rh/");
-const EC = require("elliptic").ec;
-const ec = new EC("secp256k1");
+// const mongo = require("mongodb");
+// const moment = require("moment");
+// const {Video} = new Mux("f899a074-f11e-490f-b35d-b6c478a5b12a", "4vLdjx6uBafGdFiSbmWt5akv4DaD4PkDuCCYdFYXzudywyQSR3Uh27GqlfedlhZ17fbnXbf9Rh/");
+// const EC = require("elliptic").ec;
+// const ec = new EC("secp256k1");
 const gemshire = require("./main.js");
 const rp = require("request-promise");
 const uuid = require("uuid/v4");
@@ -43,7 +43,7 @@ const node_media_server = require('./rtmpserver/media_server.js');
 // import thumbnail generator
 const thumbnail_generator = require('./rtmpserver/thumbnail.js');
 
-let STREAM;
+// let STREAM;
 
 {/*var httpsServer = https.createServer(credentials, app).listen(<port>);*/
 }
@@ -79,16 +79,16 @@ app.get('*', cors(), function (_, res) {
         if (err) {
             res.status(500).send(err)
         }
-        ;
+
     };
 });
 
 app.get('/*', cors(), function (_, res) {
-    res.sendFile(__dirname, './client/build/index.html'), function (err) {
+    res.sendFile(__dirname, './client/build/index.html') , function (err) {
         if (err) {
             res.status(500).send(err)
         }
-        ;
+
     };
 });
 
@@ -119,7 +119,7 @@ if (process.env.NODE_ENV === "production") {
         })
     })
 }
-;
+
 app.use("/login/check/creds", require("./routes/auth/checkCreds.js"));
 app.use("/post/reply/comment/profile", require("./routes/comments/postReplyComment.js"));
 app.use("/gather/profile/comments/individual", require("./routes/comments/gather/gatherComments.js"));
@@ -302,8 +302,7 @@ app.get("/consensus", (req, res) => {
         requestPromises.push(rp(requestOptions));
     });
     Promise.all(requestPromises).then((blockchains) => {
-        const currentChainLength = gemshire.chain.length;
-        let maxChainLength = currentChainLength;
+        let maxChainLength = gemshire.chain.length;
         let newLongestChain = null;
         let newPendingTransactions = null;
 
@@ -335,7 +334,7 @@ app.get("/consensus", (req, res) => {
 app.post("/register-and-broadcast-node", (req, res) => {
     const {newNodeUrl} = req.body;
 
-    if (gemshire.networkNodes.indexOf(newNodeUrl) == -1 && gemshire.currentNodeUrl !== newNodeUrl) {
+    if (gemshire.networkNodes.indexOf(newNodeUrl) === -1 && gemshire.currentNodeUrl !== newNodeUrl) {
         console.log("ran 3");
         gemshire.networkNodes.push(newNodeUrl);
     }
@@ -421,7 +420,7 @@ app.post("/register-nodes-bulk", (req, res) => {
 
     allNetworkNodes.forEach((networkNodeUrl) => {
         console.log("allNetworkNodes", allNetworkNodes);
-        const nodeNotAlreadyPresent = gemshire.networkNodes.indexOf(networkNodeUrl) == -1;
+        const nodeNotAlreadyPresent = gemshire.networkNodes.indexOf(networkNodeUrl) === -1;
         const notCurrentNode = gemshire.currentNodeUrl !== networkNodeUrl;
         if (nodeNotAlreadyPresent && notCurrentNode) {
             console.log("Ran 2");

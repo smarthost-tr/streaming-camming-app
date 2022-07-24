@@ -87,7 +87,6 @@ class StreamShow extends Component {
     this.state = {
     	streams: [],
     	streamsReady: false,
-    	playbackID: null,
     	APISuccess: false,
     	err: "",
     	streamIsReady: false,
