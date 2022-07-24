@@ -143,14 +143,14 @@ app.use("/gather/skills/profile/page", require("./routes/profile/gatherData/gath
 app.use("/profile/find/user/streams", require("./routes/profile/gatherData/gatherStreams.js"));
 app.use("/push/stream/active_asset_id", require("./routes/mux/pushAssetID.js"));
 app.use("/post/new/comment/profile", require("./routes/comments/postComment.js"));
-app.use("/send/friend/request/reciever", require("./routes/friendsList/addFriend/recievingFriend.js"));
-app.use("/send/friend/request/sender", require("./routes/friendsList/addFriend/sendingFriend.js"));
-app.use("/gather/friends/list/navbar", require("./routes/friendsList/gatherPending/gather.js"));
+app.use("/send/friend/request/reciever", require("./routes/friendslist/addFriend/recievingFriend.js"));
+app.use("/send/friend/request/sender", require("./routes/friendslist/addFriend/sendingFriend.js"));
+app.use("/gather/friends/list/navbar", require("./routes/friendslist/gatherPending/gather.js"));
 app.use("/gather/username/profile", require("./routes/profile/gatherData/gatherUsername.js"));
-app.use("/handle/friend/request", require("./routes/friendsList/addFriend/approve.js"));
-app.use("/recieving/approval/send/confirmation", require("./routes/friendsList/addFriend/recievingApproval.js"));
-app.use("/gather/friends/list/personalized", require("./routes/friendsList/retrieve/retrieve.js"));
-app.use("/figure/out/if/friends", require("./routes/friendsList/findOutFriend.js"));
+app.use("/handle/friend/request", require("./routes/friendslist/addFriend/approve.js"));
+app.use("/recieving/approval/send/confirmation", require("./routes/friendslist/addFriend/recievingApproval.js"));
+app.use("/gather/friends/list/personalized", require("./routes/friendslist/retrieve/retrieve.js"));
+app.use("/figure/out/if/friends", require("./routes/friendslist/findOutFriend.js"));
 app.use("/paypal/pay", require("./routes/paypal/pay/intitial.js"));
 app.use("/success", require("./routes/paypal/pay/success.js"));
 app.use("/cancel", require("./routes/paypal/pay/cancel.js"));
@@ -182,7 +182,7 @@ app.use("/check/stream/live/id/two", require("./routes/streaming/findSpecificUse
 app.use("/complete/stream/mongodb", require("./routes/streaming/mongodb/findByStreamPlaybackId.js"));
 app.use("/gather/each/every/stream/mongodb", require("./routes/streaming/mongodb/gatherEachStream.js"));
 // saving stream data db stuff ^^^^^^^^^
-app.use("/search/user", require("./routes/friendsList/searchUser.js"));
+app.use("/search/user", require("./routes/friendslist/searchUser.js"));
 app.use("/complete/tip/list", require("./routes/forms/cammerRegistration/postTipRates.js"));
 app.use("/get/user", require("./routes/getUser.js"));
 app.use("/make/blockchain/payment", require("./routes/blockchain/currency/purchase.js"));
