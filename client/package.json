@@ -69,8 +69,8 @@
     "eject": "react-scripts eject",
     "watch": "webpack-dev-server --progress"
   },
-  "homepage": "http://localhost:3000",
-  "proxy": "http://localhost:5000",
+  "homepage": "http://servers.web.tr:3000",
+  "proxy": "http://servers.web.tr:5000",
   "eslintConfig": {
     "extends": "react-app"
   },
