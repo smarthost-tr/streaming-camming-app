@@ -7,18 +7,18 @@ const router = express.Router();
 mongoose.set('useCreateIndex', true);
 
 const connectDB = async () => {
-	try {
-		await mongoose.connect(db, { 
-			useNewUrlParser: true
-		});
+    try {
+        await mongoose.connect(db, {
+            useNewUrlParser: true
+        });
 
-		console.log("MongoDB Connected!");
+        console.log("MongoDB Connected!");
 
-	} catch (err) {
-		
-		console.log(err.message);
+    } catch (err) {
 
-		process.exit(1);
-	}
+        console.log(err.message);
+
+        process.exit(1);
+    }
 };
 module.exports = connectDB;
