@@ -1,8 +1,8 @@
 /**************/
 /*** CONFIG ***/
 /**************/
-const PORT = process.env.PORT || 5000;
-const port = PORT;
+const PORT = process.argv[2] || 5000;
+const port = process.argv[2] || PORT;
 
 /*************/
 /*** SETUP ***/

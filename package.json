@@ -5,11 +5,11 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "node_0": "nodemon server.js 5000 http://localhost:5000",
-    "node_1": "nodemon server.js 5001 http://localhost:5001",
-    "node_2": "nodemon server.js 5002 http://localhost:5002",
-    "node_3": "nodemon server.js 5003 http://localhost:5003",
-    "node_4": "nodemon server.js 5004 http://localhost:5004",
+    "node_0": "nodemon server.js 5000 http://0.0.0.0:5000",
+    "node_1": "nodemon server.js 5001 http://0.0.0.0:5001",
+    "node_2": "nodemon server.js 5002 http://0.0.0.0:5002",
+    "node_3": "nodemon server.js 5003 http://0.0.0.0:5003",
+    "node_4": "nodemon server.js 5004 http://0.0.0.0:5004",
     "dev": "concurrently \"npm run node_0\" \"cd client && npm start\"",
     "heroku-postbuild": "NODE_ENV=production cd client && npm install && npm run build"
   },
