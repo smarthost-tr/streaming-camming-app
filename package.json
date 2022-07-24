@@ -55,7 +55,7 @@
     "paypal-rest-sdk": "^1.8.1",
     "pusher": "^3.0.0",
     "react-activity-feed": "^0.10.2",
-    "react-hls": "^0.0.8",
+    "react-hls": "0.0.8",
     "request": "^2.88.2",
     "request-promise": "^4.2.5",
     "sendbird": "^3.0.121",
