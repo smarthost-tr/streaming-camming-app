@@ -2,15 +2,15 @@ const mongoose = require("mongoose");
 const express = require("express");
 const router = express.Router();
 const cors = require("cors");
-const app = express();
+// const app = express();
 const config = require("config");
-const mongo = require("mongodb");
+// const mongo = require("mongodb");
 const AWS = require('aws-sdk');
-const uuid = require('uuid/v4');
-const multer = require('multer');
-const multerS3 = require('multer-s3');
+// const uuid = require('uuid/v4');
+// const multer = require('multer');
+// const multerS3 = require('multer-s3');
 const Grid = require("gridfs-stream");
-const GridFsStorage = require('multer-gridfs-storage');
+// const GridFsStorage = require('multer-gridfs-storage');
 Grid.mongo = mongoose.mongo;
 
 AWS.config.update({
@@ -21,32 +21,32 @@ AWS.config.update({
 
 s3 = new AWS.S3();
 
-var gfs = Grid("test", mongo);
+// var gfs = Grid("test", mongo);
 
-const storage = new GridFsStorage({
-  url: config.get("mongoURI"),
-  gfs: gfs,
-  file: (req, file) => {
-    return {
-        filename: file.originalname
-    }
-  }
-});
-var upload = multer({
-    storage: multerS3({
-        s3: s3,
-        bucket: 'sex-streaming-jerk-n-squirt',
-        key: function (req, file, cb) {
-            console.log(file);
-            cb(null, file.originalname); //use Date.now() for unique file keys
-        }
-    })
-});
+// const storage = new GridFsStorage({
+//   url: config.get("mongoURI"),
+//   gfs: gfs,
+//   file: (req, file) => {
+//     return {
+//         filename: file.originalname
+//     }
+//   }
+// });
+// var upload = multer({
+//     storage: multerS3({
+//         s3: s3,
+//         bucket: 'sex-streaming-jerk-n-squirt',
+//         key: function (req, file, cb) {
+//             console.log(file);
+//             cb(null, file.originalname); //use Date.now() for unique file keys
+//         }
+//     })
+// });
 
 mongoose.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTopology: true }, cors(), (err, db) => {
 	router.post("/", upload.single("image"), (req, res) => {
 
-		const image_uuid = uuid();
+		// const image_uuid = uuid();
 
 		console.log("req.body ------------- :", req.body);
 
