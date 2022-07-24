@@ -15,41 +15,42 @@ const helpers = require("../routes/streaming/rtmp/helpers.js");
 let nms;
 let db = null;
 
-mongo.connect(configgg.get("mongoURI"), (err, client) => {
-	if (err) {
-		console.log(err);
-	} 
-	console.log(client);
-	db = client;
+mongoose.connect(configgg.get("mongoURI"), (err, client) => {
+    if (err) {
+        console.log(err);
+    }
+    console.log(client);
+    db = client;
 })
 
 nms = new NodeMediaServer(config);
- 
-nms.on('prePublish', async (id, StreamPath, args) => {
-   	const stream_key = getStreamKeyFromStreamPath(StreamPath);
 
-	console.log(stream_key);
+nms.on('prePublish', async (id, StreamPath, args) => {
+    const stream_key = getStreamKeyFromStreamPath(StreamPath);
+
+    console.log(stream_key);
     console.log('[NodeEvent on prePublish]', `id=${id} StreamPath=${StreamPath} args=${JSON.stringify(args)}`);
 
-	const collection = db.collection("users");
+    const collection = db.collection("users");
 
-    collection.findOne({ stream_key: stream_key }).then((user) => {
+    collection.findOne({stream_key: stream_key}).then((user) => {
         if (!user) {
-        	console.log("user doesnt exist...");
+            console.log("user doesnt exist...");
             let session = nms.getSession(id);
         } else {
-        	console.log("user exists! ... generate thumbnail.")
+            console.log("user exists! ... generate thumbnail.")
             helpers.generateStreamThumbnail(stream_key);
-        };
+        }
+        ;
     }).catch((err) => {
-    	console.log(err);
+        console.log(err);
     });
 });
- 
+
 const getStreamKeyFromStreamPath = (path) => {
     let parts = path.split('/');
     return parts[parts.length - 1];
 };
 
- 
+
 module.exports = nms;
