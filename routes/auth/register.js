@@ -2,22 +2,22 @@ const mongoose = require("mongoose");
 const express = require("express");
 const router = express.Router();
 const cors = require("cors");
-const app = express();
+// const app = express();
 const config = require("config");
-const mongo = require("mongodb");
-const passport = require("passport");
-const LocalStrategy = require('passport-local').Strategy;
-const bcrypt = require("bcrypt");
+// const mongo = require("mongodb");
+// const passport = require("passport");
+// const LocalStrategy = require('passport-local').Strategy;
+// const bcrypt = require("bcrypt");
 const User = require("../../models/user.js");
 const AWS = require('aws-sdk');
-const uuid = require('uuid/v4');
+// const uuid = require('uuid/v4');
 const multer = require('multer');
 const multerS3 = require('multer-s3');
 const Grid = require("gridfs-stream");
-const GridFsStorage = require('multer-gridfs-storage');
+// const GridFsStorage = require('multer-gridfs-storage');
 const EC = require("elliptic").ec;
 const ec = new EC("secp256k1");
-const gemshire = require("../../main.js");
+// const gemshire = require("../../main.js");
 const axios = require("axios");
 
 Grid.mongo = mongoose.mongo;
@@ -30,17 +30,17 @@ AWS.config.update({
 
 s3 = new AWS.S3();
 
-var gfs = Grid("test", mongo);
+// var gfs = Grid("test", mongo);
 
-const storage = new GridFsStorage({
-  url: config.get("mongoURI"),
-  gfs: gfs,
-  file: (req, file) => {
-    return {
-        filename: file.originalname
-    }
-  }
-});
+// const storage = new GridFsStorage({
+//   url: config.get("mongoURI"),
+//   gfs: gfs,
+//   file: (req, file) => {
+//     return {
+//         filename: file.originalname
+//     }
+//   }
+// });
 var upload = multer({
     storage: multerS3({
         s3: s3,
@@ -58,7 +58,7 @@ mongoose.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifie
 		// deconstruct response body
 		const { security, securityAnswer, gender, chat_uuid, firstName, lastName, phoneNumber, email, username, password, birthdate } = req.body;
 
-		const hashedPassword = bcrypt.hashSync(req.body.password, 8);
+		// const hashedPassword = bcrypt.hashSync(req.body.password, 8);
 
 		console.log("fileeeeee ------------- :", req.file);
 
